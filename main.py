@@ -3,6 +3,9 @@ from flask import render_template, redirect, abort, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from data import db_session
 from data.users import User
+from data.problems import Problem
+from data.submissions import Submission
+from data.jobs import Job
 import os
 
 
@@ -18,3 +21,6 @@ db_session.global_init('db/main.sqlite')
 def load_user(user_id):
     session = db_session.create_session()
     return session.query(User).get(user_id)
+
+
+app.run()
