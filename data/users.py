@@ -9,9 +9,10 @@ from flask_login import UserMixin
 class User(SqlAlchemyBase, SerializerMixin, UserMixin):
     __tablename__ = 'users'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
+    username = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True)
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True)
+    email = sqlalchemy.Column(sqlalchemy.String)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     account_type = sqlalchemy.Column(sqlalchemy.Integer)
     icon_id = sqlalchemy.Column(sqlalchemy.Integer)
