@@ -40,7 +40,7 @@ def register():
     db_sess = db_session.create_session()
     form = RegisterForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
+        if form.password.data != form.password_repeat.data:
             return render_template('register.html', title='Registration',
                                    form=form,
                                    message="Passwords are not same")
