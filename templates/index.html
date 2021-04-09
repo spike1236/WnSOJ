@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container center" align="center">
+    <h1>Welcome to WnSOJ!</h1>
+    <br>
+    <div class="card-group">
+        <div class="card">
+            <img class="card-img-top" src="{{ card1 }}">
+            <div class="card-body">
+                <h4 class="card-text">Solve problems</h4>
+                <p class="card-text">Solve programming and math problems and become better in programming! All of the problems are categorized.</p>
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="{{ card2 }}">
+            <div class="card-body">
+                <h4 class="card-text">Get a job</h4>
+                <p class="card-text">Get a cool job! Find a job you want, open employer's credits, and talk with him.</p>
+            </div>
+        </div>
+        <div class="card">
+            <img class="card-img-top" src="{{ card3 }}">
+            <div class="card-body">
+                <h4 class="card-text">Participate in contests (Soon...)</h4>
+                <p class="card-text">Participate in contests which our team hosts. Solve problems and win prizes!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

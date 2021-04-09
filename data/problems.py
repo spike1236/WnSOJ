@@ -3,13 +3,6 @@ from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 
 
-users_to_problems = sqlalchemy.Table('users_to_problems', SqlAlchemyBase.metadata,
-                                     sqlalchemy.Column('users', sqlalchemy.Integer,
-                                                       sqlalchemy.ForeignKey('users.id')),
-                                     sqlalchemy.Column('problems', sqlalchemy.Integer,
-                                                       sqlalchemy.ForeignKey('problems.id')))
-
-
 class Problem(SqlAlchemyBase):
     __tablename__ = 'problems'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
@@ -17,5 +10,5 @@ class Problem(SqlAlchemyBase):
     time_limit = sqlalchemy.Column(sqlalchemy.Float)
     memory_limit = sqlalchemy.Column(sqlalchemy.Integer)
     theme = sqlalchemy.Column(sqlalchemy.String)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
-    submissions = orm.relation('Problem', back_populates='problem')
+    user = orm.relation('User')
+    submissions = orm.relation('Submission', back_populates='problem')

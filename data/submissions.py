@@ -12,7 +12,7 @@ class Submission(SqlAlchemyBase, SerializerMixin):
     time = sqlalchemy.Column(sqlalchemy.Float)
     memory = sqlalchemy.Column(sqlalchemy.Integer)
     language = sqlalchemy.Column(sqlalchemy.String)
-    send_time = sqlalchemy.Column(sqlalchemy.String, default=datetime.datetime.strftime('%d/%b/%Y  %H:%M  UTC+6'))
+    send_time = sqlalchemy.Column(sqlalchemy.String, default=datetime.datetime.now().strftime("%d/%b/%Y  %H:%M  UTC+6"))
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     problem_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("problems.id"))
     user = orm.relation("User")
