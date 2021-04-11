@@ -59,7 +59,7 @@ def register():
     params = page_params(-1, 'Registration')
     if form.validate_on_submit():
         if form.password.data != form.password_repeat.data:
-            return render_template('register.html', **params, form=form, email_error_message="Passwords are not same")
+            return render_template('register.html', **params, form=form, password_error_message="Passwords are not same")
         if db_sess.query(User).filter(User.username == form.username.data).first():
             return render_template('register.html', **params, form=form, username_error_message="User already exists")
         if db_sess.query(User).filter(User.email == form.email.data).first():
