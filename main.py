@@ -90,11 +90,11 @@ def register():
             ICON_POINTER += 1
             icon64 = f'static/users_icons/icon64/icon64_user_{user.icon_id}.png'
             icon256 = f'static/users_icons/icon256/icon256_user_{user.icon_id}.png'
-            with open(icon64, 'rb') as file:
+            with open(icon64, 'wb') as file:
                 file.write(icon_data)
                 resize_image(icon64, (64, 64))
 
-            with open(icon256, 'rb') as file:
+            with open(icon256, 'wb') as file:
                 file.write(icon_data)
                 resize_image(icon256, (256, 256))
 
