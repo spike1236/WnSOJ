@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .card {
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 10px;
+    }
+</style>
+{% if show_categories is defined %}
+    <div class="container">
+        <h2 style="margin-top: 15px">Categories</h2>
+        <hr class="my-4">
+        {% for item in categories %}
+            {% if loop.index >= 3 %}
+                {% if loop.index % 3 == 0 %}
+                    {% set first = categories[loop.index - 3] %}
+                    {% set second = categories[loop.index - 2] %}
+                    {% set third = categories[loop.index - 1] %}
+                    <div class="card-deck">
+                        <div class="card">
+                            <a href="problems/{{ first[1] }}"><h3 class="card-title">{{ first[0] }}</h3></a>
+                        </div>
+                        <div class="card">
+                            <a href="problems/{{ second[1] }}"><h3 class="card-title">{{ second[0] }}</h3></a>
+                        </div>
+                        <div class="card">
+                            <a href="problems/{{ third[1] }}"><h3 class="card-title">{{ third[0] }}</h3></a>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+
+{% endif %}
+{% endblock %}

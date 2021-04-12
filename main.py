@@ -199,8 +199,8 @@ def abf10g9():
 @app.route('/home')
 def cad30f2():
     params = page_params(1, 'Home')
-    params['card1'] = url_for('static', filename='img/main_page_card1.png')
-    params['card2'] = url_for('static', filename='img/main_page_card2.png')
+    params['card1'] = url_for('static', filename='img/main_page_card1.svg')
+    params['card2'] = url_for('static', filename='img/main_page_card2.svg')
     params['card3'] = url_for('static', filename='img/main_page_card3.svg')
     return render_template('index.html', **params)
 
@@ -213,6 +213,14 @@ def ad871fe():
 
 @app.route('/profile/<username>')
 def fa908cb(username):
+    if username.isdecimal():
+        username = int(username)
+        session = db_session.create_session()
+        user = session.query(User).filter(User.id == username).first()
+        if user:
+            return redirect(f'/profile/{user.username}')
+        else:
+            abort(404)
     session = db_session.create_session()
     user = session.query(User).filter(User.username == username).first()
     if user:
@@ -224,13 +232,31 @@ def fa908cb(username):
         abort(404)
 
 
-@app.route('/problems/<theme>')
-def a098bfo():
+@app.route('/problems')
+def a1bo2ba():
+    with open('data/PROBLEMS_CATEGORIES') as file:
+        a = file.readlines()[1].strip().split(',')
+        b = []
+        for i in a:
+            b.append([i, i.lower().replace(' ', '_')])
+        params = page_params(2, 'Problems')
+        params['categories'] = b
+        return render_template('problems_list.html', **params, show_categories=1)
+
+
+@app.route('/problems/<category>')
+def a098bfo(category):
     username = request.args.get('author')
+    session = db_session.create_session()
     if username is None:
-        return render_template()
+        if category == 'problemset':
+            problems = session.query(Problem).all()
+            return render_template('problem_list.html')
+        else:
+            pass
     else:
-        return render_template()
+        pass
+    return render_template('base.html')
 
 
 app.run()
