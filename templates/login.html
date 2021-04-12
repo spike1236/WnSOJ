@@ -16,7 +16,6 @@
                     {{ error }}
                 </p>
             {% endfor %}
-            <p class="text-danger">{{ username_error_message }}</p>
         </p>
         <p>
             {{ form.password.label }}
@@ -31,6 +30,11 @@
         <p>{{ form.remember.label }} {{ form.remember() }}</p>
         <br>
         <p>{{ form.submit(type="submit", class="btn btn-primary btn-lg") }}</p>
+        {% if message is defined %}
+            <p class="alert alert-danger mt-2" role="alert">
+                {{ message }}
+            </p>
+        {% endif %}
     </form>
 </div>
 {% endblock %}

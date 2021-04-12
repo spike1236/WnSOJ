@@ -15,9 +15,15 @@ class User(SqlAlchemyBase, SerializerMixin, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     account_type = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     icon_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    phone_number = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     jobs = orm.relation('Job', back_populates='user')
     submissions = orm.relation('Submission', back_populates='user')
-    problems = orm.relation('Problem', back_populates='user')
+    problems_solved = orm.relation("Problem",
+                                   secondary="users_to_solved_problems",
+                                   backref="users_solved")
+    problems_unsolved = orm.relation("Problem",
+                                     secondary="users_to_unsolved_problems",
+                                     backref="users_unsolved")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

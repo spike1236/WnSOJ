@@ -32,7 +32,7 @@
             {{ form.email.label }}
             <br>
             {{ form.email(class="form-control", type="email") }}
-            {% for error in form.password.errors %}
+            {% for error in form.email.errors %}
                 <p class="alert alert-danger mt-2" role="alert">
                     {{ error }}
                 </p>
@@ -59,6 +59,17 @@
                 </p>
             {% endfor %}
             <p class="text-danger">{{ password_error_message }}</p>
+        </p>
+        <p>
+            {{ form.phone_number.label }}
+            <br>
+            {{ form.phone_number(class="form-control") }}
+            {% for error in form.phone_number.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+            <p class="text-danger">{{ phone_number_error_message }}</p>
         </p>
         <p>{{ form.is_business.label }} {{ form.is_business() }}</p>
         <div class="form-group">

@@ -46,6 +46,15 @@
                         <a class="nav-link" href="/jobs">Jobs</a>
                     </li>
                 {% endif %}
+                {% if navbar_item_id == 4 %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/contents">Contests</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contests">Contests</a>
+                    </li>
+                {% endif %}
             </ul>
             <ul class="navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
