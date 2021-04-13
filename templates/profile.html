@@ -55,11 +55,11 @@
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
-                <img src="{{ icon_256 }}" class="rounded-circle" width="150">
+                <img src="{{ icon_170 }}" class="rounded-circle">
                 <div class="mt-3">
                   <h4>{{ user.username }}</h4>
                 </div>
-                {% if user.account_type == 0 %}
+                {% if user.account_type == 1 %}
                   <a class="btn btn-primary" href="/jobs?author={{ user.username }}">{{ user.username }}'s jobs</a>
                   <a class="btn btn-primary" href="/problems?author={{ user.username }}">{{ user.username }}'s problems</a>
                 {% endif %}

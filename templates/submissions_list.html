@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    <table class="table table-bordered table-striped container">
+        <thead>
+            <tr>
+                <th scope="col" class="w-10">ID</th>
+                <th scope="col" class="w-30">Sending time</th>
+                <th scope="col" class="w-20">User</th>
+                <th scope="col" class="w-30">Problem</th>
+                <th scope="col" class="w-15">Language</th>
+                <th scope="col" class="w-10">Verdict</th>
+                <th scope="col" class="w-15">Time</th>
+                <th scope="col" class="w-15">Memory</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in submissions %}
+                <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <td>{{ item.send_time }}</td>
+                    <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
+                    <td><a href="problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
+                    <td>{{ item.language }}</td>
+                    <td>{{ item.verdict }}</td>
+                    <td>{{ item.time }}</td>
+                    <td>{{ item.memory }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

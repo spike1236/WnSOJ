@@ -28,49 +28,6 @@ login_manager.init_app(app)
 db_session.global_init('db/main.sqlite')
 
 
-@app.errorhandler(404)
-def error_404(error):
-    params = page_params(-1, 'Error 404')
-    return render_template('404.html', **params)
-
-
-@app.errorhandler(403)
-def error_403(error):
-    params = page_params(-1, 'Error 403')
-    return render_template('403.html', **params)
-
-
-@app.errorhandler(500)
-def error_500(error):
-    params = page_params(-1, 'Error 500')
-    return render_template('500.html', **params)
-
-
-@app.errorhandler(401)
-def error_401(error):
-    params = page_params(-1, 'Error 401')
-    return render_template('401.html', **params)
-
-
-def page_params(navbar_item_id, title):
-    d = dict()
-    d['title'] = title + ' | WnSOJ'
-    d['navbar_item_id'] = navbar_item_id
-    if current_user.is_authenticated:
-        d['link_to_profile'] = f'/profile/{current_user.id}'
-        if current_user.icon_id == -1:
-            d['icon64'] = url_for('static', filename=f'users_icons/icon64/default.png')
-        else:
-            d['icon64'] = url_for('static', filename=f'users_icons/icon64/icon64_user_{current_user.icon_id}.png')
-    return d
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    session = db_session.create_session()
-    return session.query(User).get(user_id)
-
-
 def check_phone_number(n: str):
     er = 'error'
     if n.count('+') > 1:
@@ -97,13 +54,55 @@ def check_phone_number(n: str):
             cnt += 1
         if cnt != 1 and cnt != 0:
             return er
-
     if cnt != 0:
         return er
     if len(ans) != 12:
         return er
     else:
         return ans
+
+
+def page_params(navbar_item_id, title):
+    d = dict()
+    d['title'] = title + ' | WnSOJ'
+    d['navbar_item_id'] = navbar_item_id
+    if current_user.is_authenticated:
+        d['link_to_profile'] = f'/profile/{current_user.username}'
+        if current_user.icon_id == -1:
+            d['icon64'] = url_for('static', filename=f'users_icons/icon64/default.png')
+        else:
+            d['icon64'] = url_for('static', filename=f'users_icons/icon64/icon64_user_{current_user.icon_id}.png')
+    return d
+
+
+@app.errorhandler(404)
+def error_404(error):
+    params = page_params(-1, 'Error 404')
+    return render_template('404.html', **params)
+
+
+@app.errorhandler(403)
+def error_403(error):
+    params = page_params(-1, 'Error 403')
+    return render_template('403.html', **params)
+
+
+@app.errorhandler(500)
+def error_500(error):
+    params = page_params(-1, 'Error 500')
+    return render_template('500.html', **params)
+
+
+@app.errorhandler(401)
+def error_401(error):
+    params = page_params(-1, 'Error 401')
+    return render_template('401.html', **params)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    session = db_session.create_session()
+    return session.query(User).get(user_id)
 
 
 # -------------------------------------------- REGISTER/LOGIN/LOGOUT START--------------------------------------------
@@ -150,14 +149,14 @@ def register():
                     break
             user.icon_id = icon_id
             icon64 = f'static/users_icons/icon64/icon64_user_{user.icon_id}.png'
-            icon256 = f'static/users_icons/icon256/icon256_user_{user.icon_id}.png'
+            icon170 = f'static/users_icons/icon170/icon170_user_{user.icon_id}.png'
             with open(icon64, 'wb') as file:
                 file.write(icon_data)
                 resize_image(icon64, (64, 64))
 
-            with open(icon256, 'wb') as file:
+            with open(icon170, 'wb') as file:
                 file.write(icon_data)
-                resize_image(icon256, (256, 256))
+                resize_image(icon170, (180, 180))
 
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -205,12 +204,6 @@ def cad30f2():
     return render_template('index.html', **params)
 
 
-@app.route('/contests')
-def ad871fe():
-    params = page_params(4, 'Contests')
-    return render_template('contests.html', **params)
-
-
 @app.route('/profile/<username>')
 def fa908cb(username):
     if username.isdecimal():
@@ -225,38 +218,88 @@ def fa908cb(username):
     user = session.query(User).filter(User.username == username).first()
     if user:
         params = page_params(-1, f"{user.username}'s profile")
-        params['icon_256'] = url_for('static', filename=f'users_icons/icon256/icon256_user_{user.icon_id}.png')
+        params['icon_170'] = url_for('static', filename=f'users_icons/icon170/icon170_user_{user.icon_id}.png')
         params['user'] = user
         return render_template('profile.html', **params)
     else:
         abort(404)
 
 
+@app.route('/contests')
+def ad871fe():
+    params = page_params(4, 'Contests')
+    return render_template('contests.html', **params)
+
+
+@app.route('/submissions/<username>')
+def e07baf1(username):
+    session = db_session.create_session()
+    user = session.query(User).filter(User.username == username).first()
+    if user:
+        params = page_params(-1, 'Submissions')
+        params['submissions'] = session.query(Submission).filter(Submission.user_id == user.id).all()
+        return render_template('submissions_list.html', **params)
+    else:
+        abort(404)
+
+
 @app.route('/problems')
 def a1bo2ba():
-    with open('data/PROBLEMS_CATEGORIES') as file:
-        a = file.readlines()[1].strip().split(',')
-        b = []
-        for i in a:
-            b.append([i, i.lower().replace(' ', '_')])
-        params = page_params(2, 'Problems')
-        params['categories'] = b
-        return render_template('problems_list.html', **params, show_categories=1)
+    username = request.args.get('author')
+    session = db_session.create_session()
+    params = page_params(2, 'Problems')
+    if username:
+        user = session.query(User).filter(User.username == username).first()
+        params['problems'] = []
+        if user:
+            params['problems'] = session.query(Problem).filter(Problem.user_id == user.id).all()
+        else:
+            abort(404)
+        params['author'] = user
+        return render_template('problems_list.html', **params)
+    else:
+        with open('data/PROBLEMS_CATEGORIES') as file:
+            a = file.readlines()[1].strip().split(',')
+            b = []
+            for i in a:
+                b.append([i, i.lower().replace(' ', '_')])
+            params['categories'] = b
+            return render_template('problems_list.html', **params, show_categories=1)
 
 
 @app.route('/problems/<category>')
 def a098bfo(category):
     username = request.args.get('author')
     session = db_session.create_session()
-    if username is None:
+    params = page_params(2, 'Problems')
+    if username:
+        user = session.query(User).filter(User.username == username).first()
+        if user:
+            if category != 'problemset':
+                problems = session.query(Problem).filter(Problem.category == category, Problem.user_id == user.id).all()
+            else:
+                problems = session.query(Problem).filter(Problem.user_id == user.id).all()
+            a = []
+            for i in problems:
+                a.append([i, user])
+            params['problems'] = a
+            return render_template('problems_list.html', **params)
+        else:
+            abort(404)
+    else:
         if category == 'problemset':
             problems = session.query(Problem).all()
-            return render_template('problem_list.html')
+            a = []
+            for i in problems:
+                a.append([i, session.query(User).filter(User.id == i.user_id).first()])
+            params['problems'] = a
         else:
-            pass
-    else:
-        pass
-    return render_template('base.html')
+            problems = session.query(Problem).filter(Problem.category == category).all()
+            a = []
+            for i in problems:
+                a.append([i, session.query(User).filter(User.id == i.user_id).first()])
+            params['problems'] = a
+        return render_template('problems_list.html', **params)
 
 
 app.run()

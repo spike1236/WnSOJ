@@ -34,6 +34,43 @@
         {% endfor %}
     </div>
 {% else %}
-
+    <table class="table table-bordered table-striped container">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Author</th>
+                <th scope="col">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if author is defined %}
+                {% for item in problems %}
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <td><a href="/profile/{{ author.username }}">{{ author.username }}</a></td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.category }}</td>
+                        <td><a href="/problem/{{ item.id }}/submissions">{{ item.submissions|length }}</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                {% for item in problems %}
+                    <tr>
+                        <th scope="row">{{ item[0].id }}</th>
+                        {% if author is defined %}
+                            <td><a href="/profile/{{ author.username }}">{{ author.username }}</a></td>
+                        {% else %}
+                            <td><a href="/profile/{{ item[1].username }}">{{ item[1].username }}</a></td>
+                        {% endif %}
+                        <td><a href="problem/{{ item[0].id }}">{{ item[0].title }}</a></td>
+                        <td>{{ item[0].category }}</td>
+                        <td><a href="/problem/{{ item[0].id }}/submissions">{{ item[0].submissions|length }}</a></td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
 {% endif %}
 {% endblock %}
