@@ -12,6 +12,7 @@ from forms.login_form import LoginForm
 from forms.submit_form import SubmitForm
 from random import randrange
 import os
+import json
 
 
 def resize_image(file, size):
@@ -258,11 +259,11 @@ def a1bo2ba():
         params['author'] = user
         return render_template('problems_list.html', **params)
     else:
-        with open('data/PROBLEMS_CATEGORIES') as file:
-            a = file.readlines()[1].strip().split(',')
+        with open('data/PROBLEMS_CATEGORIES.json') as file:
+            d = json.loads(file.read())['categories']
             b = []
-            for i in a:
-                b.append([i, i.lower().replace(' ', '_')])
+            for i in d:
+                b.append([i['long_name'], i['short_name']])
             params['categories'] = b
             return render_template('problems_list.html', **params, show_categories=1)
 
@@ -272,11 +273,18 @@ def a098bfo(category):
     username = request.args.get('author')
     session = db_session.create_session()
     params = page_params(2, 'Problems')
+    d = json.loads(open('data/PROBLEMS_CATEGORIES.json').read())['categories']
+    long_category = ''
+    for i in d:
+        if i['short_name'] == category:
+            long_category = i['long_name']
+    if long_category == '':
+        abort(404)
     if username:
         user = session.query(User).filter(User.username == username).first()
         if user:
             if category != 'problemset':
-                problems = session.query(Problem).filter(Problem.category == category, Problem.user_id == user.id).all()
+                problems = session.query(Problem).filter(Problem.category == long_category, Problem.user_id == user.id).all()
             else:
                 problems = session.query(Problem).filter(Problem.user_id == user.id).all()
             a = []
@@ -294,12 +302,33 @@ def a098bfo(category):
                 a.append([i, session.query(User).filter(User.id == i.user_id).first()])
             params['problems'] = a
         else:
-            problems = session.query(Problem).filter(Problem.category == category).all()
+            problems = session.query(Problem).filter(Problem.category == long_category).all()
             a = []
             for i in problems:
                 a.append([i, session.query(User).filter(User.id == i.user_id).first()])
             params['problems'] = a
         return render_template('problems_list.html', **params)
+
+
+@app.route('/problem/<problem_id>')
+def c6daf80(problem_id: str):
+    session = db_session.create_session()
+    if problem_id.isdecimal():
+        problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
+        if problem:
+            params = page_params(2, problem.title)
+            params['problem'] = problem
+            return render_template('problem.html', **params)
+        else:
+            abort(404)
+    else:
+        if not problem_id.isalnum():
+            abort(404)
+        problem = session.query(Problem).filter(Problem.title == problem_id).first()
+        if problem:
+            return redirect(f'/problem/{problem.id}')
+        else:
+            abort(404)
 
 
 app.run()

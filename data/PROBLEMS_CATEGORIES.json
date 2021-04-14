@@ -1,0 +1,28 @@
+{
+  "categories": [
+    {
+      "short_name": "math",
+      "long_name": "Math"
+    },
+    {
+      "short_name": "graph_theory",
+      "long_name": "Graph Theory"
+    },
+    {
+      "short_name": "strings",
+      "long_name": "Strings"
+    },
+    {
+      "short_name": "data_structures",
+      "long_name": "Data Structures"
+    },
+    {
+      "short_name": "dynamic_programming",
+      "long_name": "Dynamic Programming"
+    },
+    {
+      "short_name": "binary_and_ternary_searches",
+      "long_name": "Binary and Ternary searches"
+    }
+  ]
+}

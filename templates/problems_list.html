@@ -19,13 +19,13 @@
                     {% set third = categories[loop.index - 1] %}
                     <div class="card-deck">
                         <div class="card">
-                            <a href="problems/{{ first[1] }}"><h3 class="card-title">{{ first[0] }}</h3></a>
+                            <a href="/problems/{{ first[1] }}"><h3 class="card-title">{{ first[0] }}</h3></a>
                         </div>
                         <div class="card">
-                            <a href="problems/{{ second[1] }}"><h3 class="card-title">{{ second[0] }}</h3></a>
+                            <a href="/problems/{{ second[1] }}"><h3 class="card-title">{{ second[0] }}</h3></a>
                         </div>
                         <div class="card">
-                            <a href="problems/{{ third[1] }}"><h3 class="card-title">{{ third[0] }}</h3></a>
+                            <a href="/problems/{{ third[1] }}"><h3 class="card-title">{{ third[0] }}</h3></a>
                         </div>
                     </div>
                     <hr class="my-4">
@@ -34,14 +34,14 @@
         {% endfor %}
     </div>
 {% else %}
-    <table class="table table-bordered table-striped container">
+    <table class="table table-bordered table-striped text-center container">
         <thead>
             <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Author</th>
-                <th scope="col">Title</th>
-                <th scope="col">Category</th>
-                <th scope="col">Status</th>
+                <th scope="col" style="width: 10%">ID</th>
+                <th scope="col" style="width: 15%">Author</th>
+                <th scope="col" style="width: 25%">Title</th>
+                <th scope="col" style="width: 25%">Category</th>
+                <th scope="col" style="width: 15%">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -64,7 +64,7 @@
                         {% else %}
                             <td><a href="/profile/{{ item[1].username }}">{{ item[1].username }}</a></td>
                         {% endif %}
-                        <td><a href="problem/{{ item[0].id }}">{{ item[0].title }}</a></td>
+                        <td><a href="/problem/{{ item[0].id }}">{{ item[0].title }}</a></td>
                         <td>{{ item[0].category }}</td>
                         <td><a href="/problem/{{ item[0].id }}/submissions">{{ item[0].submissions|length }}</a></td>
                     </tr>

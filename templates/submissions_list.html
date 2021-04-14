@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-    <table class="table table-bordered table-striped container">
+    <table class="table table-bordered table-striped container text-center">
         <thead>
             <tr>
-                <th scope="col" class="w-10">ID</th>
-                <th scope="col" class="w-30">Sending time</th>
-                <th scope="col" class="w-20">User</th>
-                <th scope="col" class="w-30">Problem</th>
-                <th scope="col" class="w-15">Language</th>
-                <th scope="col" class="w-10">Verdict</th>
-                <th scope="col" class="w-15">Time</th>
-                <th scope="col" class="w-15">Memory</th>
+                <th scope="col" style="width: 7%">ID</th>
+                <th scope="col" style="width: 20%">Sending time</th>
+                <th scope="col" style="width: 20%">User</th>
+                <th scope="col" style="width: 23%">Problem</th>
+                <th scope="col" style="width: 5%">Language</th>
+                <th scope="col" style="width: 5%">Verdict</th>
+                <th scope="col" style="width: 10%">Time</th>
+                <th scope="col" style="width: 10%">Memory</th>
             </tr>
         </thead>
         <tbody>
@@ -22,7 +22,7 @@
                     <td><a href="problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
                     <td>{{ item.language }}</td>
                     <td>{{ item.verdict }}</td>
-                    <td>{{ item.time }}</td>
+                    <td>{{ item.time }} ms</td>
                     <td>{{ item.memory }}</td>
                 </tr>
             {% endfor %}
