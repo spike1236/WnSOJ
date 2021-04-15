@@ -219,7 +219,10 @@ def fa908cb(username):
     user = session.query(User).filter(User.username == username).first()
     if user:
         params = page_params(-1, f"{user.username}'s profile")
-        params['icon_170'] = url_for('static', filename=f'users_icons/icon170/icon170_user_{user.icon_id}.png')
+        if user.icon_id != -1:
+            params['icon_170'] = url_for('static', filename=f'users_icons/icon170/icon170_user_{user.icon_id}.png')
+        else:
+            params['icon_170'] = url_for('static', filename='users_icons/icon170/default.png')
         params['user'] = user
         return render_template('profile.html', **params)
     else:
@@ -310,14 +313,38 @@ def a098bfo(category):
         return render_template('problems_list.html', **params)
 
 
-@app.route('/problem/<problem_id>')
+@app.route('/problem/<problem_id>', methods=['GET', 'POST'])
 def c6daf80(problem_id: str):
     session = db_session.create_session()
     if problem_id.isdecimal():
         problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
         if problem:
+            form = SubmitForm()
             params = page_params(2, problem.title)
+            params['form'] = form
+            params['problem_statement'] = f'/templates/problems/{problem_id}/statement.html'
             params['problem'] = problem
+            params['current_bar_id'] = 1
+            if form.validate_on_submit():
+                if not current_user.is_authenticated:
+                    params['message'] = 'You must be signed in to submit'
+                    return render_template('problem.html', **params)
+                code = request.form['code_area']
+                if code:
+                    submission = Submission(
+                        language='C++11',
+                        user_id=current_user.id,
+                        problem_id=problem.id,
+                        verdict='In queue'
+                    )
+                    session.add(submission)
+                    session.commit()
+                    direc = f'static/submissions/{submission.id}'
+                    os.mkdir(direc)
+                    # zdes submissions
+                else:
+                    params['message'] = 'You can not submit empty code'
+                    return render_template('problem.html', **params)
             return render_template('problem.html', **params)
         else:
             abort(404)

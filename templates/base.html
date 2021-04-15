@@ -12,6 +12,14 @@
     <script src="/static/js/bootstrap.min.js"></script>
 
     <title>{{ title }}</title>
+    {% if message %}
+    <div style="padding: 5px;">
+        <div id="inner-message" class="alert alert-warning fixed-top mx-auto">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    </div>
+    {% endif %}
 </head>
 <body>
 <header>
