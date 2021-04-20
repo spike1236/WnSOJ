@@ -32,44 +32,45 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
+        {% if categories|length % 3 == 1 %}
+            {% set first = categories[categories|length - 1] %}
+            <div class="card-deck">
+                <div class="card">
+                    <a href="/problems/{{ first[1] }}"><h3 class="card-title">{{ first[0] }}</h3></a>
+                </div>
+            </div>
+        {% elif categories|length % 3 == 2 %}
+            {% set first = categories[categories|length - 2] %}
+            {% set second = categories[categories|length - 1] %}
+            <div class="card-deck">
+                <div class="card">
+                    <a href="/problems/{{ first[1] }}"><h3 class="card-title">{{ first[0] }}</h3></a>
+                </div>
+                <div class="card">
+                    <a href="/problems/{{ second[1] }}"><h3 class="card-title">{{ second[0] }}</h3></a>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% else %}
-    <table class="table table-bordered table-striped text-center container">
+    <table class="table table-bordered table-striped text-center container" style="margin-top: 15px">
         <thead>
             <tr>
-                <th scope="col" style="width: 10%">ID</th>
-                <th scope="col" style="width: 15%">Author</th>
-                <th scope="col" style="width: 25%">Title</th>
-                <th scope="col" style="width: 25%">Category</th>
+                <th scope="col" style="width: 15%">ID</th>
+                <th scope="col" style="width: 40%">Title</th>
+                <th scope="col" style="width: 30%">Category</th>
                 <th scope="col" style="width: 15%">Status</th>
             </tr>
         </thead>
         <tbody>
-            {% if author is defined %}
-                {% for item in problems %}
-                    <tr>
-                        <th scope="row">{{ item.id }}</th>
-                        <td><a href="/profile/{{ author.username }}">{{ author.username }}</a></td>
-                        <td>{{ item.title }}</td>
-                        <td>{{ item.category }}</td>
-                        <td><a href="/problem/{{ item.id }}/submissions">{{ item.submissions|length }}</a></td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                {% for item in problems %}
-                    <tr>
-                        <th scope="row">{{ item[0].id }}</th>
-                        {% if author is defined %}
-                            <td><a href="/profile/{{ author.username }}">{{ author.username }}</a></td>
-                        {% else %}
-                            <td><a href="/profile/{{ item[1].username }}">{{ item[1].username }}</a></td>
-                        {% endif %}
-                        <td><a href="/problem/{{ item[0].id }}">{{ item[0].title }}</a></td>
-                        <td>{{ item[0].category }}</td>
-                        <td><a href="/problem/{{ item[0].id }}/submissions">{{ item[0].submissions|length }}</a></td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+            {% for item in problems %}
+                <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
+                    <td>{{ item.category }}</td>
+                    <td><a href="/problem/{{ item.id }}/submissions">{{ item.users_solved|length }}</a></td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% endif %}

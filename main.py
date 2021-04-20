@@ -10,16 +10,22 @@ from data.jobs import Job
 from forms.register_form import RegisterForm
 from forms.login_form import LoginForm
 from forms.submit_form import SubmitForm
+from forms.add_problem_form import AddProblemForm
 from random import randrange
 import os
 import json
+import multiprocessing
+from sqlalchemy import func as sqlalchemy_func
+from tester import test_forever
+from zipfile import ZipFile
+from io import BytesIO
 
 
-def resize_image(file, size):
-    im = Image.open(file)
-    im = im.resize(size)
-    im.save(file)
-
+# import logging
+# import sys
+#
+#
+# logging.basicConfig(filename='server_log.log', format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = str(os.urandom(16))
@@ -27,6 +33,26 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 db_session.global_init('db/main.sqlite')
+
+
+def main():
+    processes = []
+    process = multiprocessing.Process(target=test_forever)
+    processes.append(process)
+    process.start()
+    del process
+    process = multiprocessing.Process(target=app.run())
+    processes.append(process)
+    process.start()
+    del process
+    for process in processes:
+        process.join()
+
+
+def resize_image(file, size):
+    im = Image.open(file)
+    im = im.resize(size)
+    im.save(file)
 
 
 def check_phone_number(n: str):
@@ -229,51 +255,84 @@ def fa908cb(username):
         abort(404)
 
 
+@app.route('/add_problem', methods=['GET', 'POST'])
+@login_required
+def ca14df3():
+    if current_user.account_type != 2:
+        abort(403)
+    session = db_session.create_session()
+    params = page_params(2, 'Add Problem')
+    form = AddProblemForm()
+    params['form'] = form
+    if form.validate_on_submit():
+        problem_id = 1
+        if session.query(Problem).first():
+            problem_id = session.query(sqlalchemy_func.max(Problem.id)).one()[0] + 1
+        problem = Problem(
+            id=problem_id,
+            time_limit=form.time_limit.data,
+            memory_limit=form.memory_limit.data,
+            title=form.title.data,
+            category=form.category.data
+        )
+        os.mkdir(f'data/problems/{problem_id}')
+        with ZipFile(BytesIO(form.test_data.data.read()), 'r') as file:
+            file.extractall(f'data/problems/{problem.id}')
+        os.mkdir(f'templates/problems/{problem_id}')
+        with open(f'templates/problems/{problem_id}/statement.html', 'w', encoding='utf-8', errors='strict') as file:
+            file.write(form.statement.data.read().decode('utf-8', errors='strict'))
+        with open(f'templates/problems/{problem_id}/editorial.html', 'w', encoding='utf-8', errors='strict') as file:
+            file.write(form.editorial.data.read().decode('utf-8', errors='strict'))
+        session.add(problem)
+        session.commit()
+        return redirect('/problems')
+    else:
+        return render_template('add_problem.html', **params)
+
+
 @app.route('/contests')
 def ad871fe():
     params = page_params(4, 'Contests')
     return render_template('contests.html', **params)
 
 
-@app.route('/submissions/<username>')
-def e07baf1(username):
+@app.route('/submissions')
+def e07baf1():
     session = db_session.create_session()
-    user = session.query(User).filter(User.username == username).first()
-    if user:
-        params = page_params(-1, 'Submissions')
-        params['submissions'] = session.query(Submission).filter(Submission.user_id == user.id).all()
-        return render_template('submissions_list.html', **params)
+    username = request.args.get('username')
+    if username:
+        user = session.query(User).filter(User.username == username).first()
+        if user:
+            params = page_params(-1, 'Submissions')
+            params['submissions'] = session.query(Submission).filter(Submission.user_id == user.id).all()
+            params['submissions'].sort(key=lambda x: -x.id)
+            return render_template('submissions_list.html', **params)
+        else:
+            params = page_params(-1, 'Submissions')
+            params['submissions'] = session.query(Submission).filter().all()
+            params['submissions'].sort(key=lambda x: -x.id)
+            return render_template('submissions_list.html', **params)
     else:
-        abort(404)
+        params = page_params(-1, 'Submissions')
+        params['submissions'] = session.query(Submission).filter().all()
+        params['submissions'].sort(key=lambda x: -x.id)
+        return render_template('submissions_list.html', **params)
 
 
 @app.route('/problems')
 def a1bo2ba():
-    username = request.args.get('author')
-    session = db_session.create_session()
     params = page_params(2, 'Problems')
-    if username:
-        user = session.query(User).filter(User.username == username).first()
-        params['problems'] = []
-        if user:
-            params['problems'] = session.query(Problem).filter(Problem.user_id == user.id).all()
-        else:
-            abort(404)
-        params['author'] = user
-        return render_template('problems_list.html', **params)
-    else:
-        with open('data/PROBLEMS_CATEGORIES.json') as file:
-            d = json.loads(file.read())['categories']
-            b = []
-            for i in d:
-                b.append([i['long_name'], i['short_name']])
-            params['categories'] = b
-            return render_template('problems_list.html', **params, show_categories=1)
+    with open('data/PROBLEMS_CATEGORIES.json') as file:
+        d = json.loads(file.read())['categories']
+        b = []
+        for i in d:
+            b.append([i['long_name'], i['short_name']])
+        params['categories'] = b
+        return render_template('problems_list.html', **params, show_categories=1)
 
 
 @app.route('/problems/<category>')
 def a098bfo(category):
-    username = request.args.get('author')
     session = db_session.create_session()
     params = page_params(2, 'Problems')
     d = json.loads(open('data/PROBLEMS_CATEGORIES.json').read())['categories']
@@ -283,34 +342,13 @@ def a098bfo(category):
             long_category = i['long_name']
     if long_category == '':
         abort(404)
-    if username:
-        user = session.query(User).filter(User.username == username).first()
-        if user:
-            if category != 'problemset':
-                problems = session.query(Problem).filter(Problem.category == long_category, Problem.user_id == user.id).all()
-            else:
-                problems = session.query(Problem).filter(Problem.user_id == user.id).all()
-            a = []
-            for i in problems:
-                a.append([i, user])
-            params['problems'] = a
-            return render_template('problems_list.html', **params)
-        else:
-            abort(404)
+    if category == 'problemset':
+        problems = session.query(Problem).all()
+        params['problems'] = problems
     else:
-        if category == 'problemset':
-            problems = session.query(Problem).all()
-            a = []
-            for i in problems:
-                a.append([i, session.query(User).filter(User.id == i.user_id).first()])
-            params['problems'] = a
-        else:
-            problems = session.query(Problem).filter(Problem.category == long_category).all()
-            a = []
-            for i in problems:
-                a.append([i, session.query(User).filter(User.id == i.user_id).first()])
-            params['problems'] = a
-        return render_template('problems_list.html', **params)
+        problems = session.query(Problem).filter(Problem.category == long_category).all()
+        params['problems'] = problems
+    return render_template('problems_list.html', **params)
 
 
 @app.route('/problem/<problem_id>', methods=['GET', 'POST'])
@@ -322,26 +360,45 @@ def c6daf80(problem_id: str):
             form = SubmitForm()
             params = page_params(2, problem.title)
             params['form'] = form
-            params['problem_statement'] = f'/templates/problems/{problem_id}/statement.html'
+            params['problem_statement'] = f'problems/{problem_id}/statement.html'
             params['problem'] = problem
             params['current_bar_id'] = 1
             if form.validate_on_submit():
                 if not current_user.is_authenticated:
-                    params['message'] = 'You must be signed in to submit'
+                    params['message'] = 'You must be authorized to submit'
                     return render_template('problem.html', **params)
                 code = request.form['code_area']
                 if code:
+                    if len(''.join(code)) > 65535:
+                        params['message'] = "Code must contain no more 65535 symbols"
+                        return render_template('problem.html', **params)
+                    lang = request.form['language']
                     submission = Submission(
-                        language='C++11',
                         user_id=current_user.id,
                         problem_id=problem.id,
-                        verdict='In queue'
+                        verdict='In queue',
+                        time=0,
+                        memory=0
                     )
+                    submission_id = 1
+                    if session.query(Submission).first():
+                        submission_id = session.query(sqlalchemy_func.max(Submission.id)).one()[0] + 1
+                    submission.id = submission_id
+                    path = f'static/submissions/{submission.id}'
+                    os.mkdir(path)
+                    if lang == 'py':
+                        submission.language = 'Python 3'
+                        file = open(f'{path}/source.py', 'wb')
+                        file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict') for line in code])
+                        file.close()
+                    else:
+                        submission.language = 'GNU C++14'
+                        file = open(f'{path}/source.cpp', 'wb')
+                        file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict') for line in code])
+                        file.close()
                     session.add(submission)
                     session.commit()
-                    direc = f'static/submissions/{submission.id}'
-                    os.mkdir(direc)
-                    # zdes submissions
+                    return redirect(f'/problem/{problem_id}/submissions?user={current_user.username}')
                 else:
                     params['message'] = 'You can not submit empty code'
                     return render_template('problem.html', **params)
@@ -349,13 +406,58 @@ def c6daf80(problem_id: str):
         else:
             abort(404)
     else:
-        if not problem_id.isalnum():
-            abort(404)
-        problem = session.query(Problem).filter(Problem.title == problem_id).first()
+        abort(404)
+
+
+@app.route('/problem/<problem_id>/editorial')
+def c9adf5e(problem_id: str):
+    session = db_session.create_session()
+    if problem_id.isdecimal():
+        problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
         if problem:
-            return redirect(f'/problem/{problem.id}')
+            params = page_params(2, 'Editorial')
+            params['current_bar_id'] = 2
+            params['solution'] = open(f'data/problems/{problem_id}/author_sol.cpp', 'r').read()
+            params['problem_editorial'] = f'problems/{problem_id}/editorial.html'
+            params['problem'] = problem
+            return render_template('editorial.html', **params)
         else:
             abort(404)
+    else:
+        abort(404)
 
 
-app.run()
+@app.route('/problem/<problem_id>/submissions')
+def dacf91b(problem_id: str):
+    session = db_session.create_session()
+    if problem_id.isdecimal():
+        problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
+        if problem:
+            params = page_params(2, 'Editorial')
+            params['current_bar_id'] = 3
+            params['problem'] = problem
+            username = request.args.get('username')
+            if username:
+                user = session.query(User).filter(User.username == username).first()
+                if user:
+                    params['submissions'] = session.query(Submission).filter(
+                        Submission.problem_id == int(problem_id),
+                        Submission.user_id == user.id).all()
+                else:
+                    params['submissions'] = session.query(Submission).filter(
+                        Submission.problem_id == int(problem_id)).all()
+            else:
+                params['submissions'] = session.query(Submission).filter(
+                    Submission.problem_id == int(problem_id)).all()
+            params['submissions'].sort(key=lambda x: -x.id)
+            if len(params['submissions']) > 15:
+                params['submissions'] = params['submissions'][len(params['submissions']) - 15::]
+            return render_template('problem_submissions.html', **params)
+        else:
+            abort(404)
+    else:
+        abort(404)
+
+
+if __name__ == '__main__':
+    main()

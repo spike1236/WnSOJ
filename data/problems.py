@@ -23,5 +23,4 @@ class Problem(SqlAlchemyBase):
     time_limit = sqlalchemy.Column(sqlalchemy.Float)
     memory_limit = sqlalchemy.Column(sqlalchemy.Integer)
     category = sqlalchemy.Column(sqlalchemy.String)
-    user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     submissions = orm.relation('Submission', back_populates='problem')

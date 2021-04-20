@@ -12,19 +12,28 @@
     <script src="/static/js/bootstrap.min.js"></script>
 
     <title>{{ title }}</title>
-    {% if message %}
-    <div style="padding: 5px;">
-        <div id="inner-message" class="alert alert-warning fixed-top mx-auto">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            {{ message }}
-        </div>
-    </div>
-    {% endif %}
+    <style>
+        .alert {
+          left: 0;
+          margin: auto;
+          right: 0;
+          text-align: center;
+          top: 3em;
+          width: 40%;
+          z-index: 1;
+        }
+    </style>
 </head>
 <body>
+    {% if message %}
+        <div class="alert alert-warning fixed-top" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    {% endif %}
 <header>
     <nav class="navbar navbar-dark bg-primary navbar-expand-lg">
-        <a class="navbar-brand" href="#">WnSOJ</a>
+        <a class="navbar-brand" href="/">WnSOJ</a>
         <div class="collapse navbar-collapse ml-5" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
                 {% if navbar_item_id == 1 %}
@@ -72,7 +81,7 @@
                                aria-haspopup="true" aria-expanded="false"></a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown01">
                                 <a class="dropdown-item" href="{{ link_to_profile }}">Profile</a>
-                                <a class="dropdown-item" href="/submissions/{{ current_user.username }}">Submissions</a>
+                                <a class="dropdown-item" href="/submissions?username={{ current_user.username }}">Submissions</a>
                                 <a class="dropdown-item" href="/stats/{{ current_user.username }}">Statistics</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="/logout">Logout</a>

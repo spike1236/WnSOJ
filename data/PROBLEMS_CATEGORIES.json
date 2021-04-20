@@ -19,10 +19,6 @@
     {
       "short_name": "dynamic_programming",
       "long_name": "Dynamic Programming"
-    },
-    {
-      "short_name": "binary_and_ternary_searches",
-      "long_name": "Binary and Ternary searches"
     }
   ]
 }

@@ -60,8 +60,7 @@
                   <h4>{{ user.username }}</h4>
                 </div>
                 {% if user.account_type == 1 %}
-                  <a class="btn btn-primary" href="/jobs?author={{ user.username }}">{{ user.username }}'s jobs</a>
-                  <a class="btn btn-primary" href="/problems?author={{ user.username }}">{{ user.username }}'s problems</a>
+                    <a class="btn btn-primary" href="/jobs?author={{ user.username }}">{{ user.username }}'s jobs</a>
                 {% endif %}
               </div>
             </div>

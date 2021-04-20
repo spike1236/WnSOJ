@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="container">
+    {% include "problem_navbar.html" %}
     <table class="table table-bordered table-striped container text-center" style="margin-top: 10px">
         <thead>
             <tr>
@@ -28,4 +30,5 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 {% endblock %}

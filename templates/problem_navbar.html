@@ -1,31 +1,23 @@
 <ul class="nav nav-tabs">
-        {% if current_bar_id == 1 %}
-            <li class="nav-item active">
+        <li class="nav-item">
+            {% if current_bar_id == 1 %}
+                <a class="nav-link active" href="/problem/{{ problem.id }}">Statement</a>
+            {% else %}
                 <a class="nav-link" href="/problem/{{ problem.id }}">Statement</a>
-            </li>
-        {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="/problem/{{ problem.id }}">Statement</a>
-            </li>
         {% endif %}
+        </li>
+        <li class="nav-item">
         {% if current_bar_id == 2 %}
-            <li class="nav-item active">
-                <a class="nav-link" href="/problem/{{ problem.id }}/editorial">Editorial</a>
-            </li>
+                <a class="nav-link active" href="/problem/{{ problem.id }}/editorial">Editorial</a>
         {% else %}
-            <li class="nav-item">
                 <a class="nav-link" href="/problem/{{ problem.id }}/editorial">Editorial</a>
-            </li>
         {% endif %}
-    {% if current_user.is_authenticated %}
+        </li>
+        <li class="nav-item">
         {% if current_bar_id == 3 %}
-            <li class="nav-item active">
-                <a class="nav-link" href="/problem/{{ problem.id }}/submissions?user={{ current_user.username }}">My submissions</a>
-            </li>
+            <a class="nav-link active" href="/problem/{{ problem.id }}/submissions">Submissions</a>
         {% else %}
-            <li class="nav-item">
-                <a class="nav-link" href="/problem/{{ problem.id }}/submissions?user={{ current_user.username }}">My submissions</a>
-            </li>
+            <a class="nav-link" href="/problem/{{ problem.id }}/submissions">Submissions</a>
         {% endif %}
-    {% endif %}
+        </li>
 </ul>
