@@ -64,12 +64,27 @@
         </thead>
         <tbody>
             {% for item in problems %}
-                <tr>
-                    <th scope="row">{{ item.id }}</th>
-                    <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
-                    <td>{{ item.category }}</td>
-                    <td><a href="/problem/{{ item.id }}/submissions">{{ item.users_solved|length }}</a></td>
-                </tr>
+                {% if current_user.is_authenticated %}
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
+                        <td>{{ item.category }}</td>
+                        {% if current_user in item.users_solved %}
+                            <td class="alert-success text-dark"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% elif current_user in item.users_unsolved %}
+                            <td class="alert-danger text-dark"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% else %}
+                            <td><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
+                        <td>{{ item.category }}</td>
+                        <td><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>

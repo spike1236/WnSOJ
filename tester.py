@@ -9,7 +9,7 @@ import datetime
 
 def run_tests(submission):
     stat = {}
-    run_args = f'static/submissions/{submission.id}'
+    run_args = f'data/submissions/{submission.id}'
     path_to_tests = f'data/problems/{submission.problem_id}/tests'
     if submission.language == 'GNU C++14':
         compile_process = subprocess.Popen(f'g++ {run_args}/source.cpp -std=c++14 -o {run_args}/source.exe',
@@ -27,39 +27,44 @@ def run_tests(submission):
     max_time = 0
     max_memory = 0
     for filename in os.listdir(f'{path_to_tests}/input'):
-        input_file = open(f'{path_to_tests}/input/{filename}', 'r')
         correct_output = open(f'{path_to_tests}/output/{filename}', 'r').read()
+        memory_used = 0
+        test_run_process = subprocess.Popen(run_args, stdin=open(f'{path_to_tests}/input/{filename}', 'r'),
+                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         time_before_testing = datetime.datetime.now()
-        memory_used = None
-        try:
-            test_run_process = subprocess.Popen(run_args, stdin=input_file,
-                                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            memory_used = psutil.Process(test_run_process.pid).memory_info().rss
-            test_run_process.wait(submission.problem.time_limit)
-        except subprocess.TimeoutExpired:
-            stat['verdict'] = f'TLE {test_index}'
-            stat['time'] = int(submission.problem.time_limit * 1000)
-            stat['memory'] = memory_used // (2 ** 20)
-            return stat
+        while test_run_process.poll() is None:
+            try:
+                memory_used = max(memory_used, psutil.Process(test_run_process.pid).memory_info().rss)
+            except Exception:
+                continue
         testing_time = int((datetime.datetime.now() - time_before_testing).microseconds / 1000)
+        if testing_time > int(submission.problem.time_limit * 1000):
+            stat['verict'] = f'TLE {test_index}'
+            stat['time'] = int(submission.problem.time_limit * 1000)
+            stat['memory'] = memory_used // (2 ** 10)
+            return stat
+        if test_run_process.returncode != 0:
+            stat['verdict'] = f'RE {test_index}'
+            stat['time'] = testing_time
+            stat['memory'] = memory_used // (2 ** 10)
+            return stat
         if memory_used > submission.problem.memory_limit * (2 ** 20):
             stat['verdict'] = f'MLE {test_index}'
             stat['time'] = testing_time
-            stat['memory'] = submission.problem.memory_limit
+            stat['memory'] = submission.problem.memory_limit * (2 ** 10)
             return stat
-        submission_output = \
-            test_run_process.stdout.read().decode('ascii').strip('\n').strip(' ')
+        submission_output = test_run_process.stdout.read().decode('utf-8', errors='strict').strip('\n').strip(' ')
         if submission_output != correct_output:
             stat['verdict'] = f'WA {test_index}'
             stat['time'] = testing_time
-            stat['memory'] = memory_used // (2 ** 20)
+            stat['memory'] = memory_used // (2 ** 10)
             return stat
         test_index += 1
         max_time = max(max_time, testing_time)
         max_memory = max(max_memory, memory_used)
     stat['verdict'] = 'AC'
     stat['time'] = max_time
-    stat['memory'] = max_memory // (2 ** 20)
+    stat['memory'] = max_memory // (2 ** 10)
     return stat
 
 

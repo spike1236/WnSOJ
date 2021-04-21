@@ -20,10 +20,10 @@ class User(SqlAlchemyBase, SerializerMixin, UserMixin):
     submissions = orm.relation('Submission', back_populates='user')
     problems_solved = orm.relation("Problem",
                                    secondary="users_to_solved_problems",
-                                   backref="users_solved")
+                                   backref="users_solved", lazy='subquery')
     problems_unsolved = orm.relation("Problem",
                                      secondary="users_to_unsolved_problems",
-                                     backref="users_unsolved")
+                                     backref="users_unsolved", lazy='subquery')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
