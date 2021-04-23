@@ -1,24 +1,34 @@
 {
   "categories": [
     {
+      "short_name": "problemset",
+      "long_name": "Whole problemset",
+      "img_url": "/static/img/problemset.svg"
+    },
+    {
       "short_name": "math",
-      "long_name": "Math"
+      "long_name": "Math",
+      "img_url": "/static/img/math.svg"
     },
     {
       "short_name": "graph_theory",
-      "long_name": "Graph Theory"
+      "long_name": "Graph Theory",
+      "img_url": "/static/img/graph_theory.svg"
     },
     {
       "short_name": "strings",
-      "long_name": "Strings"
+      "long_name": "Strings",
+      "img_url": "/static/img/strings.svg"
     },
     {
       "short_name": "data_structures",
-      "long_name": "Data Structures"
+      "long_name": "Data Structures",
+      "img_url": "/static/img/data_structures.svg"
     },
     {
       "short_name": "dynamic_programming",
-      "long_name": "Dynamic Programming"
+      "long_name": "Dynamic Programming",
+      "img_url": "/static/img/dynamic_programming.png"
     }
   ]
 }

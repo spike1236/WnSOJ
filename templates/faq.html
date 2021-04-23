@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="margin-top: 10px">
+    <div>
+        <p>This site contains an archive of Olympiad programming tasks with a built-in testing system and work search platform.</p>
+        <ul>
+            <li>To open problems list go to "Problems" section.</li>
+            <li>To open work search platform platform go to "Jobs" section.</li>
+        </ul>
+    </div>
+    <hr class="my-4">
+    <div>
+        <h3>"Problems" section</h3><br>
+        <p>
+            In "Problems" section you can solve various programming and math tasks.<br>
+            To submit solution to problem go to "Problems" section, then choose problem, paste your code in code editor and click on submit button.<br>
+            After submitting system runs your solution on tests and then reports verdict.
+        </p>
+        <p>Testing system uses the following compilers:</p>
+        <div class="d-flex justify-content-left">
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#language_1">GNU C++14</button>
+            <br>
+            <div id="language_1" class="collapse col py-2 px-0">
+                <div class="card card-body py-2 px-3 ml-3">
+                    <p class="m-0">g++ submission.cpp -std=c++14 -o submission.exe</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-left mt-md-2">
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#language_2">Python 3</button>
+            <div id="language_2" class="collapse col py-2 px-0">
+                <div class="card card-body py-2 px-3 ml-3">
+                    <p class="m-0">py submission.py</p>
+                </div>
+            </div>
+        </div>
+        <br>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"><pre>Verdict</pre></th>
+                    <th scope="col"><pre>Description</pre></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><pre class="text-success">AC</pre></td>
+                    <td><pre>Accepted. Program works correctly and passed all tests. Most likely, tests are week :)</pre></td>
+                </tr>
+                <tr>
+                    <td><pre class="text-warning">CE</pre></td>
+                    <td><pre>Compilation error. Syntax or another error in the code.</pre></td>
+                </tr>
+                <tr>
+                    <td><pre class="text-danger">WA</pre></td>
+                    <td><pre>Wrong answer. The output of the program is not correct.</pre></td>
+                </tr>
+                <tr>
+                    <td><pre class="text-danger">RE</pre></td>
+                    <td><pre>Runtime error. Program terminated with a non-zero return code.</pre></td>
+                </tr>
+                <tr>
+                    <td><pre class="text-danger">TLE</pre></td>
+                    <td><pre>Time limit exceeded. Program runs longer than the allocated time.</pre></td>
+                </tr>
+                <tr>
+                    <td><pre class="text-danger">MLE</pre></td>
+                    <td><pre>Memory limit exceeded. Program uses more than the allocated memory.</pre></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <hr class="my-4">
+    <div>
+        <h3>"Jobs" section</h3><br>
+        <p>In "Jobs" section you can find work.</p>
+        There are 2 types of accounts:
+        <ol>
+            <li>Common account - these users can find job and communicate with employers by email or phone.<br>
+                Open job that you liked, read the description and if job suits you, communicate with employer by email or phone.
+            </li>
+            <li style="margin-top: 10px">
+                Business account - these users or companies can publish, edit or delete jobs, also find and communicate by email or phone with other users.<br>
+                Publish job, edit it if it is need, and just wait until some qualified specialist will communicate with you by email or phone number.
+            </li>
+        </ol>
+    </div>
+</div>
+{% endblock %}

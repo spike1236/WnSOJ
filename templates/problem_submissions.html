@@ -24,13 +24,13 @@
                     <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
                     <td>{{ item.language }}</td>
                     {% if item.verdict == 'AC' %}
-                        <td class="alert-success text-dark">{{ item.verdict }}</td>
+                        <td class="alert-success">{{ item.verdict }}</td>
                     {% elif item.verdict == 'CE' %}
-                        <td class="alert-warning text-dark">{{ item.verdict }}</td>
+                        <td class="alert-warning">{{ item.verdict }}</td>
                     {% elif item.verdict == 'In queue' %}
-                        <td class="alert-secondary text-dark">{{ item.verdict }}</td>
+                        <td class="alert-secondary">{{ item.verdict }}</td>
                     {% else %}
-                        <td class="alert-danger text-dark">{{ item.verdict }}</td>
+                        <td class="alert-danger">{{ item.verdict }}</td>
                     {% endif %}
                     <td>{{ item.time }} ms</td>
                     <td>{{ item.memory }} KB</td>

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="margin-top: 10px">
+    <div class="problem_content mx-5 pt-4">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="text-center">
+                    <img src="{{ profile_icon }}">
+                </div>
+                <form action="" method="post" id="icon_change" name="icon_change" enctype="multipart/form-data">
+                    {{ change_icon_form.hidden_tag() }}
+                    {{ change_icon_form.csrf_token }}
+                    {{ change_icon_form.icon.label }}<br>
+                    {{ change_icon_form.icon(class="form-control-file pl-3", type="file") }}
+                    {% for error in change_icon_form.icon.errors %}
+                        <p class="alert alert-danger mt-2 pl-3 small p-1" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                    <p class="mt-2" align="center">{{ change_icon_form.submit(type="submit", class="btn btn-primary btn-sm", form="icon_change") }}</p>
+                </form>
+                <hr class="my-4">
+                <div class="mt-3">
+                    <a href="/profile/{{ current_user.username }}"><h4 align="center">{{ current_user.username }}</h4></a>
+                </div>
+            </div>
+            <div class="col-md-7 pl-0 border ml-2">
+                <form class="css_form mt-4" action="" method="post" id="password_change" name="password_change">
+                    {{ change_password_form.hidden_tag() }}
+                    {{ change_password_form.csrf_token }}
+                    <p>
+                        {{ change_password_form.old_password.label }}
+                        <br>
+                        {{ change_password_form.old_password(class="form-control", type="password") }}
+                        {% for error in change_password_form.old_password.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ change_password_form.password.label }}
+                        <br>
+                        {{ change_password_form.password(class="form-control", type="password") }}
+                        {% for error in change_password_form.password.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ change_password_form.password_repeat.label }}
+                        <br>
+                        {{ change_password_form.password_repeat(class="form-control", type="password") }}
+                        {% for error in change_password_form.password_repeat.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <p class="text-danger">{{ password_error_message }}</p>
+                    <p class="ml-2">{{ change_password_form.submit(type="submit", class="btn btn-primary", form="password_change") }}</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

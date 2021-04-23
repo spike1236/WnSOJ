@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- Zero-MD -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"></script>
+
+    <div class="container" style="margin-top: 10px">
+        {% if current_user.is_authenticated and (current_user.account_type == 2 or (current_user.account_type == 1 and job in current_user.jobs)) %}
+            <div>
+            <a href="/job/{{ job.id }}/edit"><button class="btn btn-primary">Edit</button></a>
+            <a href="/job/{{ job.id }}/delete"><button class="btn btn-danger">Delete</button></a>
+            </div>
+            <hr class="my-4">
+        {% endif %}
+        <h4 style="margin: 10px" align="left"><b>Title:</b> {{ job.title }}</h4>
+        <h4 style="margin: 10px" align="left"><b>Author:</b> <a href="/profile/{{ job.user.username }}">{{ job.user.username }}</a></h4>
+        <hr class="my-4">
+        <h4>Description</h4><br>
+        <zero-md src="/static/jobs/{{ job.job_id }}/whole_info.md"></zero-md>
+    </div>
+{% endblock %}

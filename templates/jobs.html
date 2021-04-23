@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- Zero-MD -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"></script>
+
+    <div class="container" style="margin-top: 10px">
+        <div class="row">
+            <div class="col-md-1">
+                <h2>Jobs</h2>
+            </div>
+            <div class="col-md-4">
+            {% if current_user.is_authenticated and current_user.account_type != 0 %}
+                <a href="/add_job"><button class="btn btn-primary">Add Job</button></a>
+            {% endif %}
+            </div>
+        </div>
+        {% for item in jobs %}
+            <div class="card" style="width: 69rem">
+                <h5 class="card-header">{{ item.title }}</h5>
+                <div class="card-body">
+                    <p class="card-text"><zero-md src="static/jobs/{{ item.job_id }}/short_info.md"></zero-md></p>
+                    <a href="/job/{{ item.id }}" class="card-link">Read more...</a>
+                </div>
+                <h5 class="card-footer"><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></h5>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

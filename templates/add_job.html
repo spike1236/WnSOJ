@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container" style="margin-top: 10px">
+        <form class="css_form" action="" method="post">
+            <h3>{{ title.split('| WnSOJ')[0] }}</h3>
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control") }}<br>
+                {% for error in form.title.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.short_info.label }}<br>
+                {{ form.short_info(class="form-control") }}<br>
+                {% for error in form.short_info.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.whole_info.label }}<br>
+                {{ form.whole_info(class="form-control") }}<br>
+                {% for error in form.whole_info.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        </form>
+    </div>
+{% endblock %}

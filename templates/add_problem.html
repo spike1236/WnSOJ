@@ -46,29 +46,33 @@
                 </p>
             {% endfor %}
         </p>
-        <div class="form-group">
-            {{ form.statement.label }}<br>
+        <p>
+            {{ form.statement.label }}
             {{ form.statement(class="form-control-file", type="file") }}
             {% for error in form.statement.errors %}
                 <p class="alert alert-danger mt-2" role="alert">
                     {{ error }}
                 </p>
             {% endfor %}
-            {{ form.editorial.label }}<br>
+        </p>
+        <p>
+            {{ form.editorial.label }}
             {{ form.editorial(class="form-control-file", type="file") }}
             {% for error in form.editorial.errors %}
                 <p class="alert alert-danger mt-2" role="alert">
                     {{ error }}
                 </p>
             {% endfor %}
-            {{ form.test_data.label }}<br>
+        </p>
+        <p>
+            {{ form.test_data.label }}
             {{ form.test_data(class="form-control-file", type="file") }}
             {% for error in form.test_data.errors %}
                 <p class="alert alert-danger mt-2" role="alert">
                     {{ error }}
                 </p>
             {% endfor %}
-        </div>
+        </p>
         <br>
         <p>{{ form.submit(type="submit", class="btn btn-primary btn-lg") }}</p>
     </form>

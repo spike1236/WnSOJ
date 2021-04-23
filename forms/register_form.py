@@ -8,8 +8,9 @@ from wtforms.validators import DataRequired, Length
 class RegisterForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=4, max=15)])
     email = EmailField('Email', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
-    password_repeat = PasswordField('Repeat password', validators=[DataRequired(), Length(min=8)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, message='Password is too short!')])
+    password_repeat = PasswordField('Repeat password', validators=[DataRequired(),
+                                                                   Length(min=8, message='Password is too short!')])
     fullname = StringField('Full Name')
     icon = FileField('Choose icon', validators=[FileAllowed(['jpg', 'png'], 'Only image file types for icon allowed!')])
     phone_number = StringField('Phone number')

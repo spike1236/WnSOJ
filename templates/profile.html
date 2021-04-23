@@ -4,11 +4,9 @@
   .main-body {
       padding: 15px;
   }
-  .card {
-      box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
-  }
 
   .card {
+      box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -55,18 +53,18 @@
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
-                <img src="{{ icon_170 }}" class="rounded-circle">
+                <img src="{{ icon_170 }}">
                 <div class="mt-3">
                   <h4>{{ user.username }}</h4>
                 </div>
-                {% if user.account_type == 1 %}
+                {% if user.account_type != 0 %}
                     <a class="btn btn-primary" href="/jobs?author={{ user.username }}">{{ user.username }}'s jobs</a>
                 {% endif %}
               </div>
             </div>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-5">
           <div class="card mb-3">
             <div class="card-body">
               <div class="row">
@@ -92,6 +90,72 @@
             </div>
           </div>
         </div>
+        <div class="col-md-3">
+          <table class="table table bordered">
+            <tr>
+              <th scope="row" class="alert-success" style="width:50%">AC</th>
+              <th scope="row" style="width:50%">{{ cnt['AC'] }}</th>
+            </tr>
+            <tr>
+              <th scope="row" class="alert-warning" style="width:50%">CE</th>
+              <th scope="row" style="width:50%">{{ cnt['CE'] }}</th>
+            </tr>
+            <tr>
+              <th scope="row" class="alert-danger" style="width:50%">RE</th>
+              <th scope="row" style="width:50%">{{ cnt['RE'] }}</th>
+            </tr>
+            <tr>
+              <th scope="row" class="alert-danger" style="width:50%">WA</th>
+              <th scope="row" style="width:50%">{{ cnt['WA'] }}</th>
+            </tr>
+            <tr>
+              <th scope="row" class="alert-danger" style="width:50%">TLE</th>
+              <th scope="row" style="width:50%">{{ cnt['TLE'] }}</th>
+            </tr>
+            <tr>
+              <th scope="row" class="alert-danger" style="width:50%">MLE</th>
+              <th scope="row" style="width:50%">{{ cnt['MLE'] }}</th>
+            </tr>
+          </table>
+        </div>
+        <br>
+          <h3>Last 10 submissions</h3>
+          <table class="table table-bordered table-striped text-center" style="margin-top: 10px">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 7%">ID</th>
+                    <th scope="col" style="width: 20%">Sending time</th>
+                    <th scope="col" style="width: 20%">User</th>
+                    <th scope="col" style="width: 23%">Problem</th>
+                    <th scope="col" style="width: 5%">Language</th>
+                    <th scope="col" style="width: 5%">Verdict</th>
+                    <th scope="col" style="width: 10%">Time</th>
+                    <th scope="col" style="width: 10%">Memory</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in submissions %}
+                    <tr>
+                        <th scope="row"><a href="/submission/{{ item.id }}">{{ item.id }}</a></th>
+                        <td>{{ item.send_time }}</td>
+                        <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
+                        <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
+                        <td>{{ item.language }}</td>
+                        {% if item.verdict == 'AC' %}
+                            <td class="alert-success">{{ item.verdict }}</td>
+                        {% elif item.verdict == 'CE' %}
+                            <td class="alert-warning">{{ item.verdict }}</td>
+                        {% elif item.verdict == 'In queue' %}
+                            <td class="alert-secondary">{{ item.verdict }}</td>
+                        {% else %}
+                            <td class="alert-danger">{{ item.verdict }}</td>
+                        {% endif %}
+                        <td>{{ item.time }} ms</td>
+                        <td>{{ item.memory }} KB</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
       </div>
 </div>
 {% endblock %}

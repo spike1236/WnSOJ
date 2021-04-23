@@ -11,6 +11,9 @@ from forms.register_form import RegisterForm
 from forms.login_form import LoginForm
 from forms.submit_form import SubmitForm
 from forms.add_problem_form import AddProblemForm
+from forms.add_job_form import AddJobForm
+from forms.change_icon_form import ChangeIconForm
+from forms.change_password_form import ChangePasswordForm
 from random import randrange
 import os
 import json
@@ -126,6 +129,15 @@ def error_401(error):
     return render_template('401.html', **params)
 
 
+# remove cache
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+    response.headers["Expires"] = '0'
+    response.headers["Pragma"] = "no-cache"
+    return response
+
+
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
@@ -185,7 +197,7 @@ def register():
 
             with open(icon170, 'wb') as file:
                 file.write(icon_data)
-                resize_image(icon170, (180, 180))
+                resize_image(icon170, (170, 170))
 
         user.set_password(form.password.data)
         db_sess.add(user)
@@ -235,16 +247,14 @@ def cad30f2():
     return render_template('index.html', **params)
 
 
+@app.route('/faq')
+def aef1cf7():
+    params = page_params(4, 'FAQ')
+    return render_template('faq.html', **params)
+
+
 @app.route('/profile/<username>')
 def fa908cb(username):
-    if username.isdecimal():
-        username = int(username)
-        session = db_session.create_session()
-        user = session.query(User).filter(User.id == username).first()
-        if user:
-            return redirect(f'/profile/{user.username}')
-        else:
-            abort(404)
     session = db_session.create_session()
     user = session.query(User).filter(User.username == username).first()
     if user:
@@ -254,9 +264,77 @@ def fa908cb(username):
         else:
             params['icon_170'] = url_for('static', filename='users_icons/icon170/default.png')
         params['user'] = user
+        params['submissions'] = session.query(Submission).filter(Submission.user_id == user.id).all()
+        params['submissions'].reverse()
+        params['cnt'] = {
+            'AC': 0,
+            'CE': 0,
+            'WA': 0,
+            'TLE': 0,
+            'MLE': 0,
+            'RE': 0
+        }
+        for i in params['submissions']:
+            if i.verdict == 'In queue':
+                continue
+            params['cnt'][i.verdict] += 1
+        if len(params['submissions']) > 10:
+            params['submissions'] = params['submissions'][:10:]
         return render_template('profile.html', **params)
     else:
         abort(404)
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def dacf14e():
+    session = db_session.create_session()
+    params = page_params(-1, 'Edit Profile')
+    change_password_form = ChangePasswordForm()
+    change_icon_form = ChangeIconForm()
+    params['change_password_form'] = change_password_form
+    params['change_icon_form'] = change_icon_form
+    user = session.query(User).get(current_user.id)
+    if current_user.icon_id == -1:
+        params['profile_icon'] = f'static/users_icons/icon170/default.png'
+    else:
+        params['profile_icon'] = f'static/users_icons/icon170/icon170_user_{current_user.icon_id}.png'
+    form_type = request.form.get('submit')
+    if change_icon_form.validate_on_submit():
+        if 'icon' in form_type:
+            icon_data = change_icon_form.icon.data.read()
+            if user.icon_id == -1:
+                icon_id = randrange(10000000, 100000000)
+                path = 'static/users_icons'
+                while True:
+                    if f'{path}/icon64/icon64_user_{icon_id}.png' in os.listdir(f'{path}/icon64/'):
+                        icon_id = randrange(10000000, 100000000)
+                    else:
+                        break
+                user.icon_id = icon_id
+            icon64 = f'static/users_icons/icon64/icon64_user_{user.icon_id}.png'
+            icon170 = f'static/users_icons/icon170/icon170_user_{user.icon_id}.png'
+            with open(icon64, 'wb') as file:
+                file.write(icon_data)
+                resize_image(icon64, (64, 64))
+
+            with open(icon170, 'wb') as file:
+                file.write(icon_data)
+                resize_image(icon170, (170, 170))
+        elif 'password' in form_type:
+            if not user.check_password(change_password_form.old_password.data):
+                return render_template('edit_profile.html', **params, password_error_message='Old password is wrong')
+            if change_password_form.password.data != change_password_form.password_repeat.data:
+                return render_template('edit_profile.html', **params, password_error_message="Passwords are not same")
+            if len(change_password_form.password.data) < 8:
+                params['message'] = 'Password is too short!'
+                return render_template('edit_profile.html', **params)
+            user.set_password(change_password_form.password.data)
+        else:
+            assert 0
+        session.commit()
+        return redirect(url_for('dacf14e'))
+    return render_template('edit_profile.html', **params)
 
 
 @app.route('/add_problem', methods=['GET', 'POST'])
@@ -296,12 +374,6 @@ def ca14df3():
         return render_template('add_problem.html', **params)
 
 
-@app.route('/contests')
-def ad871fe():
-    params = page_params(4, 'Contests')
-    return render_template('contests.html', **params)
-
-
 @app.route('/submissions')
 def e07baf1():
     session = db_session.create_session()
@@ -335,11 +407,7 @@ def e07baf1():
 def a1bo2ba():
     params = page_params(2, 'Problems')
     with open('data/problems/PROBLEMS_CATEGORIES.json') as file:
-        d = json.loads(file.read())['categories']
-        b = []
-        for i in d:
-            b.append([i['long_name'], i['short_name']])
-        params['categories'] = b
+        params['categories'] = json.loads(file.read())['categories']
         return render_template('problems_list.html', **params, show_categories=1)
 
 
@@ -347,6 +415,10 @@ def a1bo2ba():
 def a098bfo(category):
     session = db_session.create_session()
     params = page_params(2, 'Problems')
+    if category == 'problemset':
+        problems = session.query(Problem).all()
+        params['problems'] = problems
+        return render_template('problems_list.html', **params)
     d = json.loads(open('data/problems/PROBLEMS_CATEGORIES.json').read())['categories']
     long_category = ''
     for i in d:
@@ -354,12 +426,8 @@ def a098bfo(category):
             long_category = i['long_name']
     if long_category == '':
         abort(404)
-    if category == 'problemset':
-        problems = session.query(Problem).all()
-        params['problems'] = problems
-    else:
-        problems = session.query(Problem).filter(Problem.category == long_category).all()
-        params['problems'] = problems
+    problems = session.query(Problem).filter(Problem.category == long_category).all()
+    params['problems'] = problems
     return render_template('problems_list.html', **params)
 
 
@@ -507,6 +575,118 @@ def a9f1ce7(submission_id: str):
         return render_template('submission.html', **params)
     else:
         abort(404)
+
+
+@app.route('/jobs')
+def d7afa34():
+    session = db_session.create_session()
+    username = request.args.get('user')
+    params = page_params(3, 'Jobs')
+    if username is None:
+        params['jobs'] = session.query(Job).all()
+    else:
+        user = session.query(User).filter(User.username == username).first()
+        if user is None:
+            params['jobs'] = session.query(Job).all()
+        else:
+            params['jobs'] = user.jobs
+    return render_template('jobs.html', **params)
+
+
+@app.route('/job/<job_id>')
+def dfa4910(job_id: str):
+    session = db_session.create_session()
+    job = session.query(Job).filter(Job.id == int(job_id)).first()
+    if job is None:
+        abort(404)
+    params = page_params(3, f'Job {job.id}')
+    params['job'] = job
+    return render_template('job.html', **params)
+
+
+@app.route('/add_job', methods=['GET', 'POST'])
+@login_required
+def fc4da11():
+    session = db_session.create_session()
+    if current_user.account_type == 0:
+        abort(403)
+    form = AddJobForm()
+    params = page_params(3, 'Add Job')
+    params['form'] = form
+    if form.validate_on_submit():
+        job_id = 1
+        if session.query(Job).first():
+            job_id = session.query(sqlalchemy_func.max(Job.id)).one()[0] + 1
+        job_random_id = randrange(10000000, 100000000)
+        while True:
+            if str(job_random_id) in os.listdir('static/jobs'):
+                job_random_id = randrange(10000000, 100000000)
+            else:
+                break
+        job = Job(
+            id=job_id,
+            title=form.title.data,
+            user_id=current_user.id,
+            job_id=job_random_id
+        )
+        session.add(job)
+        session.commit()
+        os.mkdir(f'static/jobs/{job_random_id}')
+        with open(f'static/jobs/{job_random_id}/short_info.md', 'w') as file:
+            file.write(form.short_info.data)
+        with open(f'static/jobs/{job_random_id}/whole_info.md', 'w') as file:
+            file.write(form.whole_info.data)
+        return redirect('/jobs')
+    else:
+        return render_template('add_job.html', **params)
+
+
+@app.route('/job/<job_id>/edit', methods=['GET', 'POST'])
+@login_required
+def acb12df(job_id: str):
+    session = db_session.create_session()
+    job = session.query(Job).filter(Job.id == int(job_id)).first()
+    if job is None:
+        abort(404)
+    if current_user.account_type == 0:
+        abort(403)
+    if current_user.account_type == 1 and job not in current_user.jobs:
+        abort(403)
+    params = page_params(3, 'Edit Job')
+    form = AddJobForm()
+    params['form'] = form
+    if request.method == 'GET':
+        form.title.data = job.title
+        form.short_info.data = open(f'static/jobs/{job.job_id}/short_info.md', 'r').read()
+        form.whole_info.data = open(f'static/jobs/{job.job_id}/whole_info.md', 'r').read()
+    if form.validate_on_submit():
+        job.title = form.title.data
+        with open(f'static/jobs/{job.job_id}/short_info.md', 'w') as file:
+            file.write(form.short_info.data)
+        with open(f'static/jobs/{job.job_id}/whole_info.md', 'w') as file:
+            file.write(form.whole_info.data)
+        session.commit()
+        return redirect('/jobs')
+    return render_template('add_job.html', **params)
+
+
+@app.route('/job/<job_id>/delete')
+@login_required
+def bfac219(job_id: str):
+    session = db_session.create_session()
+    job = session.query(Job).filter(Job.id == int(job_id)).first()
+    if job is None:
+        abort(404)
+    if current_user.account_type == 0:
+        abort(403)
+    if current_user.account_type == 1 and job not in current_user.jobs:
+        abort(403)
+    os.remove(f'static/jobs/{job.job_id}/short_info.md')
+    os.remove(f'static/jobs/{job.job_id}/whole_info.md')
+    os.rmdir(f'static/jobs/{job.job_id}')
+    session.delete(job)
+    session.commit()
+    return redirect('/jobs')
 
 
 if __name__ == '__main__':
