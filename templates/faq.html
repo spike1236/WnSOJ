@@ -7,6 +7,7 @@
             <li>To open problems list go to "Problems" section.</li>
             <li>To open work search platform platform go to "Jobs" section.</li>
         </ul>
+        FOR DEVELOPERS: Our platform is rich for API.
     </div>
     <hr class="my-4">
     <div>
@@ -85,6 +86,69 @@
                 Publish job, edit it if it is need, and just wait until some qualified specialist will communicate with you by email or phone number.
             </li>
         </ol>
+    </div>
+    <hr class="my-4">
+    <div>
+        <h3>API</h3><br>
+        <p>In API you can request:</p>
+        <ul>
+            <li>users list and user by id</li>
+            <li>jobs list and job by id</li>
+            <li>submissions list and submission by id</li>
+            <li>problems list and problem by id</li>
+        </ul>
+        <p>API is located by url <a href="http://127.0.0.1:5000/api/v1">http://127.0.0.1:5000/api/v1</a></p>
+        <p>Examples:</p>
+        <ul>
+            <li>
+                request: <a href="http://127.0.0.1:5000/api/v1/user/1">http://127.0.0.1:5000/api/v1/user/1</a><br>
+                answer:<br>
+                <pre class="alert-info">
+{
+  "user": {
+    "email": "admin@admin.com",
+    "fullname": "admin admin",
+    "phone_number": "",
+    "username": "admin"
+  }
+}
+                </pre>
+            </li>
+            <li>
+                request: <a href="http://127.0.0.1:5000/api/v1/submission/1">http://127.0.0.1:5000/api/v1/submission/1</a><br>
+                answer:<br>
+                <pre class="alert-info">
+{
+  "submission": {
+    "language": "GNU C++14",
+    "memory": 2476,
+    "send_time": "24/Apr/2021  22:06  UTC+6",
+    "time": 233,
+    "user": {
+      "username": "admin"
+    },
+    "verdict": "AC"
+  }
+}
+                </pre>
+            </li>
+            <li>
+                request: <a href="http:127.0.0.1:5000/api/v1/jobs">http:127.0.0.1:5000/api/v1/jobs</a><br>
+                answer:<br>
+                <pre class="alert-info">
+{
+  "jobs": [
+    {
+      "title": "test job",
+      "user": {
+        "username": "admin"
+      }
+    }
+  ]
+}
+                </pre>
+            </li>
+        </ul>
     </div>
 </div>
 {% endblock %}
