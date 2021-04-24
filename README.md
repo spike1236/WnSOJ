@@ -6,7 +6,7 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 ## Getting Started
 1. Download a project. To download required components, write in command line:
 ```shell
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 2. Download a [MinGW](https://sourceforge.net/projects/mingw) compiler;
 3. Add folder ```MinGW\bin``` to PATH;
