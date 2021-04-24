@@ -1,6 +1,7 @@
 from PIL import Image
 from flask import Flask
 from flask import render_template, redirect, request, url_for, abort
+from flask_restful import Api
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from data import db_session
 from data.users import User
@@ -14,6 +15,10 @@ from forms.add_problem_form import AddProblemForm
 from forms.add_job_form import AddJobForm
 from forms.change_icon_form import ChangeIconForm
 from forms.change_password_form import ChangePasswordForm
+from data import users_resource
+from data import problems_resource
+from data import submissions_resource
+from data import jobs_resource
 from random import randrange
 import os
 import json
@@ -32,8 +37,23 @@ from io import BytesIO
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = str(os.urandom(16))
+
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+api = Api(app)
+api.add_resource(users_resource.UsersListResource, '/api/v1/users')
+api.add_resource(users_resource.UserResource, '/api/v1/user/<int:user_id>')
+
+api.add_resource(problems_resource.ProblemsListResource, '/api/v1/problems')
+api.add_resource(problems_resource.ProblemResource, '/api/v1/problem/<int:problem_id>')
+
+api.add_resource(submissions_resource.SubmissionsListResource, '/api/v1/submissions')
+api.add_resource(submissions_resource.SubmissionResource, '/api/v1/submission/<int:submission_id>')
+
+api.add_resource(jobs_resource.JobsListResource, '/api/v1/jobs')
+api.add_resource(jobs_resource.JobResource, '/api/v1/job/<int:job_id>')
+
 
 db_session.global_init('db/main.sqlite')
 
@@ -108,25 +128,25 @@ def page_params(navbar_item_id, title):
 @app.errorhandler(404)
 def error_404(error):
     params = page_params(-1, 'Error 404')
-    return render_template('404.html', **params)
+    return render_template('404.html', **params), 404
 
 
 @app.errorhandler(403)
 def error_403(error):
     params = page_params(-1, 'Error 403')
-    return render_template('403.html', **params)
+    return render_template('403.html', **params), 403
 
 
 @app.errorhandler(500)
 def error_500(error):
     params = page_params(-1, 'Error 500')
-    return render_template('500.html', **params)
+    return render_template('500.html', **params), 500
 
 
 @app.errorhandler(401)
 def error_401(error):
     params = page_params(-1, 'Error 401')
-    return render_template('401.html', **params)
+    return render_template('401.html', **params), 401
 
 
 # remove cache
@@ -361,10 +381,10 @@ def ca14df3():
         with ZipFile(BytesIO(form.test_data.data.read()), 'r') as file:
             file.extractall(f'data/problems/{problem.id}')
         os.mkdir(f'templates/problems/{problem_id}')
-        with open(f'templates/problems/{problem_id}/statement.html', 'w', encoding='utf-8', errors='strict') as file:
+        with open(f'templates/problems/{problem_id}/statement.html', 'wb') as file:
             file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict')
                              for line in form.statement.data.read().decode('utf-8', errors='strict')])
-        with open(f'templates/problems/{problem_id}/editorial.html', 'w', encoding='utf-8', errors='strict') as file:
+        with open(f'templates/problems/{problem_id}/editorial.html', 'wb') as file:
             file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict')
                              for line in form.editorial.data.read().decode('utf-8', errors='strict')])
         session.add(problem)

@@ -1,5 +1,6 @@
 import sqlalchemy
 from sqlalchemy import orm
+from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 
 users_to_solved_problems = sqlalchemy.Table('users_to_solved_problems', SqlAlchemyBase.metadata,
@@ -16,7 +17,7 @@ users_to_unsolved_problems = sqlalchemy.Table('users_to_unsolved_problems', SqlA
                                               )
 
 
-class Problem(SqlAlchemyBase):
+class Problem(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'problems'
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String)

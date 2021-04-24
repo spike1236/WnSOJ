@@ -13,9 +13,9 @@ def run_tests(submission):
     path_to_tests = f'data/problems/{submission.problem_id}/tests'
     if submission.language == 'GNU C++14':
         compile_process = subprocess.Popen(f'g++ {run_args}/source.cpp -std=c++14 -o {run_args}/source.exe',
-                                           stderr=subprocess.PIPE)
+                                           stderr=open(f'data/submissions/{submission.id}/trash.txt', 'w'))
         compile_process.wait()
-        if compile_process.stderr.read():
+        if compile_process.returncode != 0:
             stat['verdict'] = 'CE'
             stat['time'] = 0
             stat['memory'] = 0
@@ -27,19 +27,20 @@ def run_tests(submission):
     max_time = 0
     max_memory = 0
     for filename in os.listdir(f'{path_to_tests}/input'):
-        correct_output = open(f'{path_to_tests}/output/{filename}', 'r').read()
+        correct_output = open(f'{path_to_tests}/output/{filename}', 'r').read().\
+            strip('\n').strip(' ').rstrip('\n').rstrip(' ')
         memory_used = 0
-        test_run_process = subprocess.Popen(run_args, stdin=open(f'{path_to_tests}/input/{filename}', 'r'),
-                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        time_before_testing = datetime.datetime.now()
-        while test_run_process.poll() is None:
-            try:
-                memory_used = max(memory_used, psutil.Process(test_run_process.pid).memory_info().rss)
-            except Exception:
-                continue
-        testing_time = int((datetime.datetime.now() - time_before_testing).microseconds / 1000)
-        if testing_time > int(submission.problem.time_limit * 1000):
-            stat['verict'] = f'TLE {test_index}'
+        try:
+            test_run_process = subprocess.Popen(run_args, text=True, stdin=subprocess.PIPE,
+                                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            memory_used = psutil.Process(test_run_process.pid).memory_info().rss
+            time_before_testing = datetime.datetime.now()
+            submission_output = test_run_process.communicate(
+                input=open(f'{path_to_tests}/input/{filename}', 'r').read(),
+                timeout=submission.problem.time_limit)[0].strip('\n').strip(' ').rstrip('\n').rstrip(' ')
+            testing_time = (datetime.datetime.now() - time_before_testing).microseconds // 1000
+        except subprocess.TimeoutExpired:
+            stat['verdict'] = f'TLE {test_index}'
             stat['time'] = int(submission.problem.time_limit * 1000)
             stat['memory'] = memory_used // (2 ** 10)
             return stat
@@ -53,7 +54,6 @@ def run_tests(submission):
             stat['time'] = testing_time
             stat['memory'] = submission.problem.memory_limit * (2 ** 10)
             return stat
-        submission_output = test_run_process.stdout.read().decode('utf-8', errors='strict').strip('\n').strip(' ')
         if submission_output != correct_output:
             stat['verdict'] = f'WA {test_index}'
             stat['time'] = testing_time
@@ -86,6 +86,14 @@ def queue():
             if problem not in submission.user.problems_solved and problem not in submission.user.problems_unsolved:
                 submission.user.problems_unsolved.append(problem)
         session.commit()
+        try:
+            os.remove(f'data/submissions/{submission.id}/trash.txt')
+        except Exception:
+            pass
+        try:
+            os.remove(f'data/submissions/{submission.id}/source.exe')
+        except Exception:
+            pass
 
 
 def test_forever():
