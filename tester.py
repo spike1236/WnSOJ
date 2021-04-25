@@ -31,9 +31,8 @@ def run_tests(submission):
             strip('\n').strip(' ').rstrip('\n').rstrip(' ')
         memory_used = 0
         try:
-            test_run_process = subprocess.Popen(run_args, text=True, stdin=subprocess.PIPE,
-                                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            memory_used = psutil.Process(test_run_process.pid).memory_info().rss
+            test_run_process = psutil.Popen(run_args, text=True, stdin=subprocess.PIPE,
+                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             time_before_testing = datetime.datetime.now()
             submission_output = test_run_process.communicate(
                 input=open(f'{path_to_tests}/input/{filename}', 'r').read(),
@@ -44,15 +43,24 @@ def run_tests(submission):
             stat['time'] = int(submission.problem.time_limit * 1000)
             stat['memory'] = memory_used // (2 ** 10)
             return stat
+        get_memory_usage = psutil.Popen(run_args, text=True, stdin=open(f'{path_to_tests}/input/{filename}', 'r'),
+                                        stdout=open(f'data/submissions/{submission.id}/trash.txt', 'w'),
+                                        stderr=subprocess.STDOUT)
+        while get_memory_usage.is_running():
+            try:
+                memory_used = max(memory_used, get_memory_usage.memory_info().rss)
+                if memory_used > submission.problem.memory_limit * (2 ** 20):
+                    get_memory_usage.kill()
+                    stat['verdict'] = f'MLE {test_index}'
+                    stat['time'] = testing_time
+                    stat['memory'] = submission.problem.memory_limit * (2 ** 10)
+                    return stat
+            except Exception:
+                continue
         if test_run_process.returncode != 0:
             stat['verdict'] = f'RE {test_index}'
             stat['time'] = testing_time
             stat['memory'] = memory_used // (2 ** 10)
-            return stat
-        if memory_used > submission.problem.memory_limit * (2 ** 20):
-            stat['verdict'] = f'MLE {test_index}'
-            stat['time'] = testing_time
-            stat['memory'] = submission.problem.memory_limit * (2 ** 10)
             return stat
         if submission_output != correct_output:
             stat['verdict'] = f'WA {test_index}'

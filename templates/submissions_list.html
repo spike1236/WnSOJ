@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-    <table class="table table-bordered table-striped container text-center" style="margin-top: 10px">
+    <div class="container" style="margin-top: 10px">
+    <h3>Last 10 submissions</h3>
+    <table class="table table-bordered table-striped text-center">
         <thead>
             <tr>
                 <th scope="col" style="width: 7%">ID</th>
@@ -36,4 +38,5 @@
             {% endfor %}
         </tbody>
     </table>
+    </div>
 {% endblock %}
