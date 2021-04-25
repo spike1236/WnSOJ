@@ -20,7 +20,7 @@ py main.py
 ## About Project
 ### Problems and submissions
 Platform contains an archive of olympiad programming tasks. To submit solution you need to be signed in system. You can register or sign in into existing account and submit solutions to problems.
-System will automatically test your solution and report verdict.
+System will automatically test your solution and report verdict, max used time and max used memory.
 One of the pluses of system is that it is well optimized - it fastly tests solution and reports verdict, even if your computer's processor is slow.
 ### Jobs
 In the platform you can also find or publish/edit/delete job.
