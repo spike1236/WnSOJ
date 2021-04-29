@@ -23,7 +23,7 @@ Platform contains an archive of olympiad programming tasks. To submit solution y
 System will automatically test your solution and report verdict, max used time and max used memory.
 One of the pluses of system is that it is well optimized - it fastly tests solution and reports verdict, even if your computer's processor is slow.\
 Also, each problem has editorial and solution in C++ language.\
-Platform administrators can add new problems.
+Platform administrators can add new problems. (More info in [admin_instruction.txt](admin_instruction.txt) file.)
 ### Jobs
 In the platform you can also find or publish/edit/delete job.
 There are 2 types of accounts:
