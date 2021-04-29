@@ -1,5 +1,5 @@
 # WnSOJ - Work and Solve online judge! 
-WnSOJ is a platform where you can solve programming and math tasks, learn new algorithms and terms and find job. Platform includes  **optimized** `testing system`, `problems categories`, `problems`, `submissions`, `job search`, `users` and `statistics`.
+WnSOJ is a platform where you can solve programming and math tasks, learn new algorithms and terms and find job. Platform includes  **optimized** `testing system`, `problems categories`, `problems`, `editorials and solutions`, `submissions`, `job search`, `users` and `statistics`.
 
 ![Main Page](/readme_screenshots/screenshot_1.png)
 
@@ -21,8 +21,9 @@ py main.py
 ### Problems and submissions
 Platform contains an archive of olympiad programming tasks. To submit solution you need to be signed in system. You can register or sign in into existing account and submit solutions to problems.
 System will automatically test your solution and report verdict, max used time and max used memory.
-One of the pluses of system is that it is well optimized - it fastly tests solution and reports verdict, even if your computer's processor is slow.
-Also, platform administrators can add new problems.
+One of the pluses of system is that it is well optimized - it fastly tests solution and reports verdict, even if your computer's processor is slow.\
+Also, each problem has editorial and solution in C++ language.\
+Platform administrators can add new problems. (More info in [admin_instruction.txt](admin_instruction.txt) file.)
 ### Jobs
 In the platform you can also find or publish/edit/delete job.
 There are 2 types of accounts:

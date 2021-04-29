@@ -1,0 +1,3 @@
+to give admin permissions to some user, open a database and in users table change value of column "account_type" to 2.
+to add problem go to http://127.0.0.1:5000/add_problem
+admin can add new job and edit/remove any other job.
