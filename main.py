@@ -446,8 +446,12 @@ def a098bfo(category):
             long_category = i['long_name']
     if long_category == '':
         abort(404)
-    problems = session.query(Problem).filter(Problem.category == long_category).all()
-    params['problems'] = problems
+    problems = session.query(Problem).all()
+    res = []
+    for i in problems:
+        if long_category in i.category.split(', '):
+            res.append(i)
+    params['problems'] = res
     return render_template('problems_list.html', **params)
 
 
@@ -677,8 +681,14 @@ def acb12df(job_id: str):
     params['form'] = form
     if request.method == 'GET':
         form.title.data = job.title
-        form.short_info.data = open(f'static/jobs/{job.job_id}/short_info.md', 'r').read()
-        form.whole_info.data = open(f'static/jobs/{job.job_id}/whole_info.md', 'r').read()
+        with open(f'static/jobs/{job.job_id}/short_info.md', 'rb') as file:
+            text = file.read()
+            text = text.replace(b'\r', b'')
+            form.short_info.data = text.decode('utf-8', errors='strict')
+        with open(f'static/jobs/{job.job_id}/whole_info.md', 'rb') as file:
+            text = file.read()
+            text = text.replace(b'\r', b'')
+            form.whole_info.data = text.decode('utf-8', errors='strict')
     if form.validate_on_submit():
         job.title = form.title.data
         with open(f'static/jobs/{job.job_id}/short_info.md', 'w') as file:
