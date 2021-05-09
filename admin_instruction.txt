@@ -1,3 +1,13 @@
-to give admin permissions to some user, open a database and in users table change value of column "account_type" to 2.
-to add problem go to http://127.0.0.1:5000/add_problem
-admin can add new job and edit/remove any other job.
+- to give admin permissions to some user, open a database and in users table change value of column "account_type" to 2.
+- to add new problem category open file data/problems/PROBLEMS_CATEGORIES.json; add image of category to /static/img/; add long name - name of category; add short name;
+  When you click on category card in list of categories server will redirect you to url with problems where category url will be value of key "short_name";
+  Example: 
+  {
+      "short_name": "aba_caba",
+      "long_name": "Abacaba",
+      "img_url" "/static/img/abacaba.svg"
+  }
+  Category image will be file "/static/img/abacaba.svg"
+  When you click on card with this category, server will redirect you to url "/problems/aba_caba";
+- to add problem go to http://127.0.0.1:5000/add_problem;
+- admin can add new job and edit/remove any other job.
