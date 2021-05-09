@@ -1,7 +1,7 @@
 # WnSOJ - Work and Solve online judge! 
 WnSOJ is a platform where you can solve programming and math tasks, learn new algorithms and terms and find job. Platform includes  **optimized** `testing system`, `problems categories`, `problems`, `editorials and solutions`, `submissions`, `job search`, `users` and `statistics`.
 
-![Main Page](/readme_screenshots/screenshot_1.png)
+![Main Page](https://github.com/spike1236/WnSOJ/blob/main/readme_screenshots/screenshot_1.png)
 
 ## Getting Started
 1. Download a project. To download required components, write in command line:
@@ -23,7 +23,7 @@ Platform contains an archive of olympiad programming tasks. To submit solution y
 System will automatically test your solution and report verdict, max used time and max used memory.
 One of the pluses of system is that it is well optimized - it fastly tests solution and reports verdict, even if server's processor is slow.\
 Also, each problem has editorial and solution in C++ language.\
-Platform administrators can add new problems. (More info in [admin_instruction.txt](admin_instruction.txt) file.)
+Platform administrators can add new problems. (More info in [admin_instruction.txt](https://github.com/spike1236/WnSOJ/blob/main/admin_instruction.txt) file.)
 ### Jobs
 In the platform you can also find or publish/edit/delete job.
 There are 2 types of accounts:
@@ -110,7 +110,7 @@ Following components were used to create this project:
 * [MathJax](https://www.mathjax.org/)
 * [Zero-MD](https://zerodevx.github.io/zero-md/)
 ## Author
-* **Rakhmetulla Akram** - [spike1236](github.com/spike1236)
+* **Rakhmetulla Akram** - [spike1236](https://github.com/spike1236)
 ## License
 This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](http://creativecommons.org/licenses/by-nc-nd/4.0/).\
-See [LICENSE](LICENSE.md) file for details.
+See [LICENSE](https://github.com/spike1236/WnSOJ/blob/main/LICENSE.md) file for details.
