@@ -297,7 +297,11 @@ def fa908cb(username):
         for i in params['submissions']:
             if i.verdict == 'In queue':
                 continue
-            params['cnt'][i.verdict] += 1
+            if i.verdict == 'AC':
+                params['cnt']['AC'] += 1
+            else:
+                ver = i.verdict.split()
+                params['cnt'][ver[0]] += 1
         if len(params['submissions']) > 10:
             params['submissions'] = params['submissions'][:10:]
         return render_template('profile.html', **params)
