@@ -15,6 +15,10 @@ var editor = CodeMirror.fromTextArea(x, {
 editor.setSize(null, 600);
 editor.refresh();
 
+function setAutoRefresh() {
+    editor.setOption("autoRefresh", true);
+}
+
 function selectTheme() {
 	var theme = theme_select.options[theme_select.selectedIndex].innerHTML;
 	editor.setOption("theme", theme);

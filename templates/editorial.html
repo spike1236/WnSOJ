@@ -11,14 +11,14 @@
     <script src="/static/plugins/CodeMirror/mode/clike/clike.js"></script>
     <script src="/static/plugins/CodeMirror/mode/python/python.js"></script>
     <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
-
+    <script src="/static/plugins/CodeMirror/addon/display/autorefresh.js"></script>
     <div class="container">
         {% include "problem_navbar.html" %}
         <div style="margin: 10px">
         {% include problem_editorial %}
         </div>
         <hr class="my-4">
-        <button onclick="setReadOnly()" class="btn btn-primary" type="button" data-toggle="collapse"
+        <button onclick="setAutoRefresh()" class="btn btn-primary" type="button" data-toggle="collapse"
                 data-target="#show_code_area" aria-expanded="false" aria-controls="show_code_area">
             Author's solution
         </button><br>
@@ -36,7 +36,8 @@
                 </div>
             </div>
             <textarea id="code_area" name="code_area">{{ solution }}</textarea>
+            <div style="display: none" id="code_language">GNU C++14</div>
         </div>
-        <script type="text/javascript" src="/static/js/main.js"></script>
+    <script type="text/javascript" src="/static/js/submission_js.js"></script>
     </div>
 {% endblock %}
