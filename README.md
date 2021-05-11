@@ -77,7 +77,7 @@ answer:
   }
   ```
 
-* request: [http:127.0.0.1:5000/api/v1/jobs](http:127.0.0.1:5000/api/v1/jobs)\
+* request: [http://127.0.0.1:5000/api/v1/jobs](http://127.0.0.1:5000/api/v1/jobs)\
 answer:
   ```json
   {
