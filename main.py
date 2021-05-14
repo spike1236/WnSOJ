@@ -544,7 +544,7 @@ def dacf91b(problem_id: str):
             params = page_params(2, 'Submissions')
             params['current_bar_id'] = 3
             params['problem'] = problem
-            username = request.args.get('username')
+            username = request.args.get('user')
             verdict = request.args.get('verdict')
             if verdict:
                 if username:
