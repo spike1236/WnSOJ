@@ -3,7 +3,7 @@ from data.submissions import Submission
 import subprocess
 import psutil
 import os
-import datetime
+import time
 # import schedule
 
 
@@ -33,11 +33,11 @@ def run_tests(submission):
         try:
             test_run_process = psutil.Popen(run_args, text=True, stdin=subprocess.PIPE,
                                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            time_before_testing = datetime.datetime.now()
+            time_before_testing = time.time()
             submission_output = test_run_process.communicate(
                 input=open(f'{path_to_tests}/input/{filename}', 'r').read(),
                 timeout=submission.problem.time_limit)[0].strip('\n').strip(' ').rstrip('\n').rstrip(' ')
-            testing_time = (datetime.datetime.now() - time_before_testing).microseconds // 1000
+            testing_time = int((time.time() - time_before_testing) * 1000)
         except subprocess.TimeoutExpired:
             stat['verdict'] = f'TLE {test_index}'
             stat['time'] = int(submission.problem.time_limit * 1000)

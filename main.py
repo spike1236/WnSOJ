@@ -491,6 +491,8 @@ def c6daf80(problem_id: str):
                     submission_id = 1
                     if session.query(Submission).first():
                         submission_id = session.query(sqlalchemy_func.max(Submission.id)).one()[0] + 1
+                    else:
+                        os.mkdir('data/submissions')
                     submission.id = submission_id
                     path = f'data/submissions/{submission.id}'
                     os.mkdir(path)
@@ -645,6 +647,8 @@ def fc4da11():
         job_id = 1
         if session.query(Job).first():
             job_id = session.query(sqlalchemy_func.max(Job.id)).one()[0] + 1
+        else:
+            os.mkdir('static/jobs')
         job_random_id = randrange(10000000, 100000000)
         while True:
             if str(job_random_id) in os.listdir('static/jobs'):
