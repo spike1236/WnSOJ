@@ -1,3 +1,4 @@
+from PIL import UnidentifiedImageError
 from PIL import Image
 from flask import Flask
 from flask import render_template, redirect, request, url_for, abort
@@ -211,14 +212,22 @@ def register():
             user.icon_id = icon_id
             icon64 = f'static/users_icons/icon64/icon64_user_{user.icon_id}.png'
             icon170 = f'static/users_icons/icon170/icon170_user_{user.icon_id}.png'
-            with open(icon64, 'wb') as file:
-                file.write(icon_data)
-                resize_image(icon64, (64, 64))
-
-            with open(icon170, 'wb') as file:
-                file.write(icon_data)
-                resize_image(icon170, (170, 170))
-
+            try:
+                with open(icon64, 'wb') as file:
+                    file.write(icon_data)
+                    resize_image(icon64, (64, 64))
+            except UnidentifiedImageError:
+                os.remove(icon64)
+                return render_template('register.html', **params,
+                                       form=form, message='Cannot identify image file')
+            try:
+                with open(icon170, 'wb') as file:
+                    file.write(icon_data)
+                    resize_image(icon170, (170, 170))
+            except UnidentifiedImageError:
+                os.remove(icon170)
+                return render_template('register.html', **params,
+                                       form=form, message='Cannot identify image file')
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
@@ -327,7 +336,9 @@ def edit_profile_page():
     if change_icon_form.validate_on_submit():
         if 'icon' in form_type:
             icon_data = change_icon_form.icon.data.read()
+            check_have_icon = True
             if user.icon_id == -1:
+                check_have_icon = False
                 icon_id = randrange(10000000, 100000000)
                 path = 'static/users_icons'
                 while True:
@@ -338,13 +349,32 @@ def edit_profile_page():
                 user.icon_id = icon_id
             icon64 = f'static/users_icons/icon64/icon64_user_{user.icon_id}.png'
             icon170 = f'static/users_icons/icon170/icon170_user_{user.icon_id}.png'
-            with open(icon64, 'wb') as file:
-                file.write(icon_data)
+            old_icon_data = None
+            try:
+                if check_have_icon:
+                    old_icon_data = open(icon64, 'rb').read()
+                open(icon64, 'wb').write(icon_data)
                 resize_image(icon64, (64, 64))
+            except UnidentifiedImageError:
+                if check_have_icon:
+                    open(icon64, 'wb').write(old_icon_data)
+                else:
+                    os.remove(icon64)
+                return render_template('edit_profile.html', **params, message='Cannot identify image file')
+            del old_icon_data
 
-            with open(icon170, 'wb') as file:
-                file.write(icon_data)
+            old_icon_data = None
+            try:
+                if check_have_icon:
+                    old_icon_data = open(icon170, 'rb').read()
+                open(icon170, 'wb').write(icon_data)
                 resize_image(icon170, (170, 170))
+            except UnidentifiedImageError:
+                if check_have_icon:
+                    open(icon170, 'wb').write(old_icon_data)
+                else:
+                    os.remove(icon170)
+                return render_template('edit_profile.html', **params, message='Cannot identify image file')
         elif 'password' in form_type:
             if not user.check_password(change_password_form.old_password.data):
                 return render_template('edit_profile.html', **params, password_error_message='Old password is wrong')
