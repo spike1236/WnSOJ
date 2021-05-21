@@ -254,12 +254,12 @@ def logout():
 
 
 @app.route('/')
-def abf10g9():
+def home_page_redirect():
     return redirect('/home')
 
 
 @app.route('/home')
-def cad30f2():
+def home_page():
     params = page_params(1, 'Home')
     params['card1'] = url_for('static', filename='img/main_page_card1.svg')
     params['card2'] = url_for('static', filename='img/main_page_card2.svg')
@@ -268,13 +268,13 @@ def cad30f2():
 
 
 @app.route('/faq')
-def aef1cf7():
+def faq_page():
     params = page_params(4, 'FAQ')
     return render_template('faq.html', **params)
 
 
 @app.route('/profile/<username>')
-def fa908cb(username):
+def profile_page(username):
     session = db_session.create_session()
     user = session.query(User).filter(User.username == username).first()
     if user:
@@ -311,7 +311,7 @@ def fa908cb(username):
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
-def dacf14e():
+def edit_profile_page():
     session = db_session.create_session()
     params = page_params(-1, 'Edit Profile')
     change_password_form = ChangePasswordForm()
@@ -357,13 +357,13 @@ def dacf14e():
         else:
             assert 0
         session.commit()
-        return redirect(url_for('dacf14e'))
+        return redirect(url_for('edit_profile_page'))
     return render_template('edit_profile.html', **params)
 
 
 @app.route('/add_problem', methods=['GET', 'POST'])
 @login_required
-def ca14df3():
+def add_problem_page():
     if current_user.account_type != 2:
         abort(403)
     session = db_session.create_session()
@@ -399,7 +399,7 @@ def ca14df3():
 
 
 @app.route('/submissions')
-def e07baf1():
+def submissions_list_page():
     session = db_session.create_session()
     username = request.args.get('username')
     if username:
@@ -428,7 +428,7 @@ def e07baf1():
 
 
 @app.route('/problems')
-def a1bo2ba():
+def problems_list_page():
     params = page_params(2, 'Problems')
     with open('data/problems/PROBLEMS_CATEGORIES.json') as file:
         params['categories'] = json.loads(file.read())['categories']
@@ -436,7 +436,7 @@ def a1bo2ba():
 
 
 @app.route('/problems/<category>')
-def a098bfo(category):
+def problems_by_category_page(category):
     session = db_session.create_session()
     params = page_params(2, 'Problems')
     if category == 'problemset':
@@ -460,7 +460,7 @@ def a098bfo(category):
 
 
 @app.route('/problem/<problem_id>', methods=['GET', 'POST'])
-def c6daf80(problem_id: str):
+def problem_page(problem_id: str):
     session = db_session.create_session()
     if problem_id.isdecimal():
         problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
@@ -520,7 +520,7 @@ def c6daf80(problem_id: str):
 
 
 @app.route('/problem/<problem_id>/editorial')
-def c9adf5e(problem_id: str):
+def problem_editorial_page(problem_id: str):
     session = db_session.create_session()
     if problem_id.isdecimal():
         problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
@@ -538,7 +538,7 @@ def c9adf5e(problem_id: str):
 
 
 @app.route('/problem/<problem_id>/submissions')
-def dacf91b(problem_id: str):
+def submissions_on_problem_list(problem_id: str):
     session = db_session.create_session()
     if problem_id.isdecimal():
         problem = session.query(Problem).filter(Problem.id == int(problem_id)).first()
@@ -592,7 +592,7 @@ def dacf91b(problem_id: str):
 
 
 @app.route('/submission/<submission_id>')
-def a9f1ce7(submission_id: str):
+def submission_page(submission_id: str):
     sesion = db_session.create_session()
     submission = sesion.query(Submission).filter(Submission.id == int(submission_id)).first()
     if submission:
@@ -608,7 +608,7 @@ def a9f1ce7(submission_id: str):
 
 
 @app.route('/jobs')
-def d7afa34():
+def jobs_list_page():
     session = db_session.create_session()
     username = request.args.get('user')
     params = page_params(3, 'Jobs')
@@ -624,7 +624,7 @@ def d7afa34():
 
 
 @app.route('/job/<job_id>')
-def dfa4910(job_id: str):
+def job_page(job_id: str):
     session = db_session.create_session()
     job = session.query(Job).filter(Job.id == int(job_id)).first()
     if job is None:
@@ -636,7 +636,7 @@ def dfa4910(job_id: str):
 
 @app.route('/add_job', methods=['GET', 'POST'])
 @login_required
-def fc4da11():
+def add_job_page():
     session = db_session.create_session()
     if current_user.account_type == 0:
         abort(403)
@@ -675,7 +675,7 @@ def fc4da11():
 
 @app.route('/job/<job_id>/edit', methods=['GET', 'POST'])
 @login_required
-def acb12df(job_id: str):
+def job_edit_page(job_id: str):
     session = db_session.create_session()
     job = session.query(Job).filter(Job.id == int(job_id)).first()
     if job is None:
@@ -710,7 +710,7 @@ def acb12df(job_id: str):
 
 @app.route('/job/<job_id>/delete')
 @login_required
-def bfac219(job_id: str):
+def job_delete_page(job_id: str):
     session = db_session.create_session()
     job = session.query(Job).filter(Job.id == int(job_id)).first()
     if job is None:
