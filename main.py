@@ -175,9 +175,6 @@ def register():
     form = RegisterForm()
     params = page_params(-1, 'Registration')
     if form.validate_on_submit():
-        if form.password.data != form.password_repeat.data:
-            return render_template('register.html', **params, form=form,
-                                   password_error_message="Passwords are not same")
         if db_sess.query(User).filter(User.username == form.username.data).first():
             return render_template('register.html', **params, form=form, username_error_message="User already exists")
         if db_sess.query(User).filter(User.email == form.email.data).first():
@@ -189,6 +186,12 @@ def register():
         if uname.isdecimal():
             return render_template('register.html', **params,
                                    form=form, username_error_message='Username must contain at least 1 latin letter')
+        if form.password.data != form.password_repeat.data:
+            return render_template('register.html', **params, form=form,
+                                   password_error_message="Passwords are not same")
+        if len(form.password.data) < 8:
+            return render_template('register.html', **params, form=form,
+                                   password_error_message="Password is too short")
         if form.phone_number.data and check_phone_number(form.phone_number.data) == 'error':
             return render_template('register.html', **params,
                                    form=form, phone_number_error_message='Invalid phone number')
@@ -674,6 +677,15 @@ def add_job_page():
     params = page_params(3, 'Add Job')
     params['form'] = form
     if form.validate_on_submit():
+        if len(form.title.data) > 30:
+            params['message'] = 'Length of title is too long.'
+            return render_template('add_job.html', **params)
+        if len(form.short_info.data) > 100:
+            params['message'] = 'Length of short info is too long.'
+            return render_template('add_job.html', **params)
+        if len(form.whole_info.data) > 300:
+            params['message'] = 'Length of whole info is too long.'
+            return render_template('add_job.html', **params)
         job_id = 1
         if session.query(Job).first():
             job_id = session.query(sqlalchemy_func.max(Job.id)).one()[0] + 1
