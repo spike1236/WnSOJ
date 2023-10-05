@@ -1,1 +1,0 @@
-n=int(input())a=list(map(int,input().split()))q=int(input())for i in range(q):  request=list(map(int,input().split()))  if request[0] == 1:	  a[request[1]-1]=request[2]  else:    request[1] -= 1    print(sum(a[request[1]:request[2]:]))
