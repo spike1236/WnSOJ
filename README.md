@@ -10,12 +10,13 @@ pip install -r requirements.txt
 ```
 2. Download a [MinGW](https://sourceforge.net/projects/mingw) compiler;
 3. Add folder ```MinGW\bin``` to PATH;
-4. Launch server:
+4. Watch the [video](https://youtu.be/WXRyMGD6RH8) to learn more about project;
+5. Launch server:
 ```shell
 py main.py
 ```
-5. Open [Main page](http://127.0.0.1:5000)
-6. Enjoy project! :sunglasses:
+6. Open [Main page](http://127.0.0.1:5000)
+7. Enjoy project! :sunglasses:
 
 ## About Project
 ### Problems and submissions
