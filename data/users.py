@@ -16,12 +16,12 @@ class User(SqlAlchemyBase, SerializerMixin, UserMixin):
     account_type = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     icon_id = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
     phone_number = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    jobs = orm.relation('Job', back_populates='user')
-    submissions = orm.relation('Submission', back_populates='user')
-    problems_solved = orm.relation("Problem",
+    jobs = orm.relationship('Job', back_populates='user')
+    submissions = orm.relationship('Submission', back_populates='user')
+    problems_solved = orm.relationship("Problem",
                                    secondary="users_to_solved_problems",
                                    backref="users_solved", lazy='subquery')
-    problems_unsolved = orm.relation("Problem",
+    problems_unsolved = orm.relationship("Problem",
                                      secondary="users_to_unsolved_problems",
                                      backref="users_unsolved", lazy='subquery')
 

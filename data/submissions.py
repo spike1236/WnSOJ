@@ -15,5 +15,5 @@ class Submission(SqlAlchemyBase, SerializerMixin):
     send_time = sqlalchemy.Column(sqlalchemy.String, default=datetime.datetime.now().strftime("%d/%b/%Y  %H:%M  UTC+6"))
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     problem_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("problems.id"))
-    user = orm.relation("User")
-    problem = orm.relation("Problem")
+    user = orm.relationship("User")
+    problem = orm.relationship("Problem")
