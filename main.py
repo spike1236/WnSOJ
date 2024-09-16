@@ -7,6 +7,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from data import db_session
 from data.users import User
 from data.problems import Problem
+from data.problem_categories import Category
 from data.submissions import Submission
 from data.jobs import Job
 from forms.register_form import RegisterForm
@@ -151,12 +152,12 @@ def error_401(error):
 
 
 # remove cache
-@app.after_request
-def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
-    response.headers["Expires"] = '0'
-    response.headers["Pragma"] = "no-cache"
-    return response
+# @app.after_request
+# def after_request(response):
+#     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+#     response.headers["Expires"] = '0'
+#     response.headers["Pragma"] = "no-cache"
+#     return response
 
 
 @login_manager.user_loader
@@ -411,8 +412,7 @@ def add_problem_page():
             id=problem_id,
             time_limit=form.time_limit.data,
             memory_limit=form.memory_limit.data,
-            title=form.title.data,
-            category=form.category.data
+            title=form.title.data
         )
         os.mkdir(f'data/problems/{problem_id}')
         with ZipFile(BytesIO(form.test_data.data.read()), 'r') as file:
@@ -426,6 +426,11 @@ def add_problem_page():
                              for line in form.editorial.data.read().decode('utf-8', errors='strict')])
         session.add(problem)
         session.commit()
+        cats = form.category.data.split(', ')
+        for sn_cat in cats:
+            cat = session.query(Category).filter(Category.short_name == sn_cat).first()
+            if cat:
+                problem.categories.append(cat)
         return redirect('/problems')
     else:
         return render_template('add_problem.html', **params)
@@ -463,9 +468,9 @@ def submissions_list_page():
 @app.route('/problems')
 def problems_list_page():
     params = page_params(2, 'Problems')
-    with open('data/problems/PROBLEMS_CATEGORIES.json') as file:
-        params['categories'] = json.loads(file.read())['categories']
-        return render_template('problems_list.html', **params, show_categories=1)
+    session = db_session.create_session()
+    params['categories'] = session.query(Category).all()
+    return render_template('problems_list.html', **params, show_categories=1)
 
 
 @app.route('/problems/<category>')
@@ -476,19 +481,10 @@ def problems_by_category_page(category):
         problems = session.query(Problem).all()
         params['problems'] = problems
         return render_template('problems_list.html', **params)
-    d = json.loads(open('data/problems/PROBLEMS_CATEGORIES.json').read())['categories']
-    long_category = ''
-    for i in d:
-        if i['short_name'] == category:
-            long_category = i['long_name']
-    if long_category == '':
+    cat = session.query(Category).filter(Category.short_name == category).first()
+    if cat is None:
         abort(404)
-    problems = session.query(Problem).all()
-    res = []
-    for i in problems:
-        if long_category in i.category.split(', '):
-            res.append(i)
-    params['problems'] = res
+    params['problems'] = list(cat.problems)
     return render_template('problems_list.html', **params)
 
 
@@ -535,7 +531,7 @@ def problem_page(problem_id: str):
                         file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict') for line in code])
                         file.close()
                     else:
-                        submission.language = 'GNU C++14'
+                        submission.language = 'GNU C++17'
                         file = open(f'{path}/source.cpp', 'wb')
                         file.writelines([line.rstrip('\n').encode(encoding='utf-8', errors='strict') for line in code])
                         file.close()
@@ -664,6 +660,8 @@ def job_page(job_id: str):
         abort(404)
     params = page_params(3, f'Job {job.id}')
     params['job'] = job
+    with open(f'data/jobs/{job.job_id}.md') as file:
+        params['whole_info'] = file.read()
     return render_template('job.html', **params)
 
 
@@ -701,14 +699,13 @@ def add_job_page():
             id=job_id,
             title=form.title.data,
             user_id=current_user.id,
+            short_info=form.short_info.data,
             job_id=job_random_id
         )
         session.add(job)
         session.commit()
-        os.mkdir(f'static/jobs/{job_random_id}')
-        with open(f'static/jobs/{job_random_id}/short_info.md', 'w') as file:
-            file.write(form.short_info.data)
-        with open(f'static/jobs/{job_random_id}/whole_info.md', 'w') as file:
+        os.mkdir(f'data/jobs/{job_random_id}')
+        with open(f'data/jobs/{job_random_id}.md', 'w') as file:
             file.write(form.whole_info.data)
         return redirect('/jobs')
     else:
@@ -731,19 +728,15 @@ def job_edit_page(job_id: str):
     params['form'] = form
     if request.method == 'GET':
         form.title.data = job.title
-        with open(f'static/jobs/{job.job_id}/short_info.md', 'rb') as file:
-            text = file.read()
-            text = text.replace(b'\r', b'')
-            form.short_info.data = text.decode('utf-8', errors='strict')
-        with open(f'static/jobs/{job.job_id}/whole_info.md', 'rb') as file:
+        form.short_info.data = job.short_info
+        with open(f'data/jobs/{job.job_id}.md', 'rb') as file:
             text = file.read()
             text = text.replace(b'\r', b'')
             form.whole_info.data = text.decode('utf-8', errors='strict')
     if form.validate_on_submit():
         job.title = form.title.data
-        with open(f'static/jobs/{job.job_id}/short_info.md', 'w') as file:
-            file.write(form.short_info.data)
-        with open(f'static/jobs/{job.job_id}/whole_info.md', 'w') as file:
+        job.short_info = form.short_info.data
+        with open(f'data/jobs/{job.job_id}.md', 'w') as file:
             file.write(form.whole_info.data)
         session.commit()
         return redirect('/jobs')
@@ -761,9 +754,8 @@ def job_delete_page(job_id: str):
         abort(403)
     if current_user.account_type == 1 and job not in current_user.jobs:
         abort(403)
-    os.remove(f'static/jobs/{job.job_id}/short_info.md')
-    os.remove(f'static/jobs/{job.job_id}/whole_info.md')
-    os.rmdir(f'static/jobs/{job.job_id}')
+    os.remove(f'data/jobs/{job.job_id}.md')
+    os.rmdir(f'data/jobs/{job.job_id}')
     session.delete(job)
     session.commit()
     return redirect('/jobs')

@@ -107,7 +107,13 @@
                     <tr>
                         <th scope="row">{{ item.id }}</th>
                         <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
-                        <td>{{ item.category }}</td>
+                        {% set cats = [] %}
+                        {% for cat in item.categories %}
+                            {% if cat.long_name != 'Problemset' %}
+                                {% set _ = cats.append(cat.long_name) %}
+                            {% endif %}
+                        {% endfor %}
+                        <td>{{ cats|join(', ') }}</td>
                         {% if current_user in item.users_solved %}
                             <td class="alert-success"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
                         {% elif current_user in item.users_unsolved %}
@@ -120,7 +126,13 @@
                     <tr>
                         <th scope="row">{{ item.id }}</th>
                         <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
-                        <td>{{ item.category }}</td>
+                        {% set cats = [] %}
+                        {% for cat in item.categories %}
+                            {% if cat.long_name != 'Problemset' %}
+                                {% set _ = cats.append(cat.long_name) %}
+                            {% endif %}
+                        {% endfor %}
+                        <td>{{ cats|join(', ') }}</td>
                         <td><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
                     </tr>
                 {% endif %}

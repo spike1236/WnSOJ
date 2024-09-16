@@ -23,5 +23,5 @@ class Problem(SqlAlchemyBase, SerializerMixin):
     title = sqlalchemy.Column(sqlalchemy.String)
     time_limit = sqlalchemy.Column(sqlalchemy.Float)
     memory_limit = sqlalchemy.Column(sqlalchemy.Integer)
-    category = sqlalchemy.Column(sqlalchemy.String)
     submissions = orm.relationship('Submission', back_populates='problem')
+    categories = orm.relationship("Category", secondary="problems_to_categories", backref="problems", lazy='subquery')

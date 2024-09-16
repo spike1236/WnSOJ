@@ -9,7 +9,7 @@ var editor = CodeMirror.fromTextArea(x, {
 	readOnly: true,
 	tabSize: 4,
 	theme: "default",
-	mode: ((lang == 'GNU C++14') ? "text/x-c++src" : "text/x-python")
+	mode: ((lang == 'GNU C++17') ? "text/x-c++src" : "text/x-python")
 });
 
 editor.setSize(null, 600);

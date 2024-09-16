@@ -9,5 +9,6 @@ class Job(SqlAlchemyBase, SerializerMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     job_id = sqlalchemy.Column(sqlalchemy.Integer)
     title = sqlalchemy.Column(sqlalchemy.String)
+    short_info = sqlalchemy.Column(sqlalchemy.String)
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship("User")

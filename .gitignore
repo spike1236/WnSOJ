@@ -1,4 +1,3 @@
-data/submissions/*
 *.pptx
 __pycache__/
 .venv/

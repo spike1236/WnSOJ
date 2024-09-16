@@ -25,7 +25,7 @@ function selectTheme() {
 
 function selectLanguage() {
     var language = language_select.options[language_select.selectedIndex].innerHTML;
-    if (language == "GNU C++14") {
+    if (language == "GNU C++17") {
         editor.setOption("mode", "text/x-c++src");
     } else {
         editor.setOption("mode", "text/x-python");

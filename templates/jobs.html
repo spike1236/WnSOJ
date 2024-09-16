@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <!-- Zero-MD -->
-    <script type="module" src="/static/plugins/ZeroMD/zero-md.min.js"></script>
-
+    <script src="/static/js/marked.min.js"></script>
     <div class="container" style="margin-top: 10px">
         <div class="row">
             <div class="col-md-1">
@@ -14,15 +12,23 @@
             {% endif %}
             </div>
         </div>
+        {% set ptr = 0 %}
         {% for item in jobs %}
             <div class="card" style="width: 69rem">
                 <h5 class="card-header">{{ item.title }}</h5>
                 <div class="card-body">
-                    <p class="card-text"><zero-md src="static/jobs/{{ item.job_id }}/short_info.md"></zero-md></p>
+                    <div class="card-text" id="content-{{ item.job_id }}">{{ item.short_info }}</div>
                     <a href="/job/{{ item.id }}" class="card-link">Read more...</a>
                 </div>
                 <h5 class="card-footer"><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></h5>
             </div>
         {% endfor %}
+        <script>
+            const elements = document.querySelectorAll("[id^='content-']");
+            console.log(elements)
+            for(const x of elements) {
+                x.innerHTML = marked.parse(x.innerHTML);
+            }
+        </script>
     </div>
 {% endblock %}
