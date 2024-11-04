@@ -15,12 +15,12 @@ class ProblemResource(Resource):
         abort_if_problem_not_found(problem_id)
         session = db_session.create_session()
         problem = session.query(Problem).filter(Problem.id == problem_id).first()
-        return jsonify({'problem': problem.to_dict(only=('title', 'category', 'time_limit', 'memory_limit'))})
+        return jsonify({'problem': problem.to_dict(only=('title', 'categories.short_name', 'time_limit', 'memory_limit'))})
 
 
 class ProblemsListResource(Resource):
     def get(self):
         session = db_session.create_session()
         problems = session.query(Problem).all()
-        return jsonify({'problems': [item.to_dict(only=('title', 'category', 'time_limit', 'memory_limit'))
+        return jsonify({'problems': [item.to_dict(only=('title', 'categories.short_name', 'time_limit', 'memory_limit'))
                                      for item in problems]})
