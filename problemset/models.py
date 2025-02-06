@@ -25,9 +25,12 @@ class Submission(models.Model):
         ('CE', 'Compilation Error'),
         ('RE', 'Runtime Error'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='submissions')
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name='submissions')
-    verdict = models.CharField(max_length=20, choices=VERDICT_CHOICES, default='In queue')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='submissions')
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE,
+                                related_name='submissions')
+    verdict = models.CharField(max_length=20, choices=VERDICT_CHOICES,
+                               default='In queue')
     time = models.IntegerField(default=0)
     memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)

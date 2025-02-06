@@ -1,0 +1,15 @@
+form.css_form {
+    max-width: 500px;
+    justify-content: center;
+    margin: auto;
+    margin-top: 2%;
+}
+.alert {
+    left: 0;
+    margin: auto;
+    right: 0;
+    text-align: center;
+    top: 3em;
+    width: 40%;
+    z-index: 1;
+}

@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 
+
 class Job(models.Model):
     job_id = models.IntegerField()
     title = models.CharField(max_length=200)

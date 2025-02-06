@@ -1,0 +1,13 @@
+asgiref==3.8.1
+astroid==3.3.8
+dill==0.3.9
+Django==5.1.5
+isort==5.13.2
+Jinja2==3.1.5
+MarkupSafe==3.0.2
+mccabe==0.7.0
+pep8==1.7.1
+pillow==11.1.0
+platformdirs==4.3.6
+sqlparse==0.5.3
+tomlkit==0.13.2
