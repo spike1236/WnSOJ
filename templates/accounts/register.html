@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mx-auto">
+    <form class="css_form" action="" method="post" enctype="multipart/form-data">
+        {{ csrf_input }}
+        <h3 align="center" class="ml-2">Register in WnSOJ</h3>
+        <br>
+        <p>
+            {{ form.fullname.label }}
+            <br>
+            {{ form.fullname }}
+            {% for error in form.fullname.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.username.label }}
+            <br>
+            {{ form.username }}
+            {% for error in form.username.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+            <p class="text-danger">{{ username_error_message or '' }}</p>
+        </p>
+        <p>
+            {{ form.email.label }}
+            <br>
+            {{ form.email }}
+            {% for error in form.email.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+            <p class="text-danger">{{ email_error_message or '' }}</p>
+        </p>
+        <p>
+            {{ form.password1.label }}
+            <br>
+            {{ form.password1 }}
+            {% for error in form.password1.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+            <p class="text-danger">{{ password_error_message or '' }}</p>
+        </p>
+        <p>
+            {{ form.password2.label }}
+            <br>
+            {{ form.password2 }}
+            {% for error in form.password2.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.phone_number.label }}
+            <br>
+            {{ form.phone_number }}
+            {% for error in form.phone_number.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+            <p class="text-danger">{{ phone_number_error_message or '' }}</p>
+        </p>
+        <p>{{ form.is_business.label }} {{ form.is_business }}</p>
+        <div class="form-group">
+            {{ form.icon.label }}<br>
+            {{ form.icon }}
+            {% for error in form.icon.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </div>
+        <br>
+        <input type="submit" class="btn btn-primary btn-lg" value="Submit">
+    </form>
+</div>
+{% endblock %}
