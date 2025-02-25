@@ -2,34 +2,36 @@
 
 {% block content %}
 <div class="sign_up_form mx-auto">
-    <form class="css_form" action="" method="post" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        {{ form.csrf_token }}
+    <form class="css_form" action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
         <h3 align="center" class="ml-2">Log in WnSOJ</h3>
         <br>
         <p>
             {{ form.username.label }}
             <br>
-            {{ form.username(class="form-control") }}
-            {% for error in form.username.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
+            {{ form.username }}
+            {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                    <p class="alert alert-danger mt-2" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            {% endif %}
         </p>
         <p>
             {{ form.password.label }}
             <br>
-            {{ form.password(class="form-control", type="password") }}
-            {% for error in form.password.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
+            {{ form.password }}
+            {% if form.password.errors %}
+                {% for error in form.password.errors %}
+                    <p class="alert alert-danger mt-2" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            {% endif %}
         </p>
-        <p>{{ form.remember.label }} {{ form.remember() }}</p>
+        <p>{{ form.remember.label }} {{ form.remember }}</p>
         <br>
-        <p>{{ form.submit(type="submit", class="btn btn-primary btn-lg") }}</p>
+        <input type="submit" class="btn btn-primary btn-lg" value="Submit">
     </form>
 </div>
 {% endblock %}

@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, ChangeIconForm, PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from PIL import Image
+from django.middleware.csrf import get_token
 
 
 def register(request):
@@ -23,13 +25,9 @@ def register(request):
                                                              'users_icons',
                                                              'icon64'))
                 filename = fs.save(f'icon64_user_{user.icon_id}.png', icon)
-                # Resize image using PIL
-                from PIL import Image
                 img = Image.open(fs.path(filename))
                 img = img.resize((64, 64))
                 img.save(fs.path(filename))
-
-                # Similarly for icon170
                 fs_170 = FileSystemStorage(location=os.path.join(settings.BASE_DIR,
                                                                  'media',
                                                                  'users_icons',
@@ -65,8 +63,11 @@ def user_login(request):
         messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
-    return render(request, 'accounts/login.html', {'form': form, 'navbar_item_id': -1,
-                                                   'title': 'Authorization | WnSOJ'})
+    return render(request, 'accounts/login.html', {
+        'form': form,
+        'navbar_item_id': -1,
+        'title': 'Authorization | WnSOJ',
+    })
 
 
 @login_required
@@ -80,21 +81,14 @@ def edit_profile(request):
     user = request.user
     if request.method == 'POST':
         if 'password_change_submit' in request.POST:
-            old_password = request.POST.get('old_password')
-            new_password = request.POST.get('password')
-            new_password_repeat = request.POST.get('password_repeat')
-            if not user.check_password(old_password):
-                messages.error(request, "Old password is incorrect.")
-            elif new_password != new_password_repeat:
-                messages.error(request, "Passwords do not match.")
-            elif len(new_password) < 8:
-                messages.error(request, "Password is too short.")
-            else:
-                user.set_password(new_password)
-                user.save()
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
                 login(request, user)
                 messages.success(request, "Password updated successfully.")
                 return redirect('edit_profile')
+            else:
+                messages.error(request, "Please correct the errors below.")
         elif 'icon_change_submit' in request.POST:
             icon = request.FILES.get('icon')
             if icon:
@@ -103,7 +97,6 @@ def edit_profile(request):
                                                              'users_icons',
                                                              'icon64'))
                 filename = fs.save(f'icon64_user_{user.icon_id}.png', icon)
-                from PIL import Image
                 img = Image.open(fs.path(filename))
                 img = img.resize((64, 64))
                 img.save(fs.path(filename))
@@ -119,8 +112,12 @@ def edit_profile(request):
                 img170.save(fs_170.path(filename_170))
                 messages.success(request, "Icon updated successfully.")
                 return redirect('edit_profile')
+
     return render(request, 'accounts/edit_profile.html', {
         'user': user,
         'navbar_item_id': -1,
-        'title': 'Edit Profile | WnSOJ'
+        'title': 'Edit Profile | WnSOJ',
+        'change_icon_form': ChangeIconForm(),
+        'password_change_form': PasswordChangeForm(user),
+        'profile_icon': user.icon170_url,
     })

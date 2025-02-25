@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="margin-top: 10px">
+    <div class="problem_content mx-5 pt-4">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="text-center">
+                    <img src="{{ profile_icon }}">
+                </div>
+                <form action="" method="post" id="icon_change" name="icon_change" enctype="multipart/form-data">{{ csrf_input }}
+                    {{ change_icon_form.icon.label }}<br>
+                    {{ change_icon_form.icon }}
+                    {% for error in change_icon_form.icon.errors %}
+                        <p class="alert alert-danger mt-2 pl-3 small p-1" role="alert">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                    <input type="submit" class="btn btn-primary btn-lg" name="change_icon_submit" value="Submit">
+                </form>
+                <hr class="my-4">
+                <div class="mt-3">
+                    <a href="/profile/{{ user.username }}"><h4 align="center">{{ user.username }}</h4></a>
+                </div>
+            </div>
+            <div class="col-md-7 pl-0 border ml-2">
+                <form class="css_form mt-4" action="" method="post" id="password_change" name="password_change">{{ csrf_input }}
+                    <p>
+                        {{ password_change_form.old_password.label }}
+                        <br>
+                        {{ password_change_form.old_password }}
+                        {% for error in password_change_form.old_password.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ password_change_form.new_password1.label }}
+                        <br>
+                        {{ password_change_form.new_password1 }}
+                        {% for error in password_change_form.new_password1.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <p>
+                        {{ password_change_form.new_password2.label }}
+                        <br>
+                        {{ password_change_form.new_password2 }}
+                        {% for error in password_change_form.new_password2.errors %}
+                            <p class="alert alert-danger mt-2" role="alert">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </p>
+                    <input type="submit" class="btn btn-primary btn-lg" name="password_change_submit" value="Submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
