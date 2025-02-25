@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mx-auto">
+    <form class="css_form" action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
+        <h3 align="center" class="ml-2">Add problem</h3>
+        <br>
+        <p>
+            {{ form.title.label }}
+            <br>
+            {{ form.title(class="form-control") }}
+            {% for error in form.title.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.category.label }}
+            <br>
+            {{ form.category(class="form-control") }}
+            {% for error in form.category.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.time_limit.label }}
+            <br>
+            {{ form.time_limit(class="form-control") }}
+            {% for error in form.time_limit.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.memory_limit.label }}
+            <br>
+            {{ form.memory_limit(class="form-control") }}
+            {% for error in form.memory_limit.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.statement.label }}
+            {{ form.statement(class="form-control-file", type="file") }}
+            {% for error in form.statement.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.editorial.label }}
+            {{ form.editorial(class="form-control-file", type="file") }}
+            {% for error in form.editorial.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.test_data.label }}
+            {{ form.test_data(class="form-control-file", type="file") }}
+            {% for error in form.test_data.errors %}
+                <p class="alert alert-danger mt-2" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
+        <br>
+        <p>{{ form.submit(type="submit", class="btn btn-primary btn-lg") }}</p>
+    </form>
+</div>
+{% endblock %}

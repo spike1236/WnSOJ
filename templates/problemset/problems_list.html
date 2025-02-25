@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .card {
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 10px;
+    }
+</style>
+{% if show_categories is defined %}
+    <div class="container" style="margin-top: 15px">
+        <div class="row">
+            <div class="col-md-2">
+                <h2>Categories</h2>
+            </div>
+            <div class="col-md-4">
+            {% if current_user.is_authenticated and current_user.account_type == 2 %}
+                <a href="/add_problem"><button class="btn btn-primary">Add Problem</button></a>
+            {% endif %}
+            </div>
+        </div>
+        <hr class="my-4">
+        {% for item in categories %}
+            {% if loop.index >= 3 %}
+                {% if loop.index % 3 == 0 %}
+                    {% set first = categories[loop.index - 3] %}
+                    {% set second = categories[loop.index - 2] %}
+                    {% set third = categories[loop.index - 1] %}
+                    <div class="row justify-content-center">
+                        <div class="col-sm-3">
+                            <div class="card h-100 text-center">
+                                <a href="/problems/{{ first['short_name'] }}"><img class="card-img-top h-70" src="{{ first['img_url'] }}"></a>
+                                <div class="card-body">
+                                    <h4 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card h-100 text-center">
+                                <a href="/problems/{{ second['short_name'] }}"><img class="card-img-top h-70" src="{{ second['img_url'] }}"></a>
+                                <div class="card-body">
+                                    <h4 class="card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card h-100 text-center">
+                                <a href="/problems/{{ third['short_name'] }}"><img class="card-img-top h-70" src="{{ third['img_url'] }}"></a>
+                                <div class="card-body">
+                                    <h4 class="card-footer"><a href="/problems/{{ third['short_name'] }}">{{ third['long_name'] }}</a></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if categories|length % 3 == 1 %}
+            {% set first = categories[categories|length - 1] %}
+                <div class="row justify-content-center">
+                    <div class="col-sm-3">
+                        <div class="card h-100 text-center">
+                            <a href="/problems/{{ first['short_name'] }}"><img class="card-img-top h-70" src="{{ first['img_url'] }}"></a>
+                            <div class="card-body">
+                                <h4 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% elif categories|length % 3 == 2 %}
+            {% set first = categories[categories|length - 2] %}
+            {% set second = categories[categories|length - 1] %}
+                <div class="row justify-content-center">
+                    <div class="col-sm-3">
+                        <div class="card h-100 text-center">
+                            <a href="/problems/{{ first['short_name'] }}"><img class="card-img-top h-70" src="{{ first['img_url'] }}"></a>
+                            <div class="card-body">
+                                <h4 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="card h-100 text-center">
+                            <a href="/problems/{{ second['short_name'] }}"><img class="card-img-top h-70" src="{{ second['img_url'] }}"></a>
+                            <div class="card-body">
+                                <h4 class="card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endif %}
+    </div>
+{% else %}
+    <table class="table table-bordered table-striped text-center container" style="margin-top: 15px">
+        <thead>
+            <tr>
+                <th scope="col" style="width: 15%">ID</th>
+                <th scope="col" style="width: 40%">Title</th>
+                <th scope="col" style="width: 30%">Category</th>
+                <th scope="col" style="width: 15%">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in problems %}
+                {% if current_user.is_authenticated %}
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
+                        {% set cats = [] %}
+                        {% for cat in item.categories %}
+                            {% if cat.long_name != 'Problemset' %}
+                                {% set _ = cats.append(cat.long_name) %}
+                            {% endif %}
+                        {% endfor %}
+                        <td>{{ cats|join(', ') }}</td>
+                        {% if current_user in item.users_solved %}
+                            <td class="alert-success"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% elif current_user in item.users_unsolved %}
+                            <td class="alert-danger"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% else %}
+                            <td><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                        {% endif %}
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th scope="row">{{ item.id }}</th>
+                        <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
+                        {% set cats = [] %}
+                        {% for cat in item.categories %}
+                            {% if cat.long_name != 'Problemset' %}
+                                {% set _ = cats.append(cat.long_name) %}
+                            {% endif %}
+                        {% endfor %}
+                        <td>{{ cats|join(', ') }}</td>
+                        <td><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% endblock %}

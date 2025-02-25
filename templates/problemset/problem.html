@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- MathJax -->
+    <script id="MathJax-script" async src="/static/plugins/MathJax/tex-mml-chtml.js"></script>
+
+    <!-- CodeMirror -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/darcula.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/eclipse.css">
+    <script src="/static/plugins/CodeMirror/lib/codemirror.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/clike/clike.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/python/python.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
+
+    <div class="container">
+        {% include "problem_navbar.html" %}
+        <h2 style="margin: 10px" align="left">{{ problem.title }}</h2>
+        <p style="margin: 10px"><b>Time limit per test:</b> {{ problem.time_limit }} sec</p>
+        <p style="margin: 10px"><b>Memory limit per test:</b> {{ problem.memory_limit }} MB</p>
+        <hr class="my-4">
+        {% include problem_statement %}
+        <hr class="my-4">
+        <h3 style="margin: 10px">Code Editor</h3>
+        <form action="" method="post" id="all-form" style="margin: 10px">{{ csrf_input }}
+            <div class="d-flex justify-content-right">
+                <div class="col-md-2 ml-auto px-0" align="center">
+                    <p class="mt-2" align="right">Select Language: </p>
+                </div>
+                <div class="mx-1">
+                    <div class="container">
+                        <select id="language" name="language" class="form-control ml-auto" onchange="selectLanguage()">
+                            <option selected value="cpp">GNU C++17</option>
+                            <option value="py">Python 3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-2 px-0" style="max-width: 100px;" align="center">
+                    <p class="mt-2" align="right">Select theme: </p>
+                </div>
+                <div class="col-md-2">
+                    <select id="theme_select" class="form-control ml-auto" onchange="selectTheme()">
+                        <option selected value="0">default</option>
+                        <option value="1">darcula</option>
+                        <option value="2">eclipse</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-1">
+                <textarea id="code_area" name="code_area"></textarea>
+                <br>
+                <p>{{ form.submit(type="submit", class="btn btn-primary ml-2") }}</p>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript" src="/static/js/main.js"></script>
+{% endblock %}

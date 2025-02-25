@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from .models import User
 
 
@@ -22,9 +23,3 @@ class LoginForm(AuthenticationForm):
 
 class ChangeIconForm(forms.Form):
     icon = forms.ImageField()
-
-
-class ChangePasswordForm(forms.Form):
-    old_password = forms.CharField(widget=forms.PasswordInput)
-    new_password1 = forms.CharField(widget=forms.PasswordInput)
-    new_password2 = forms.CharField(widget=forms.PasswordInput)

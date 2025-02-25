@@ -6,6 +6,9 @@ __pycache__/
 local_settings.py
 media
 
+# Ruff stuff
+.ruff_cache
+
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
 *.py[cod]
