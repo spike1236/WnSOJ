@@ -6,6 +6,9 @@ __pycache__/
 local_settings.py
 media
 
+### PostgreSQL ###
+.pgpass
+
 # Ruff stuff
 .ruff_cache
 
