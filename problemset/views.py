@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import path
 from django.templatetags.static import static
 
+
 def home_page(request):
     context = {
         'title': 'Home | WnSOJ',
