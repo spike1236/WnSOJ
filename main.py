@@ -66,7 +66,7 @@ def main():
     processes.append(process)
     process.start()
     del process
-    process = multiprocessing.Process(target=app.run(host='127.0.0.1', port='5000'))
+    process = multiprocessing.Process(target=app.run(host='0.0.0.0', port='5000'))
     processes.append(process)
     process.start()
     del process
