@@ -53,14 +53,19 @@
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-column align-items-center text-center">
-                <img src="{{ icon_170 }}">
+                <img src="{{ profile_user.icon170_url }}">
                 <div class="mt-3">
-                  <h4>{{ user.username }}</h4>
+                  <h4>{{ profile_user.username }}</h4>
                 </div>
-                {% if user.account_type != 0 %}
-                    <a class="btn btn-primary" href="/jobs?author={{ user.username }}">{{ user.username }}'s jobs</a>
+                {% if profile_user.account_type != 0 %}
+                    <a class="btn btn-primary" href="/jobs?author={{ profile_user.username }}">{{ user.username }}'s jobs</a>
                 {% endif %}
-              </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                  {% if user.id == profile_user.id %}
+                    <a href="/edit_profile" class="btn btn-primary">Edit profile</a>
+                  {% endif %}
+                </div>
             </div>
           </div>
         </div>
@@ -71,21 +76,21 @@
                 <div class="col-sm-3">
                   <h6 class="mb-0">Full Name</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">{{ user.fullname }}</div>
+                <div class="col-sm-9 text-secondary">{{ profile_user.first_name + " " + profile_user.last_name }}</div>
               </div>
               <hr>
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Email</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">{{ user.email }}</div>
+                <div class="col-sm-9 text-secondary">{{ profile_user.email }}</div>
               </div>
               <hr>
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Phone</h6>
                 </div>
-                <div class="col-sm-9 text-secondary">{{ user.phone_number }}</div>
+                <div class="col-sm-9 text-secondary">{{ profile_user.phone_number }}</div>
               </div>
             </div>
           </div>
