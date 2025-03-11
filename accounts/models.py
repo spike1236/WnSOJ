@@ -16,13 +16,13 @@ class User(AbstractUser):
     def icon64_url(self):
         if self.icon_id == -1:
             return 'media/users_icons/icon64/default.png'
-        return f'media/users_icons/icon64/icon64_user_{self.icon_id}.png'
+        return f'media/users_icons/icon64/{self.icon_id}.png'
 
     @property
     def icon170_url(self):
         if self.icon_id == -1:
             return 'media/users_icons/icon170/default.png'
-        return f'media/users_icons/icon170/icon170_user_{self.icon_id}.png'
+        return f'media/users_icons/icon170/{self.icon_id}.png'
 
     def save(self, *args, **kwargs):
         if self.icon_id == -1 and self.icon:

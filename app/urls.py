@@ -28,4 +28,5 @@ urlpatterns = [
     path('login/', accounts_views.user_login, name='login'),
     path('logout/', accounts_views.user_logout, name='logout'),
     path('edit_profile/', accounts_views.edit_profile, name='edit_profile'),
+    path('profile/<username>/', accounts_views.profile, name='profile'),
 ]

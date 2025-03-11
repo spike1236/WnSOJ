@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .forms import RegisterForm, LoginForm, ChangeIconForm, PasswordChangeForm
 from django.contrib import messages
@@ -7,7 +7,8 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from PIL import Image
-from django.middleware.csrf import get_token
+from .models import User
+from problemset.models import Submission
 
 
 def register(request):
@@ -96,7 +97,7 @@ def edit_profile(request):
                                                              'static',
                                                              'users_icons',
                                                              'icon64'))
-                filename = fs.save(f'icon64_user_{user.icon_id}.png', icon)
+                filename = fs.save(f'{user.icon_id}.png', icon)
                 img = Image.open(fs.path(filename))
                 img = img.resize((64, 64))
                 img.save(fs.path(filename))
@@ -106,7 +107,7 @@ def edit_profile(request):
                                                                  'users_icons',
                                                                  'icon170'))
                 icon.seek(0)
-                filename_170 = fs_170.save(f'icon170_user_{user.icon_id}.png', icon)
+                filename_170 = fs_170.save(f'{user.icon_id}.png', icon)
                 img170 = Image.open(fs_170.path(filename_170))
                 img170 = img170.resize((170, 170))
                 img170.save(fs_170.path(filename_170))
@@ -119,5 +120,38 @@ def edit_profile(request):
         'title': 'Edit Profile | WnSOJ',
         'change_icon_form': ChangeIconForm(),
         'password_change_form': PasswordChangeForm(user),
-        'profile_icon': user.icon170_url,
     })
+
+
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+
+    params = {
+        'navbar_item_id': -1,
+        'title': f"{user.username}'s profile",
+        'profile_user': user,
+    }
+
+    submissions = Submission.objects.filter(user_id=user.id).order_by('-id')
+    all_submissions = list(submissions)
+    params['submissions'] = all_submissions[:10]
+
+    params['cnt'] = {
+        'AC': 0,
+        'CE': 0,
+        'WA': 0,
+        'TLE': 0,
+        'MLE': 0,
+        'RE': 0
+    }
+
+    for submission in all_submissions:
+        if submission.verdict == 'In queue':
+            continue
+        if submission.verdict == 'AC':
+            params['cnt']['AC'] += 1
+        else:
+            ver = submission.verdict.split()
+            params['cnt'][ver[0]] += 1
+
+    return render(request, 'accounts/profile.html', params)
