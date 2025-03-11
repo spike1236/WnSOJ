@@ -19,6 +19,8 @@ from django.urls import path
 from problemset import views as problem_views
 from jobboard import views as job_views
 from accounts import views as accounts_views
+from . import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,4 +31,4 @@ urlpatterns = [
     path('logout/', accounts_views.user_logout, name='logout'),
     path('edit_profile/', accounts_views.edit_profile, name='edit_profile'),
     path('profile/<username>/', accounts_views.profile, name='profile'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
