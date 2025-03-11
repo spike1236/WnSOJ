@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import random
+from django.conf import settings
+import os
 
 
 class User(AbstractUser):
@@ -8,21 +10,25 @@ class User(AbstractUser):
     account_type = models.IntegerField(default=0)
     icon_id = models.IntegerField(null=True)
     problems_solved = models.ManyToManyField('problemset.Problem',
-                                             related_name='users_solved')
+                                             related_name='users_solved',
+                                             blank=True)
     problems_unsolved = models.ManyToManyField('problemset.Problem',
-                                               related_name='users_unsolved')
+                                               related_name='users_unsolved',
+                                               blank=True)
 
     @property
     def icon64_url(self):
         if self.icon_id == -1:
-            return 'media/users_icons/icon64/default.png'
-        return f'media/users_icons/icon64/{self.icon_id}.png'
+            return os.path.join(settings.MEDIA_URL, 'users_icons/icon64/default.png')
+        return os.path.join(settings.MEDIA_URL,
+                            f'users_icons/icon64/{self.icon_id}.png')
 
     @property
     def icon170_url(self):
         if self.icon_id == -1:
-            return 'media/users_icons/icon170/default.png'
-        return f'media/users_icons/icon170/{self.icon_id}.png'
+            return os.path.join(settings.MEDIA_URL, 'users_icons/icon170/default.png')
+        return os.path.join(settings.MEDIA_URL,
+                            f'users_icons/icon170/{self.icon_id}.png')
 
     def save(self, *args, **kwargs):
         if self.icon_id == -1 and self.icon:

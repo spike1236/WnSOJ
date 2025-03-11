@@ -66,7 +66,7 @@
             </ul>
             <ul class="navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                    <a href="/profile/{{ user.username }}"><img src="/{{ user.icon64_url }}" class="rounded-circle" title="{{ user.username }}"></a>
+                    <a href="/profile/{{ user.username }}"><img src="{{ user.icon64_url }}" class="rounded-circle" title="{{ user.username }}"></a>
                         <li class="nav-item dropdown ml-3">
                             <a class="nav-link dropdown-toggle" href="#" id="profile_dropdown" data-toggle="dropdown"
                                aria-haspopup="true" aria-expanded="false"></a>
