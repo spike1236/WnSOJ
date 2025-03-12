@@ -17,7 +17,7 @@ class Problem(models.Model):
 
 class Submission(models.Model):
     VERDICT_CHOICES = [
-        ('In queue', 'In queue'),
+        ('IQ', 'In queue'),
         ('AC', 'Accepted'),
         ('WA', 'Wrong Answer'),
         ('TLE', 'Time Limit Exceeded'),

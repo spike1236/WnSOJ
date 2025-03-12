@@ -103,11 +103,12 @@ def problem(request, problem_id):
                     problem=problem,
                     user=request.user,
                     language=form.cleaned_data['language'],
-                    code=form.cleaned_data['code']
+                    code=form.cleaned_data['code'],
+                    verdict='IQ'
                 )
                 submission.save()
-                return redirect(f'/problem/{problem_id}/submissions?\
-                                user={request.user.username}')
+                username = request.user.username
+                return redirect(f'/problem/{problem_id}/submissions?user={username}')
             else:
                 return redirect('login')
     return render(request, 'problemset/problem.html', {
@@ -116,4 +117,41 @@ def problem(request, problem_id):
         'problem': problem,
         'problem_statement': f'problems/{problem_id}/statement.html',
         'form': form
+    })
+
+
+def problem_submissions_list(request, problem_id):
+    problem = get_object_or_404(models.Problem, id=problem_id)
+    submissions = models.Submission.objects.filter(problem=problem)
+
+    if 'user' in request.GET and request.GET['user']:
+        submissions = submissions.filter(user__username=request.GET['user'])
+
+    if 'verdict' in request.GET and request.GET['verdict']:
+        submissions = submissions.filter(verdict=request.GET['verdict'])
+
+    submissions = submissions.order_by('-id')[:10]
+
+    return render(request, 'problemset/submissions_list.html', {
+        'title': 'Submissions | WnSOJ',
+        'navbar_item_id': 2,
+        'submissions': list(submissions)
+    })
+
+
+def submissions(request):
+    submissions = models.Submission.objects.all()
+
+    if 'user' in request.GET and request.GET['user']:
+        submissions = submissions.filter(user__username=request.GET['user'])
+
+    if 'verdict' in request.GET and request.GET['verdict']:
+        submissions = submissions.filter(verdict=request.GET['verdict'])
+
+    submissions = submissions.order_by('-id')[:10]
+
+    return render(request, 'problemset/submissions_list.html', {
+        'title': 'Submissions | WnSOJ',
+        'navbar_item_id': 2,
+        'submissions': list(submissions)
     })
