@@ -35,4 +35,6 @@ urlpatterns = [
     path('add_problem/', problem_views.add_problem, name='add_problem'),
     path('problem/<int:problem_id>/', problem_views.problem, name='problem'),
     path('problems/<category>/', problem_views.problems, name='problems'),
+    path('problem/<int:problem_id>/submissions', problem_views.problem_submissions_list, name='problem_submissions_list'),
+    path('submissions/', problem_views.submissions, name='submissions'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
