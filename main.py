@@ -166,7 +166,7 @@ def load_user(user_id):
     return session.query(User).get(user_id)
 
 
-# -------------------------------------------- REGISTER/LOGIN/LOGOUT START--------------------------------------------
+# -------------------------------------------- AUTHENTICATION START--------------------------------------------
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -263,7 +263,7 @@ def logout():
     logout_user()
     return redirect("/")
 
-# -------------------------------------------- REGISTER/LOGIN/LOGOUT END--------------------------------------------
+# -------------------------------------------- AUTHENTICATION END--------------------------------------------
 
 
 @app.route('/')
