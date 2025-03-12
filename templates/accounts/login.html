@@ -39,10 +39,10 @@
                     
                     <!-- Remember me checkbox -->
                     <div class="accounts-form-group mb-3">
-                        <div class="accounts-checkbox custom-checkbox">
-                            <label for="{{ form.remember.id_for_label }}" class="accounts-checkbox-label form-check-label">
+                        <div class="form-check d-flex align-items-center">
+                            {{ form.remember }}
+                            <label for="{{ form.remember.id_for_label }}" class="form-check-label ms-2">
                                 {{ form.remember.label }}
-                                {{ form.remember }}
                             </label>
                         </div>
                     </div>
