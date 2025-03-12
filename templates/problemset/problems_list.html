@@ -111,18 +111,18 @@
                             <th scope="row">{{ item.id }}</th>
                             <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
                             {% set cats = [] %}
-                            {% for cat in item.categories %}
+                            {% for cat in item.categories.all() %}
                                 {% if cat.long_name != 'Problemset' %}
                                     {% set _ = cats.append(cat.long_name) %}
                                 {% endif %}
                             {% endfor %}
                             <td>{{ cats|join(', ') }}</td>
-                            {% if user in item.users_solved %}
-                                <td class="status-solved problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
-                            {% elif user in item.users_unsolved %}
-                                <td class="status-attempted problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                            {% if user in item.users_solved.all() %}
+                                <td class="status-solved problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
+                            {% elif user in item.users_unsolved.all() %}
+                                <td class="status-attempted problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
                             {% else %}
-                                <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                                <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
                             {% endif %}
                         </tr>
                     {% else %}
@@ -130,13 +130,13 @@
                             <th scope="row">{{ item.id }}</th>
                             <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
                             {% set cats = [] %}
-                            {% for cat in item.categories %}
+                            {% for cat in item.categories.all() %}
                                 {% if cat.long_name != 'Problemset' %}
                                     {% set _ = cats.append(cat.long_name) %}
                                 {% endif %}
                             {% endfor %}
                             <td>{{ cats|join(', ') }}</td>
-                            <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved|length }}</a></td>
+                            <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
                         </tr>
                     {% endif %}
                 {% endfor %}

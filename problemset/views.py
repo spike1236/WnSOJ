@@ -20,13 +20,22 @@ def home_page(request):
     })
 
 
-def problems(request):
-    categories = list(models.Category.objects.all())
+def categories(request):
     return render(request, 'problemset/problems_list.html', {
         'title': 'Problems | WnSOJ',
         'navbar_item_id': 2,
-        'categories': categories,
+        'categories': list(models.Category.objects.all()),
         'show_categories': True
+    })
+
+
+def problems(request, category):
+    problems = models.Problem.objects.filter(categories__short_name=category)
+    cat = models.Category.objects.get(short_name=category)
+    return render(request, 'problemset/problems_list.html', {
+        'title': f'{cat.long_name} | WnSOJ',
+        'navbar_item_id': 2,
+        'problems': list(problems.all())
     })
 
 
@@ -82,3 +91,12 @@ def add_problem(request):
     return render(request, 'problemset/add_problem.html', context)
 
 
+def problem(request, problem_id):
+    problem = models.Problem.objects.get(id=problem_id)
+    return render(request, 'problemset/problem.html', {
+        'title': f'{problem.title} | WnSOJ',
+        'navbar_item_id': 2,
+        'problem': problem,
+        'problem_statement': f'problems/{problem_id}/statement.html',
+        'form': SubmitForm()
+    })
