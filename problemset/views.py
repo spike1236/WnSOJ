@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import path
 from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
@@ -92,11 +92,28 @@ def add_problem(request):
 
 
 def problem(request, problem_id):
-    problem = models.Problem.objects.get(id=problem_id)
+    problem = get_object_or_404(models.Problem, id=problem_id)
+    form = SubmitForm()
+    if request.method == "POST":
+        form = SubmitForm(request.POST, request.FILES)
+        print(form.is_bound, form.errors)
+        if form.is_valid():
+            if request.user.is_authenticated:
+                submission = models.Submission(
+                    problem=problem,
+                    user=request.user,
+                    language=form.cleaned_data['language'],
+                    code=form.cleaned_data['code']
+                )
+                submission.save()
+                return redirect(f'/problem/{problem_id}/submissions?\
+                                user={request.user.username}')
+            else:
+                return redirect('login')
     return render(request, 'problemset/problem.html', {
         'title': f'{problem.title} | WnSOJ',
         'navbar_item_id': 2,
         'problem': problem,
         'problem_statement': f'problems/{problem_id}/statement.html',
-        'form': SubmitForm()
+        'form': form
     })

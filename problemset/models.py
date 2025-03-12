@@ -34,4 +34,5 @@ class Submission(models.Model):
     time = models.IntegerField(default=0)
     memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)
+    code = models.CharField(max_length=65536, default='')
     send_time = models.DateTimeField(auto_now_add=True)

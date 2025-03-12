@@ -2,62 +2,64 @@
 
 {% block content %}
 <div class="container py-4">
-    <div class="card shadow border-0 rounded-lg mx-auto" style="max-width: 500px;">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0 text-center">Log in to WnSOJ</h3>
-        </div>
-        <div class="card-body p-4">
-            <form action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
-                <!-- Username field -->
-                <div class="mb-3">
-                    <label for="{{ form.username.id_for_label }}" class="form-label fw-bold">{{ form.username.label }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa fa-user"></i></span>
-                        {{ form.username }}
-                    </div>
-                    {% for error in form.username.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
-                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+    <div class="accounts-container">
+        <div class="accounts-card shadow border-0 rounded-lg mx-auto">
+            <div class="accounts-card-header bg-primary text-white">
+                <h3 class="mb-0 text-center">Log in to WnSOJ</h3>
+            </div>
+            <div class="accounts-card-body p-4">
+                <form action="" method="post" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
+                    <!-- Username field -->
+                    <div class="accounts-form-group mb-3">
+                        <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }}</label>
+                        <div class="accounts-input-group input-group">
+                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            {{ form.username }}
                         </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Password field -->
-                <div class="mb-3">
-                    <label for="{{ form.password.id_for_label }}" class="form-label fw-bold">{{ form.password.label }}</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                        {{ form.password }}
+                        {% for error in form.username.errors %}
+                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        {% endfor %}
                     </div>
-                    {% for error in form.password.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
-                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                    
+                    <!-- Password field -->
+                    <div class="accounts-form-group mb-3">
+                        <label for="{{ form.password.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password.label }}</label>
+                        <div class="accounts-input-group input-group">
+                            <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                            {{ form.password }}
                         </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Remember me checkbox -->
-                <div class="mb-3">
-                    <div class="custom-checkbox">
-                        <label for="{{ form.remember.id_for_label }}" class="form-check-label">
-                            {{ form.remember.label }}
-                            {{ form.remember }}
-                        </label>
+                        {% for error in form.password.errors %}
+                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        {% endfor %}
                     </div>
-                </div>
-                
-                <!-- Submit button -->
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5">
-                        <i class="fa fa-sign-in-alt me-2"></i>Login
-                    </button>
-                </div>
-                
-                <!-- Register link -->
-                <div class="text-center mt-4">
-                    <p>Don't have an account? <a href="/register" class="text-primary">Register now</a></p>
-                </div>
-            </form>
+                    
+                    <!-- Remember me checkbox -->
+                    <div class="accounts-form-group mb-3">
+                        <div class="accounts-checkbox custom-checkbox">
+                            <label for="{{ form.remember.id_for_label }}" class="accounts-checkbox-label form-check-label">
+                                {{ form.remember.label }}
+                                {{ form.remember }}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit button -->
+                    <div class="accounts-submit d-grid gap-2 d-md-flex justify-content-md-center">
+                        <button type="submit" class="accounts-btn btn btn-primary btn-lg px-5">
+                            <i class="fa fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </div>
+                    
+                    <!-- Register link -->
+                    <div class="accounts-footer text-center mt-4">
+                        <p>Don't have an account? <a href="/register" class="accounts-link text-primary">Register now</a></p>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
