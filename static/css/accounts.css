@@ -71,7 +71,35 @@
     font-size: 0.9rem;
 }
 
-.accounts-checkbox {
+.form-check {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.form-check input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.accounts-checkbox,
+.custom-checkbox {
     display: flex;
     align-items: center;
 }
@@ -79,11 +107,9 @@
 .accounts-checkbox-label {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: auto;
-    cursor: pointer;
     margin-bottom: 0;
     font-weight: normal;
+    cursor: pointer;
 }
 
 .accounts-checkbox input[type="checkbox"] {
@@ -93,8 +119,28 @@
     cursor: pointer;
 }
 
+/* Override any conflicting styles */
+.accounts-checkbox input[type="checkbox"],
+.custom-checkbox input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    margin-left: 0 !important; 
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+}
+
 .accounts-submit {
     margin-top: 1.5rem;
+}
+
+.accounts-submit button {
+    width: auto;
 }
 
 .accounts-btn {

@@ -110,10 +110,10 @@
                     
                     <!-- Business account checkbox -->
                     <div class="accounts-form-group mb-3">
-                        <div class="custom-checkbox">
-                            <label for="{{ form.is_business.id_for_label }}" class="form-check-label">
+                        <div class="form-check d-flex align-items-center">
+                            {{ form.is_business }}
+                            <label for="{{ form.is_business.id_for_label }}" class="form-check-label ms-2">
                                 {{ form.is_business.label }}
-                                {{ form.is_business }}
                             </label>
                         </div>
                     </div>
