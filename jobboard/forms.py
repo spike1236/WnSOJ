@@ -11,3 +11,4 @@ class AddJobForm(forms.ModelForm):
             'short_info': forms.Textarea(attrs={'class': 'form-control'}),
             'whole_info': forms.Textarea(attrs={'class': 'form-control'}),
         }
+

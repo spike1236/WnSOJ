@@ -1,78 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="mx-auto">
-    <form class="css_form" action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
-        <h3 align="center" class="ml-2">Add problem</h3>
-        <br>
-        <p>
-            {{ form.title.label }}
-            <br>
-            {{ form.title(class="form-control") }}
-            {% for error in form.title.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.category.label }}
-            <br>
-            {{ form.category(class="form-control") }}
-            {% for error in form.category.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.time_limit.label }}
-            <br>
-            {{ form.time_limit(class="form-control") }}
-            {% for error in form.time_limit.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.memory_limit.label }}
-            <br>
-            {{ form.memory_limit(class="form-control") }}
-            {% for error in form.memory_limit.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.statement.label }}
-            {{ form.statement(class="form-control-file", type="file") }}
-            {% for error in form.statement.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.editorial.label }}
-            {{ form.editorial(class="form-control-file", type="file") }}
-            {% for error in form.editorial.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.test_data.label }}
-            {{ form.test_data(class="form-control-file", type="file") }}
-            {% for error in form.test_data.errors %}
-                <p class="alert alert-danger mt-2" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <br>
-        <p>{{ form.submit(type="submit", class="btn btn-primary btn-lg") }}</p>
-    </form>
+<div class="container py-4">
+    <div class="card shadow border-0 rounded-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0 text-center">Add New Problem</h3>
+        </div>
+        <div class="card-body p-4">
+            <form action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
+                <div class="mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">{{ form.category.label }}</label>
+                    {{ form.category }}
+                    <div class="form-text text-muted">{{ form.category.help_text }}</div>
+                    {% for error in form.category.errors %}
+                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.memory_limit.id_for_label }}" class="form-label fw-bold">{{ form.memory_limit.label }}</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fa fa-microchip"></i></span>
+                            {{ form.memory_limit }}
+                            <span class="input-group-text">MB</span>
+                        </div>
+                        {% for error in form.memory_limit.errors %}
+                            <div class="alert alert-danger mt-2 py-2" role="alert">
+                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.editorial.id_for_label }}" class="form-label fw-bold">{{ form.editorial.label }}</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fa fa-file-code"></i></span>
+                        {{ form.editorial }}
+                    </div>
+                    <div class="form-text text-muted">{{ form.editorial.help_text }}</div>
+                    {% for error in form.editorial.errors %}
+                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fa fa-save me-2"></i>Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

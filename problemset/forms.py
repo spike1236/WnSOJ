@@ -16,6 +16,11 @@ class AddProblemForm(forms.Form):
         model = Problem
         fields = ['title', 'time_limit', 'memory_limit']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class SubmitForm(forms.Form):
     LANGUAGE_CHOICES = [
@@ -24,3 +29,8 @@ class SubmitForm(forms.Form):
     ]
     language = forms.ChoiceField(choices=LANGUAGE_CHOICES)
     code = forms.CharField(widget=forms.Textarea)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})

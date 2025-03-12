@@ -16,10 +16,25 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2', 'fullname',
                   'phone_number', 'is_business']
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class LoginForm(AuthenticationForm):
     remember = forms.BooleanField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class ChangeIconForm(forms.Form):
     icon = forms.ImageField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
