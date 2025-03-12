@@ -14,20 +14,24 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
 
-    <!-- Bootstrap JS -->
-    <script src="/static/js/jquery_1.11.1_min.js"></script>
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/bootstrap.js"></script>
-
     <title>{{ title }}</title>
 </head>
 <body>
-    <!-- Flash messages -->
+    <!-- Fixed-position flash messages container -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="alert-container">
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <i class="fa fa-info-circle me-2"></i>{{ message }}
+            <div class="alert alert-floating alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {% if message.tags == 'success' %}
+                    <i class="fa fa-check-circle me-2"></i>
+                {% elif message.tags == 'error' or message.tags == 'danger' %}
+                    <i class="fa fa-exclamation-circle me-2"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                {% else %}
+                    <i class="fa fa-info-circle me-2"></i>
+                {% endif %}
+                {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
@@ -35,10 +39,10 @@
     {% endif %}
     
     <!-- Navigation -->
-    <header class="mb-4">
-        <nav class="navbar navbar-dark bg-primary navbar-expand-lg shadow-sm">
+    <header class="mb-2">
+        <nav class="navbar navbar-dark bg-primary navbar-expand-lg shadow-sm py-0">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="/">
+                <a class="navbar-brand fw-bold py-0" href="/">
                     <i class="fa fa-code me-2"></i>WnSOJ
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
@@ -47,24 +51,24 @@
                 </button>
                 
                 <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav me-auto mb-0">
                         <li class="nav-item">
-                            <a class="nav-link {% if navbar_item_id == 1 %}active{% endif %}" href="/home">
+                            <a class="nav-link py-0 {% if navbar_item_id == 1 %}active{% endif %}" href="/home">
                                 <i class="fa fa-home me-1"></i>Home
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if navbar_item_id == 2 %}active{% endif %}" href="/problems">
+                            <a class="nav-link py-0 {% if navbar_item_id == 2 %}active{% endif %}" href="/problems">
                                 <i class="fa fa-tasks me-1"></i>Problems
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if navbar_item_id == 3 %}active{% endif %}" href="/jobs">
+                            <a class="nav-link py-0 {% if navbar_item_id == 3 %}active{% endif %}" href="/jobs">
                                 <i class="fa fa-briefcase me-1"></i>Jobs
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if navbar_item_id == 4 %}active{% endif %}" href="/faq">
+                            <a class="nav-link py-0 {% if navbar_item_id == 4 %}active{% endif %}" href="/faq">
                                 <i class="fa fa-question-circle me-1"></i>FAQ
                             </a>
                         </li>
@@ -72,35 +76,35 @@
                     
                     <div class="navbar-nav ms-auto">
                         {% if user.is_authenticated %}
-                            <div class="nav-item dropdown me-2">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profile_dropdown" 
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                   <img src="{{ user.icon64_url }}" class="rounded-circle me-2" style="width: 32px; height: 32px;" 
+                            <div class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center py-0" href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                   <img src="{{ user.icon64_url }}" class="rounded-circle me-2" style="width: 24px; height: 24px;" 
                                         alt="{{ user.username }}" title="{{ user.username }}">
                                    <span class="d-none d-sm-inline">{{ user.username }}</span>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profile_dropdown">
-                                    <a class="dropdown-item" href="/profile/{{ user.username }}">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    <li><a class="dropdown-item" href="/profile/{{ user.username }}">
                                         <i class="fa fa-user me-2"></i>Profile
-                                    </a>
-                                    <a class="dropdown-item" href="/edit_profile">
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/edit_profile">
                                         <i class="fa fa-edit me-2"></i>Edit Profile
-                                    </a>
-                                    <a class="dropdown-item" href="/submissions?username={{ user.username }}">
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/submissions?username={{ user.username }}">
                                         <i class="fa fa-code me-2"></i>Submissions
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="/logout">
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/logout">
                                         <i class="fa fa-sign-out-alt me-2"></i>Logout
-                                    </a>
-                                </div>
+                                    </a></li>
+                                </ul>
                             </div>
                         {% else %}
-                            <div class="d-flex">
-                                <a class="btn btn-outline-light me-2" href="/login">
+                            <div class="d-flex py-1">
+                                <a class="btn btn-outline-light btn-sm py-0 me-2" href="/login">
                                     <i class="fa fa-sign-in-alt me-1"></i>Login
                                 </a>
-                                <a class="btn btn-success" href="/register">
+                                <a class="btn btn-success btn-sm py-0" href="/register">
                                     <i class="fa fa-user-plus me-1"></i>Register
                                 </a>
                             </div>
@@ -140,5 +144,27 @@
             </div>
         </div>
     </footer>
+    
+    <!-- jQuery must be loaded before Bootstrap JS -->
+    <script src="/static/js/jquery_1.11.1_min.js"></script>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Simple alert auto-dismiss script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss alerts after 5 seconds
+            const alerts = document.querySelectorAll('.alert-floating');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    alert.classList.add('fade-out');
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
 </html>
