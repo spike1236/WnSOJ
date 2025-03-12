@@ -11,8 +11,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css"/>
+    <!-- Modular CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/home.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/accounts.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/problems.css"/>
 
     <title>{{ title }}</title>
 </head>
@@ -40,7 +43,7 @@
     
     <!-- Navigation -->
     <header class="mb-2">
-        <nav class="navbar navbar-dark bg-primary navbar-expand-lg shadow-sm py-0">
+        <nav class="navbar navbar-dark bg-primary navbar-expand-lg shadow-sm py-0 fixed-top">
             <div class="container">
                 <a class="navbar-brand fw-bold py-0" href="/">
                     <i class="fa fa-code me-2"></i>WnSOJ
@@ -116,7 +119,7 @@
     </header>
     
     <!-- Main Content -->
-    <main>
+    <main class="content-with-fixed-nav">
         {% block content %} {% endblock %}
     </main>
     

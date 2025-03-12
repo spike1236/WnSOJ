@@ -2,49 +2,49 @@
 {% block content %}
 <div class="container py-4">
     <!-- Hero section -->
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold text-primary mb-3">Welcome to WnSOJ!</h1>
-        <p class="lead text-secondary mb-4">Your platform for programming challenges, problem-solving, and career opportunities</p>
-        <hr class="my-4 divider">
+    <div class="home-hero text-center mb-5">
+        <h1 class="home-hero-title display-4 fw-bold text-primary mb-3">Welcome to WnSOJ!</h1>
+        <p class="home-hero-subtitle lead text-secondary mb-4">Your platform for programming challenges, problem-solving, and career opportunities</p>
+        <hr class="home-divider my-4">
     </div>
     
     <!-- Feature cards -->
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card h-100 feature-card">
-                <div class="card-img-container">
+    <div class="home-features row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="home-feature-card card h-100">
+                <div class="home-card-img-container card-img-container">
                     <a href="/problems"><img class="card-img-top" src="{{ card1 }}" alt="Practice coding"></a>
                 </div>
-                <div class="card-body text-center">
-                    <h4 class="card-title"><i class="fa fa-code me-2"></i>Solve Problems</h4>
-                    <p class="card-text">Challenge yourself with programming and mathematical problems across various difficulty levels and categories.</p>
-                    <a href="/problems" class="btn btn-outline-primary mt-2">Start Coding</a>
+                <div class="home-card-body card-body text-center">
+                    <h4 class="home-card-title card-title"><i class="fa fa-code me-2"></i>Solve Problems</h4>
+                    <p class="home-card-text card-text">Challenge yourself with programming and mathematical problems across various difficulty levels and categories.</p>
+                    <a href="/problems" class="home-btn btn btn-outline-primary mt-2">Start Coding</a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 feature-card">
-                <div class="card-img-container">
+        <div class="col">
+            <div class="home-feature-card card h-100">
+                <div class="home-card-img-container card-img-container">
                     <a href="/jobs"><img class="card-img-top" src="{{ card2 }}" alt="Find jobs"></a>
                 </div>
-                <div class="card-body text-center">
-                    <h4 class="card-title"><i class="fa fa-briefcase me-2"></i>Get a Job</h4>
-                    <p class="card-text">Discover exciting career opportunities. Connect with employers and take your next professional step forward.</p>
-                    <a href="/jobs" class="btn btn-outline-primary mt-2">Browse Jobs</a>
+                <div class="home-card-body card-body text-center">
+                    <h4 class="home-card-title card-title"><i class="fa fa-briefcase me-2"></i>Get a Job</h4>
+                    <p class="home-card-text card-text">Discover exciting career opportunities. Connect with employers and take your next professional step forward.</p>
+                    <a href="/jobs" class="home-btn btn btn-outline-primary mt-2">Browse Jobs</a>
                 </div>
             </div>
         </div>
         
-        <div class="col-md-4">
-            <div class="card h-100 feature-card">
-                <div class="card-img-container">
+        <div class="col">
+            <div class="home-feature-card card h-100">
+                <div class="home-card-img-container card-img-container">
                     <a href="/problems"><img class="card-img-top" src="{{ card3 }}" alt="Improve skills"></a>
                 </div>
-                <div class="card-body text-center">
-                    <h4 class="card-title"><i class="fa fa-trophy me-2"></i>Be the Best</h4>
-                    <p class="card-text">Sharpen your skills, climb the leaderboards, and establish yourself as a top programmer in the community.</p>
-                    <a href="/problems" class="btn btn-outline-primary mt-2">Start Competing</a>
+                <div class="home-card-body card-body text-center">
+                    <h4 class="home-card-title card-title"><i class="fa fa-trophy me-2"></i>Be the Best</h4>
+                    <p class="home-card-text card-text">Sharpen your skills, climb the leaderboards, and establish yourself as a top programmer in the community.</p>
+                    <a href="/problems" class="home-btn btn btn-outline-primary mt-2">Start Competing</a>
                 </div>
             </div>
         </div>

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 {% if show_categories is defined %}
-    <div class="container">
-        <div class="category-header">
-            <h2 class="section-header">Problem Categories</h2>
+    <div class="container problem-container">
+        <div class="problem-category-header category-header">
+            <h2 class="problem-section-header section-header">Problem Categories</h2>
             {% if user.is_authenticated and user.account_type == 0 %}
-                <a href="/add_problem"><button class="btn btn-primary">Add Problem</button></a>
+                <a href="/add_problem"><button class="problem-btn btn btn-primary">Add Problem</button></a>
             {% endif %}
         </div>
         
@@ -15,52 +15,52 @@
                     {% set first = categories[loop.index - 3] %}
                     {% set second = categories[loop.index - 2] %}
                     {% set third = categories[loop.index - 1] %}
-                    <div class="row category-section">
+                    <div class="row problem-category-section category-section">
                         <div class="col-sm-4">
-                            <div class="card h-100">
-                                <a href="/problems/{{ first['short_name'] }}" class="card-img-container">
+                            <div class="problem-category-card card h-100">
+                                <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
                                     <img class="card-img-top" src="/static/{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
                                 </a>
-                                <div class="card-body">
-                                    <h5 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
+                                <div class="problem-card-body card-body">
+                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="card h-100">
-                                <a href="/problems/{{ second['short_name'] }}" class="card-img-container">
+                            <div class="problem-category-card card h-100">
+                                <a href="/problems/{{ second['short_name'] }}" class="problem-card-img-container card-img-container">
                                     <img class="card-img-top" src="{{ second['img_url'] }}" alt="{{ second['long_name'] }}">
                                 </a>
-                                <div class="card-body">
-                                    <h5 class="card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
+                                <div class="problem-card-body card-body">
+                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="card h-100">
-                                <a href="/problems/{{ third['short_name'] }}" class="card-img-container">
+                            <div class="problem-category-card card h-100">
+                                <a href="/problems/{{ third['short_name'] }}" class="problem-card-img-container card-img-container">
                                     <img class="card-img-top" src="{{ third['img_url'] }}" alt="{{ third['long_name'] }}">
                                 </a>
-                                <div class="card-body">
-                                    <h5 class="card-footer"><a href="/problems/{{ third['short_name'] }}">{{ third['long_name'] }}</a></h5>
+                                <div class="problem-card-body card-body">
+                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ third['short_name'] }}">{{ third['long_name'] }}</a></h5>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="categories-divider"></div>
+                    <div class="problem-categories-divider categories-divider"></div>
                 {% endif %}
             {% endif %}
         {% endfor %}
         {% if categories|length % 3 == 1 %}
             {% set first = categories[categories|length - 1] %}
-                <div class="row category-section">
+                <div class="row problem-category-section category-section">
                     <div class="col-sm-4">
-                        <div class="card h-100">
-                            <a href="/problems/{{ first['short_name'] }}" class="card-img-container">
+                        <div class="problem-category-card card h-100">
+                            <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
                                 <img class="card-img-top" src="/static/{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
                             </a>
-                            <div class="card-body">
-                                <h5 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
+                            <div class="problem-card-body card-body">
+                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
                             </div>
                         </div>
                     </div>
@@ -68,24 +68,24 @@
         {% elif categories|length % 3 == 2 %}
             {% set first = categories[categories|length - 2] %}
             {% set second = categories[categories|length - 1] %}
-                <div class="row category-section">
+                <div class="row problem-category-section category-section">
                     <div class="col-sm-4">
-                        <div class="card h-100">
-                            <a href="/problems/{{ first['short_name'] }}" class="card-img-container">
+                        <div class="problem-category-card card h-100">
+                            <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
                                 <img class="card-img-top" src="{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
                             </a>
-                            <div class="card-body">
-                                <h5 class="card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
+                            <div class="problem-card-body card-body">
+                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        <div class="card h-100">
-                            <a href="/problems/{{ second['short_name'] }}" class="card-img-container">
+                        <div class="problem-category-card card h-100">
+                            <a href="/problems/{{ second['short_name'] }}" class="problem-card-img-container card-img-container">
                                 <img class="card-img-top" src="{{ second['img_url'] }}" alt="{{ second['long_name'] }}">
                             </a>
-                            <div class="card-body">
-                                <h5 class="card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
+                            <div class="problem-card-body card-body">
+                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
                             </div>
                         </div>
                     </div>
@@ -93,8 +93,8 @@
         {% endif %}
     </div>
 {% else %}
-    <div class="container">
-        <h2 class="section-header">Problem List</h2>
+    <div class="container problem-container">
+        <h2 class="problem-section-header section-header">Problem List</h2>
         <table class="table table-bordered problem-table">
             <thead>
                 <tr>

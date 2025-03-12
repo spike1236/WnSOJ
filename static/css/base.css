@@ -1,0 +1,180 @@
+/* Base styling for elements shared across all pages */
+
+.navbar.fixed-top {
+    z-index: 1030;
+}
+
+body {
+    padding-top: 55px;
+}
+
+.content-with-fixed-nav {
+    padding-top: 1rem;
+}
+
+/* Alert styles */
+.alert {
+    border-left: 4px solid #dc3545;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1.25rem;
+    text-align: center;
+}
+
+.form-alert {
+    left: 0;
+    margin: auto;
+    right: 0;
+    text-align: center;
+    top: 3em;
+    width: 100%;
+    z-index: 1;
+}
+
+/* Adjust alert container to appear above fixed navbar */
+.alert-container {
+    position: fixed;
+    top: 70px; /* Position below the navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 600px;
+    z-index: 1040; /* Higher than navbar */
+    pointer-events: none;
+}
+
+.alert-floating {
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 12px 20px;
+    opacity: 0.95;
+    pointer-events: auto;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.alert-floating.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.alert-floating.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-floating.alert-danger,
+.alert-floating.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert-floating.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-floating.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Form elements */
+.form-control:focus, 
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
+    outline: none;
+}
+
+/* Button styles */
+.btn-primary {
+    background-image: linear-gradient(135deg, #5a7ce2, #3a5bbf);
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    border-radius: 0.3rem;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    background-image: linear-gradient(135deg, #4e73df, #3a5bbf);
+}
+
+.btn-outline-primary {
+    color: #4e73df;
+    border: 1px solid #4e73df;
+    background-color: transparent;
+    box-shadow: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #f0f4ff;
+    color: #224abe;
+    border-color: #224abe;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(78, 115, 223, 0.15);
+}
+
+/* Container styles */
+.container {
+    max-width: 1200px;
+    margin: 1rem auto;
+}
+
+/* Navbar styles */
+.navbar {
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.05rem;
+}
+
+.navbar .nav-link {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.navbar .nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 0.25rem;
+}
+
+.navbar .nav-link.active {
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 0.25rem;
+}
+
+/* Footer styles */
+.footer {
+    color: #6c757d;
+    border-top: 1px solid #e9ecef;
+}
+
+.footer a {
+    color: #4e73df;
+}
+
+.footer a:hover {
+    color: #224abe;
+}
+
+.footer h5 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer ul li {
+    margin-bottom: 0.5rem;
+}

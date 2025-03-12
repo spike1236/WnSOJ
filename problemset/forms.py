@@ -28,7 +28,7 @@ class SubmitForm(forms.Form):
         ('py', 'Python 3'),
     ]
     language = forms.ChoiceField(choices=LANGUAGE_CHOICES)
-    code = forms.CharField(widget=forms.Textarea)
+    code = forms.CharField(widget=forms.Textarea, max_length=65536)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

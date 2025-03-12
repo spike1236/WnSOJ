@@ -1,31 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container py-4">
-    <div class="card shadow border-0 rounded-lg">
-        <div class="card-header bg-primary text-white">
+<div class="container problem-container py-4">
+    <div class="problem-card card shadow border-0 rounded-lg">
+        <div class="problem-card-header card-header bg-primary text-white">
             <h3 class="mb-0 text-center">Add New Problem</h3>
         </div>
-        <div class="card-body p-4">
-            <form action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
-                <div class="mb-3">
-                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">{{ form.title.label }}</label>
-                    <div class="input-group">
+        <div class="problem-card-body card-body p-4">
+            <form action="" method="post" enctype="multipart/form-data" class="problem-form">{{ csrf_input }}
+                <div class="problem-form-group mb-3">
+                    <label for="{{ form.title.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.title.label }}</label>
+                    <div class="problem-input-group input-group">
                         <span class="input-group-text"><i class="fa fa-heading"></i></span>
                         {{ form.title }}
                     </div>
                     {% for error in form.title.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                        <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
-                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">{{ form.category.label }}</label>
+                <div class="problem-form-group mb-3">
+                    <label for="{{ form.category.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.category.label }}</label>
                     {{ form.category }}
-                    <div class="form-text text-muted">{{ form.category.help_text }}</div>
+                    <div class="problem-help-text form-text text-muted">{{ form.category.help_text }}</div>
                     {% for error in form.category.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                        <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
                     {% endfor %}
@@ -33,77 +33,81 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="{{ form.time_limit.id_for_label }}" class="form-label fw-bold">{{ form.time_limit.label }}</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa fa-clock"></i></span>
-                            {{ form.time_limit }}
-                            <span class="input-group-text">sec</span>
-                        </div>
-                        {% for error in form.time_limit.errors %}
-                            <div class="alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                        <div class="problem-form-group">
+                            <label for="{{ form.time_limit.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.time_limit.label }}</label>
+                            <div class="problem-input-group input-group">
+                                <span class="input-group-text"><i class="fa fa-clock"></i></span>
+                                {{ form.time_limit }}
+                                <span class="input-group-text">sec</span>
                             </div>
-                        {% endfor %}
+                            {% for error in form.time_limit.errors %}
+                                <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label for="{{ form.memory_limit.id_for_label }}" class="form-label fw-bold">{{ form.memory_limit.label }}</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa fa-microchip"></i></span>
-                            {{ form.memory_limit }}
-                            <span class="input-group-text">MB</span>
-                        </div>
-                        {% for error in form.memory_limit.errors %}
-                            <div class="alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                        <div class="problem-form-group">
+                            <label for="{{ form.memory_limit.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.memory_limit.label }}</label>
+                            <div class="problem-input-group input-group">
+                                <span class="input-group-text"><i class="fa fa-microchip"></i></span>
+                                {{ form.memory_limit }}
+                                <span class="input-group-text">MB</span>
                             </div>
-                        {% endfor %}
+                            {% for error in form.memory_limit.errors %}
+                                <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="{{ form.statement.id_for_label }}" class="form-label fw-bold">{{ form.statement.label }}</label>
-                    <div class="input-group">
+                <div class="problem-form-group mb-3">
+                    <label for="{{ form.statement.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.statement.label }}</label>
+                    <div class="problem-input-group input-group">
                         <span class="input-group-text"><i class="fa fa-file-alt"></i></span>
                         {{ form.statement }}
                     </div>
-                    <div class="form-text text-muted">{{ form.statement.help_text }}</div>
+                    <div class="problem-help-text form-text text-muted">{{ form.statement.help_text }}</div>
                     {% for error in form.statement.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                        <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
-                    <label for="{{ form.editorial.id_for_label }}" class="form-label fw-bold">{{ form.editorial.label }}</label>
-                    <div class="input-group">
+                <div class="problem-form-group mb-3">
+                    <label for="{{ form.editorial.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.editorial.label }}</label>
+                    <div class="problem-input-group input-group">
                         <span class="input-group-text"><i class="fa fa-file-code"></i></span>
                         {{ form.editorial }}
                     </div>
-                    <div class="form-text text-muted">{{ form.editorial.help_text }}</div>
+                    <div class="problem-help-text form-text text-muted">{{ form.editorial.help_text }}</div>
                     {% for error in form.editorial.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                        <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
-                    <label for="{{ form.test_data.id_for_label }}" class="form-label fw-bold">{{ form.test_data.label }}</label>
-                    <div class="input-group">
+                <div class="problem-form-group mb-3">
+                    <label for="{{ form.test_data.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.test_data.label }}</label>
+                    <div class="problem-input-group input-group">
                         <span class="input-group-text"><i class="fa fa-file-archive"></i></span>
                         {{ form.test_data }}
                     </div>
-                    <div class="form-text text-muted">{{ form.test_data.help_text }}</div>
+                    <div class="problem-help-text form-text text-muted">{{ form.test_data.help_text }}</div>
                     {% for error in form.test_data.errors %}
-                        <div class="alert alert-danger mt-2 py-2" role="alert">
+                        <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
                     {% endfor %}
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                <div class="problem-submit d-grid gap-2 d-md-flex justify-content-md-center">
+                    <button type="submit" class="problem-btn btn btn-primary btn-lg px-5">
                         <i class="fa fa-save me-2"></i>Submit
                     </button>
                 </div>
