@@ -1,33 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" align="center">
-    <h1>Welcome to WnSOJ!</h1>
-    <hr class="my-4">
-    <div class="row">
-        <div class="col-sm-4">
-            <div class="card">
-                <a href="/problems"><img class="card-img-top" src="{{ card1 }}"></a>
-                <div class="card-body">
-                    <h4 class="card-text">Solve problems</h4>
-                    <p class="card-text">Solve programming and math problems! All of the problems are categorized.</p>
+<div class="container py-4">
+    <!-- Hero section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary mb-3">Welcome to WnSOJ!</h1>
+        <p class="lead text-secondary mb-4">Your platform for programming challenges, problem-solving, and career opportunities</p>
+        <hr class="my-4 divider">
+    </div>
+    
+    <!-- Feature cards -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 feature-card">
+                <div class="card-img-container">
+                    <a href="/problems"><img class="card-img-top" src="{{ card1 }}" alt="Practice coding"></a>
+                </div>
+                <div class="card-body text-center">
+                    <h4 class="card-title"><i class="fa fa-code me-2"></i>Solve Problems</h4>
+                    <p class="card-text">Challenge yourself with programming and mathematical problems across various difficulty levels and categories.</p>
+                    <a href="/problems" class="btn btn-outline-primary mt-2">Start Coding</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <a href="/jobs"><img class="card-img-top" src="{{ card2 }}"></a>
-                <div class="card-body">
-                    <h4 class="card-text">Get a job</h4>
-                    <p class="card-text">Get a cool job! Find a job you want, open employer's credits, and talk with him.</p>
+        
+        <div class="col-md-4">
+            <div class="card h-100 feature-card">
+                <div class="card-img-container">
+                    <a href="/jobs"><img class="card-img-top" src="{{ card2 }}" alt="Find jobs"></a>
+                </div>
+                <div class="card-body text-center">
+                    <h4 class="card-title"><i class="fa fa-briefcase me-2"></i>Get a Job</h4>
+                    <p class="card-text">Discover exciting career opportunities. Connect with employers and take your next professional step forward.</p>
+                    <a href="/jobs" class="btn btn-outline-primary mt-2">Browse Jobs</a>
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
-            <div class="card">
-                <a href="/problems"><img class="card-img-top" src="{{ card3 }}"></a>
-                <div class="card-body">
-                    <h4 class="card-text">Be the best</h4>
-                    <p class="card-text">Solve problems and become best in the programming!</p>
+        
+        <div class="col-md-4">
+            <div class="card h-100 feature-card">
+                <div class="card-img-container">
+                    <a href="/problems"><img class="card-img-top" src="{{ card3 }}" alt="Improve skills"></a>
+                </div>
+                <div class="card-body text-center">
+                    <h4 class="card-title"><i class="fa fa-trophy me-2"></i>Be the Best</h4>
+                    <p class="card-text">Sharpen your skills, climb the leaderboards, and establish yourself as a top programmer in the community.</p>
+                    <a href="/problems" class="btn btn-outline-primary mt-2">Start Competing</a>
                 </div>
             </div>
         </div>
