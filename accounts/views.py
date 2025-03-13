@@ -5,7 +5,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import os
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from PIL import Image
 from .models import User
 from problemset.models import Submission
@@ -21,23 +20,27 @@ def register(request):
             user.account_type = 1 if form.cleaned_data.get('is_business') else 0
             if form.cleaned_data.get('icon'):
                 icon = form.cleaned_data.get('icon')
-                fs = FileSystemStorage(location=os.path.join(settings.BASE_DIR,
-                                                             'media',
-                                                             'users_icons',
-                                                             'icon64'))
-                filename = fs.save(f'icon64_user_{user.icon_id}.png', icon)
-                img = Image.open(fs.path(filename))
+                icon64_dir = os.path.join(settings.BASE_DIR,
+                                          'media', 'users_icons', 'icon64')
+                icon170_dir = os.path.join(settings.BASE_DIR,
+                                           'media', 'users_icons', 'icon170')
+                os.makedirs(icon64_dir, exist_ok=True)
+                os.makedirs(icon170_dir, exist_ok=True)
+
+                icon64_path = os.path.join(icon64_dir,
+                                           f'icon64_user_{user.icon_id}.png')
+                icon170_path = os.path.join(icon170_dir,
+                                            f'icon170_user_{user.icon_id}.png')
+
+                img = Image.open(icon)
                 img = img.resize((64, 64))
-                img.save(fs.path(filename))
-                fs_170 = FileSystemStorage(location=os.path.join(settings.BASE_DIR,
-                                                                 'media',
-                                                                 'users_icons',
-                                                                 'icon170'))
+                img.save(icon64_path)
+
                 icon.seek(0)
-                filename_170 = fs_170.save(f'icon170_user_{user.icon_id}.png', icon)
-                img170 = Image.open(fs_170.path(filename_170))
+                img170 = Image.open(icon)
                 img170 = img170.resize((170, 170))
-                img170.save(fs_170.path(filename_170))
+                img170.save(icon170_path)
+
             user.save()
             login(request, user)
             return redirect('home')
@@ -90,27 +93,32 @@ def edit_profile(request):
                 return redirect('edit_profile')
             else:
                 messages.error(request, "Please correct the errors below.")
-        elif 'icon_change_submit' in request.POST:
+        elif 'change_icon_submit' in request.POST:
             icon = request.FILES.get('icon')
             if icon:
-                fs = FileSystemStorage(location=os.path.join(settings.BASE_DIR,
-                                                             'static',
-                                                             'users_icons',
-                                                             'icon64'))
-                filename = fs.save(f'{user.icon_id}.png', icon)
-                img = Image.open(fs.path(filename))
-                img = img.resize((64, 64))
-                img.save(fs.path(filename))
+                icon64_dir = os.path.join(settings.BASE_DIR,
+                                          'media',
+                                          'users_icons',
+                                          'icon64')
+                icon170_dir = os.path.join(settings.BASE_DIR,
+                                           'media',
+                                           'users_icons',
+                                           'icon170')
+                os.makedirs(icon64_dir, exist_ok=True)
+                os.makedirs(icon170_dir, exist_ok=True)
 
-                fs_170 = FileSystemStorage(location=os.path.join(settings.BASE_DIR,
-                                                                 'static',
-                                                                 'users_icons',
-                                                                 'icon170'))
+                icon64_path = os.path.join(icon64_dir, f'{user.icon_id}.png')
+                icon170_path = os.path.join(icon170_dir, f'{user.icon_id}.png')
+
+                img = Image.open(icon)
+                img = img.resize((64, 64))
+                img.save(icon64_path)
+
                 icon.seek(0)
-                filename_170 = fs_170.save(f'{user.icon_id}.png', icon)
-                img170 = Image.open(fs_170.path(filename_170))
+                img170 = Image.open(icon)
                 img170 = img170.resize((170, 170))
-                img170.save(fs_170.path(filename_170))
+                img170.save(icon170_path)
+
                 messages.success(request, "Icon updated successfully.")
                 return redirect('edit_profile')
 
@@ -146,12 +154,8 @@ def profile(request, username):
     }
 
     for submission in all_submissions:
-        if submission.verdict == 'In queue':
+        if submission.verdict == 'IQ':
             continue
-        if submission.verdict == 'AC':
-            params['cnt']['AC'] += 1
-        else:
-            ver = submission.verdict.split()
-            params['cnt'][ver[0]] += 1
+        params['cnt'][submission.vedict] += 1
 
     return render(request, 'accounts/profile.html', params)
