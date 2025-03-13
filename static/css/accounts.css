@@ -43,24 +43,59 @@
     flex-wrap: wrap;
     align-items: stretch;
     width: 100%;
+    border-radius: 0.25rem;
 }
 
 .accounts-input-group .input-group-text {
-    background-color: #f8f9fa;
+    background-color: transparent;
     border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
 }
 
 .accounts-input-group .form-control {
     border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-input-group .form-control:focus + .input-group-text,
+.accounts-input-group .input-group-text + .form-control:focus {
+    border-color: #86b7fe;
+    z-index: 5;
 }
 
 .accounts-input-group:focus-within {
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
+    box-shadow: none;
 }
 
-.accounts-input-group:focus-within .input-group-text,
-.accounts-input-group:focus-within .form-control {
-    border-color: #86b7fe;
+.accounts-input-group input[type="file"] {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    height: auto;
+}
+
+.accounts-input-group input[type="file"]::file-selector-button {
+    margin: -0.25rem 0.5rem -0.25rem -0.5rem;
+    padding: 0.25rem 0.5rem;
+    height: calc(1.5em + 0.5rem + 2px);
+    background-color: #f0f0f0;
 }
 
 .accounts-alert {
@@ -119,7 +154,6 @@
     cursor: pointer;
 }
 
-/* Override any conflicting styles */
 .accounts-checkbox input[type="checkbox"],
 .custom-checkbox input[type="checkbox"] {
     position: relative;
@@ -213,4 +247,118 @@
 
 .status-error {
     background-color: #f8d7da;
+}
+
+.accounts-input-group,
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+.accounts-card .input-group-text,
+.accounts-input-group .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.accounts-card .input-group .form-control,
+.accounts-input-group .form-control {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-card .input-group .form-control:focus,
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-card .input-group:focus-within .input-group-text,
+.accounts-input-group:focus-within .input-group-text {
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+    color: #4e73df;
+}
+
+.accounts-card .input-group:focus-within,
+.accounts-input-group:focus-within {
+    box-shadow: none;
+}
+
+.accounts-card .input-group,
+.accounts-input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+.accounts-card .input-group .input-group-text,
+.accounts-input-group .input-group-text {
+    background-color: transparent !important;
+    border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.accounts-card .input-group .form-control,
+.accounts-input-group .form-control {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-card .input-group .form-control:focus,
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-card .input-group:focus-within .input-group-text,
+.accounts-input-group:focus-within .input-group-text {
+    border-color: #86b7fe;
+    background-color: transparent !important;
+    color: #4e73df;
+}
+
+.accounts-card .input-group:focus-within,
+.accounts-input-group:focus-within {
+    box-shadow: none !important;
+}
+
+
+.accounts-card .input-group input[type="file"]::file-selector-button,
+.accounts-input-group input[type="file"]::file-selector-button {
+    background-color: #f0f0f0;
 }

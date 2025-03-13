@@ -110,7 +110,7 @@ form .alert {
 }
 
 .input-group-text {
-    background-color: #f8f9fa;
+    background-color: transparent;
     border-right: none;
 }
 
@@ -134,12 +134,14 @@ form .alert {
 }
 
 .input-group .form-control:focus {
-    border-color: #ced4da;
-    box-shadow: none;
+    z-index: 3;
+    position: relative;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
 }
 
 .input-group:focus-within {
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
+    box-shadow: none;
 }
 
 .input-group:focus-within .input-group-text,

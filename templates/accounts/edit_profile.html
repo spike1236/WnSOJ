@@ -22,7 +22,7 @@
                     <form action="" method="post" id="icon_change" name="icon_change" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
                         <div class="accounts-form-group mb-3">
                             <label for="{{ change_icon_form.icon.id_for_label }}" class="accounts-form-label small fw-bold">{{ change_icon_form.icon.label }}</label>
-                            <div class="accounts-input-group input-group input-group-sm">
+                            <div class="input-group input-group-sm accounts-input-group">
                                 <span class="input-group-text"><i class="fa fa-image"></i></span>
                                 {{ change_icon_form.icon }}
                             </div>
@@ -48,12 +48,12 @@
                 <div class="accounts-card-header bg-light text-primary py-2">
                     <h5 class="mb-0 text-center">Change Password</h5>
                 </div>
-                <div class="accounts-card-body p-3">
+                <div class="accounts-card-body p-4">
                     <form action="" method="post" id="password_change" name="password_change" class="accounts-form">{{ csrf_input }}
                         <!-- Old Password field -->
                         <div class="accounts-form-group mb-3">
                             <label for="{{ password_change_form.old_password.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.old_password.label }}</label>
-                            <div class="accounts-input-group input-group input-group-sm">
+                            <div class="input-group input-group-sm accounts-input-group">
                                 <span class="input-group-text"><i class="fa fa-lock"></i></span>
                                 {{ password_change_form.old_password }}
                             </div>
@@ -67,7 +67,7 @@
                         <!-- New Password field -->
                         <div class="accounts-form-group mb-3">
                             <label for="{{ password_change_form.new_password1.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.new_password1.label }}</label>
-                            <div class="accounts-input-group input-group input-group-sm">
+                            <div class="input-group input-group-sm accounts-input-group">
                                 <span class="input-group-text"><i class="fa fa-key"></i></span>
                                 {{ password_change_form.new_password1 }}
                             </div>
@@ -79,9 +79,9 @@
                         </div>
                         
                         <!-- Confirm New Password field -->
-                        <div class="accounts-form-group mb-3">
+                        <div class="accounts-form-group mb-4">
                             <label for="{{ password_change_form.new_password2.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.new_password2.label }}</label>
-                            <div class="accounts-input-group input-group input-group-sm">
+                            <div class="input-group input-group-sm accounts-input-group">
                                 <span class="input-group-text"><i class="fa fa-key"></i></span>
                                 {{ password_change_form.new_password2 }}
                             </div>
