@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- MathJax -->
+    <script id="MathJax-script" async src="/static/plugins/MathJax/tex-mml-chtml.js"></script>
+
+    <!-- CodeMirror -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/darcula.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/eclipse.css">
+    <script src="/static/plugins/CodeMirror/lib/codemirror.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/clike/clike.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/python/python.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/display/autorefresh.js"></script>
+    <link rel="stylesheet" href="/static/css/code_display.css">
+    
+    <div class="container problem-container mt-4">
+        {% include "problemset/problem_navbar.html" %}
+        
+        <div class="card problem-card shadow-sm mb-4">
+            <div class="card-header problem-card-header bg-light">
+                <h2 class="problem-section-header mb-0">Editorial</h2>
+            </div>
+            <div class="card-body problem-card-body">
+                <div class="problem-description">
+                    {% include problem_editorial %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="card problem-card shadow-sm mb-4">
+            <div class="card-header problem-card-header bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="problem-subsection-header mb-0">Author's Solution</h3>
+                    <div class="solution-controls d-flex align-items-center">
+                        <button id="toggle_solution" class="btn btn-sm btn-outline-primary me-3" onclick="toggleSolution()" aria-expanded="false">
+                            <i class="bi bi-chevron-down"></i> Show Solution
+                        </button>
+                        <div class="d-flex align-items-center">
+                            <label for="theme_select" class="me-2 fw-bold">Theme:</label>
+                            <select id="theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectTheme()">
+                                <option selected value="default">default</option>
+                                <option value="darcula">darcula</option>
+                                <option value="eclipse">eclipse</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body problem-card-body collapse" id="solution_content">
+                <div class="problem-code-header d-flex justify-content-between align-items-center mb-2">
+                    <div class="problem-code-language">
+                        <span class="badge bg-light text-dark" id="code_language_badge">GNU C++17</span>
+                    </div>
+                    <button id="copy_button" class="btn btn-outline-dark btn-sm" onclick="copyCode(editor)">
+                        <i class="bi bi-clipboard"></i> Copy Code
+                    </button>
+                </div>
+                <div class="problem-code-container">
+                    <textarea id="code_area" name="code_area">{{ solution }}</textarea>
+                    <div style="display: none" id="code_language">GNU C++17</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/javascript" src="/static/js/submission_js.js"></script>
+    <script type="text/javascript">
+        // Initialize MathJax rendering for LaTeX formulas
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax) {
+                MathJax.typesetPromise().then(() => {
+                    console.log('MathJax initialization completed');
+                }).catch(err => {
+                    console.error('MathJax initialization failed:', err);
+                });
+            }
+        });
+    </script>
+{% endblock %}

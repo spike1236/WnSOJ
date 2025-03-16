@@ -13,7 +13,7 @@ class Problem(models.Model):
     time_limit = models.FloatField()
     memory_limit = models.IntegerField()
     categories = models.ManyToManyField(Category, related_name='problems')
-
+    code = models.TextField(max_length=65536, default='')
 
 class Submission(models.Model):
     VERDICT_CHOICES = [
@@ -34,5 +34,5 @@ class Submission(models.Model):
     time = models.IntegerField(default=0)
     memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)
-    code = models.CharField(max_length=65536, default='')
+    code = models.TextField(max_length=65536, default='')
     send_time = models.DateTimeField(auto_now_add=True)
