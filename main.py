@@ -34,13 +34,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-# import logging
-# import sys
-#
-#
-# logging.basicConfig(filename='server_log.log', format='%(asctime)s %(levelname)s %(name)s %(message)s')
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
@@ -70,7 +63,7 @@ def main():
     processes.append(process)
     process.start()
     del process
-    process = multiprocessing.Process(target=app.run(host='0.0.0.0', port='8080'))
+    process = multiprocessing.Process(target=app.run(host='0.0.0.0', port=os.getenv('PORT')))
     processes.append(process)
     process.start()
     del process
