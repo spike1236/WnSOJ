@@ -29,6 +29,7 @@ from sqlalchemy import func as sqlalchemy_func
 from tester import test_forever
 from zipfile import ZipFile
 from io import BytesIO
+import re
 
 
 # import logging
@@ -80,38 +81,75 @@ def resize_image(file, size):
     im.save(file)
 
 
-def check_phone_number(n: str):
-    er = 'error'
-    if n.count('+') > 1:
-        return er
-    if len(n) == 1:
-        return er
-    if n[0] == '+' and n[1] != '7':
-        return er
-    if n[0] != '8' and n[0] != '+':
-        return er
-    if n[0] == '-' or n[-1] == '-':
-        return er
-    ans = '+7'
-    cnt = 0
-    for i in range(1 + (n[0] == '+' and n[1] == '7'), len(n)):
-        if n[i].isdigit():
-            ans += n[i]
-        if n[i] == '-':
-            if i + 1 < len(n) and n[i + 1] == '-':
-                return er
-        if n[i] == ')':
-            cnt -= 1
-        elif n[i] == '(':
-            cnt += 1
-        if cnt != 1 and cnt != 0:
-            return er
-    if cnt != 0:
-        return er
-    if len(ans) != 12:
-        return er
+def check_phone_number(phone_number):
+    if not phone_number:
+        return False, None
+
+    cleaned = re.sub(r'[^\d+]', '', phone_number)
+
+    pattern = r'^\+?(\d{7,15})$'
+    match = re.match(pattern, cleaned)
+
+    if not match:
+        return False, None
+
+    digits = match.group(1)
+
+    if cleaned.startswith('+'):
+        normalized = cleaned
     else:
-        return ans
+
+        if len(digits) >= 10:
+            normalized = f"+{digits}"
+        else:
+
+            normalized = f"+1{digits}"
+
+    return True, normalized
+
+
+def format_phone_number(phone_number):
+    is_valid, normalized = check_phone_number(phone_number)
+
+    if not is_valid:
+        return "error"
+
+    digits = normalized[1:] if normalized.startswith('+') else normalized
+
+    if re.match(r'^1\d{10}$', digits):
+        return re.sub(r'^1(\d{3})(\d{3})(\d{4})$', r'+1 (\1) \2-\3', digits)
+
+    elif re.match(r'^44\d{10}$', digits):
+        return re.sub(r'^44(\d{2})(\d{4})(\d{4})$', r'+44 \1 \2 \3', digits)
+
+    elif re.match(r'^61\d{9}$', digits):
+        return re.sub(r'^61(\d)(\d{4})(\d{4})$', r'+61 \1 \2 \3', digits)
+
+    else:
+
+        if re.match(r'^(1|7)\d{7,14}$', digits):
+
+            country_code = digits[0]
+            national = digits[1:]
+        elif re.match(r'^(2\d|3\d|4\d|5\d|6\d|8\d|9\d)\d{6,13}$', digits):
+
+            country_code = digits[:2]
+            national = digits[2:]
+        elif re.match(r'^(2\d\d|3\d\d|4\d\d|5\d\d|6\d\d|8\d\d|9\d\d)\d{5,12}$', digits):
+
+            country_code = digits[:3]
+            national = digits[3:]
+        else:
+
+            country_code = digits[:2]
+            national = digits[2:]
+
+        if len(national) <= 8:
+            return f"+{country_code} {national}"
+        else:
+
+            half = len(national) // 2
+            return f"+{country_code} {national[:half]} {national[half:]}"
 
 
 def page_params(navbar_item_id, title):
@@ -193,7 +231,8 @@ def register():
         if len(form.password.data) < 8:
             return render_template('register.html', **params, form=form,
                                    password_error_message="Password is too short")
-        if form.phone_number.data and check_phone_number(form.phone_number.data) == 'error':
+
+        if form.phone_number.data and format_phone_number(form.phone_number.data) == "error":
             return render_template('register.html', **params,
                                    form=form, phone_number_error_message='Invalid phone number')
         user = User(
