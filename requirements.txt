@@ -21,3 +21,4 @@ sqlalchemy-serializer==1.4.22
 typing_extensions==4.12.2
 Werkzeug==3.0.3
 WTForms==3.1.2
+python-dotenv==1.0.1

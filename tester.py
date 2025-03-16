@@ -5,6 +5,9 @@ import subprocess
 import threading
 from data import db_session
 from data.submissions import Submission
+from dotenv import load_dotenv
+
+load_dotenv()
 
 LANGUAGE_CONFIGS = {
     'GNU C++17': {
@@ -17,6 +20,7 @@ LANGUAGE_CONFIGS = {
         'source_file': 'source.py'
     }
 }
+isolate_local = ('local/' if os.getenv('ISOLATE_INSTALL') == '1' else '')
 
 
 def parse_meta_file(meta_file_path):
@@ -41,7 +45,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
         f'--time={time_limit}',
         f'--wall-time={time_limit * 2}',
         f'--cg-mem={mem_limit}',
-        f'--meta=/var/local/lib/isolate/{box_id}/box/meta.txt',
+        f'--meta=/var{isolate_local}/lib/isolate/{box_id}/box/meta.txt',
     ]
     
     if is_compile:
@@ -55,7 +59,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
     isolate_cmd.extend(cmd)
     
     result = subprocess.run(isolate_cmd, input=input_data, capture_output=True)
-    res = parse_meta_file(f'/var/local/lib/isolate/{box_id}/box/meta.txt')
+    res = parse_meta_file(f'/var{isolate_local}/lib/isolate/{box_id}/box/meta.txt')
     res['stdout'] = result.stdout.decode()
     res['run_success'] = result.returncode == 0
     return res
@@ -117,7 +121,7 @@ def test_submission(submission_id, language, problem_id, compile_time_limit=5, c
 
     subprocess.run(['isolate', '--cg', '--box-id', str(box_id), '--init'], capture_output=True, text=True)
     shutil.copy(f'data/submissions/{submission_id}/{config["source_file"]}',
-                os.path.join(f'/var/local/lib/isolate/{box_id}/box', config['source_file']))
+                os.path.join(f'/var{isolate_local}/lib/isolate/{box_id}/box', config['source_file']))
 
     try:
         if 'compile' in config:

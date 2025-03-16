@@ -30,6 +30,9 @@ from tester import test_forever
 from zipfile import ZipFile
 from io import BytesIO
 import re
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # import logging
@@ -39,7 +42,7 @@ import re
 # logging.basicConfig(filename='server_log.log', format='%(asctime)s %(levelname)s %(name)s %(message)s')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = str(os.urandom(16))
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
