@@ -91,7 +91,7 @@ def add_problem(request):
     return render(request, 'problemset/add_problem.html', context)
 
 
-def problem(request, problem_id):
+def problem_statement(request, problem_id):
     problem = get_object_or_404(models.Problem, id=problem_id)
     form = SubmitForm()
     if request.method == "POST":
@@ -113,10 +113,24 @@ def problem(request, problem_id):
                 return redirect('login')
     return render(request, 'problemset/problem.html', {
         'title': f'{problem.title} | WnSOJ',
+        'current_bar_id': 1,
         'navbar_item_id': 2,
         'problem': problem,
         'problem_statement': f'problems/{problem_id}/statement.html',
         'form': form
+    })
+
+
+def problem_editorial(request, problem_id):
+    problem = get_object_or_404(models.Problem, id=problem_id)
+    solution = problem.code
+    return render(request, 'problemset/editorial.html', {
+        'title': f'{problem.title} | WnSOJ',
+        'navbar_item_id': 2,
+        'problem': problem,
+        'current_bar_id': 2,
+        'solution': solution,
+        'problem_editorial': f'problems/{problem_id}/editorial.html'
     })
 
 
