@@ -1,7 +1,7 @@
 /* Problem-related styling */
 
 .problem-container {
-    padding: 1.5rem 0;
+    padding: 0.75rem 0;
 }
 
 .problem-header {
@@ -252,7 +252,7 @@
 }
 
 .problem-navbar {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     border-bottom: 1px solid #dee2e6;
 }
 

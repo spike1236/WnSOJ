@@ -131,33 +131,6 @@
     margin-bottom: 0.5rem;
 }
 
-.submission-status {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.25rem;
-    font-weight: 500;
-}
-
-.status-accepted {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.status-warning {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.status-pending {
-    background-color: #e2e3e5;
-    color: #383d41;
-}
-
 .copy-button {
     transition: all 0.2s ease;
 }
@@ -179,6 +152,49 @@
 #copy_button.btn-success, 
 #copy_button.btn-danger {
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.submission-code-wrapper {
+    width: 100%;
+    overflow: hidden;
+}
+
+.submission-code-wrapper .CodeMirror {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 400px;
+    border: none;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 0;
+}
+
+.CodeMirror-sizer {
+    min-height: 400px !important;
+}
+
+.CodeMirror-gutters {
+    height: 100% !important;
+    min-height: 400px !important;
+}
+
+.CodeMirror-scroll {
+    min-height: 400px !important;
+}
+
+/* Card styles */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+    border-radius: 0.5rem;
+    border: 0;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    background-color: #f8f9fa;
 }
 
 @media (max-width: 768px) {

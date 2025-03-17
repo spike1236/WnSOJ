@@ -17,11 +17,14 @@ let editor = CodeMirror.fromTextArea(codeElement, {
     autoRefresh: true
 });
 
-editor.setSize(null, 'auto');
-editor.setOption("minHeight", "300px");
-setTimeout(function() {
-    editor.refresh();
-}, 10);
+editor.setSize("100%", "auto");
+
+// Force refresh when document is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        editor.refresh();
+    }, 100);
+});
 
 function selectTheme() {
     let theme = themeSelect.value;

@@ -156,6 +156,6 @@ def profile(request, username):
     for submission in all_submissions:
         if submission.verdict == 'IQ':
             continue
-        params['cnt'][submission.vedict] += 1
+        params['cnt'][submission.verdict] += 1
 
     return render(request, 'accounts/profile.html', params)

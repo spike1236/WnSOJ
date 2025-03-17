@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+    <!-- CodeMirror -->
+    <link rel="stylesheet" type="text/css" href="/static/plugins/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/darcula.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/eclipse.css">
+    <script src="/static/plugins/CodeMirror/lib/codemirror.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/clike/clike.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/python/python.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/display/autorefresh.js"></script>
+    <link rel="stylesheet" href="/static/css/code_display.css">
+
+    <div class="container mt-4">
+        <h2 class="section-title mb-3">Submission #{{ item.id }}</h2>
+        
+        <table class="table table-bordered table-striped text-center mb-4">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%">ID</th>
+                    <th scope="col" style="width: 18%">Time</th>
+                    <th scope="col" style="width: 15%">User</th>
+                    <th scope="col" style="width: 22%">Problem</th>
+                    <th scope="col" style="width: 10%">Language</th>
+                    <th scope="col" style="width: 10%">Verdict</th>
+                    <th scope="col" style="width: 10%">Time</th>
+                    <th scope="col" style="width: 10%">Memory</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <td>{{ item.send_time }}</td>
+                    <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
+                    <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
+                    <td>{{ item.language }}</td>
+                    {% if item.verdict == 'AC' %}
+                        <td class="verdict-cell"><span class="submission-status status-accepted">{{ item.verdict }}</span></td>
+                    {% elif item.verdict == 'CE' %}
+                        <td class="verdict-cell"><span class="submission-status status-warning">{{ item.verdict }}</span></td>
+                    {% elif item.verdict == 'In queue' or item.verdict == 'IQ' %}
+                        <td class="verdict-cell"><span class="submission-status status-pending">{{ item.verdict }}</span></td>
+                    {% else %}
+                        <td class="verdict-cell"><span class="submission-status status-error">{{ item.verdict }}</span></td>
+                    {% endif %}
+                    <td>{{ item.time }} ms</td>
+                    <td>{{ item.memory }} KB</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fs-5">Source Code</h3>
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="d-flex align-items-center">
+                        <label for="theme_select" class="me-2 mb-0">Theme:</label>
+                        <select id="theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectTheme()">
+                            <option selected value="default">default</option>
+                            <option value="darcula">darcula</option>
+                            <option value="eclipse">eclipse</option>
+                        </select>
+                    </div>
+                    <button id="copy_button" class="btn btn-outline-secondary btn-sm" onclick="copyCode(editor)">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="submission-code-wrapper">
+                    <textarea id="code_area" name="code_area">{{ item.code }}</textarea>
+                    <div style="display: none" id="code_language">{{ item.language }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/static/js/submission_js.js"></script>
+{% endblock %}

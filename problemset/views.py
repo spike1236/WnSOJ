@@ -146,10 +146,12 @@ def problem_submissions_list(request, problem_id):
 
     submissions = submissions.order_by('-id')[:10]
 
-    return render(request, 'problemset/submissions_list.html', {
+    return render(request, 'problemset/problem_submissions.html', {
         'title': 'Submissions | WnSOJ',
         'navbar_item_id': 2,
-        'submissions': list(submissions)
+        'submissions': list(submissions),
+        'problem': problem,
+        'current_bar_id': 3
     })
 
 
@@ -168,4 +170,13 @@ def submissions(request):
         'title': 'Submissions | WnSOJ',
         'navbar_item_id': 2,
         'submissions': list(submissions)
+    })
+
+
+def submission(request, submission_id):
+    submission = get_object_or_404(models.Submission, id=submission_id)
+    return render(request, 'problemset/submission.html', {
+        'title': 'Submission | WnSOJ',
+        'navbar_item_id': 2,
+        'item': submission
     })
