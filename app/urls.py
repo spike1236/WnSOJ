@@ -39,4 +39,5 @@ urlpatterns = [
     path('problem/<int:problem_id>/submissions', problem_views.problem_submissions_list, name='problem_submissions_list'),
     path('submissions/', problem_views.submissions, name='submissions'),
     path('submission/<int:submission_id>/', problem_views.submission, name='submission'),
+    path('faq/', problem_views.faq, name='faq'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
