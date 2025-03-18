@@ -86,3 +86,48 @@
     font-weight: 500;
     border-radius: 0.25rem;
 }
+
+/* Collapse buttons styling */
+.collapse-btn {
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    border: none;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.collapse-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.collapse-btn:focus {
+    box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.25);
+}
+
+.code-collapse {
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.code-collapse .card {
+    border-radius: 0.5rem;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    background-color: #f8f9fc;
+}
+
+.code-collapse .card-body {
+    padding: 1rem;
+}
+
+.code-collapse p {
+    font-family: monospace;
+    color: #5a5c69;
+}
+
+/* Fix for Bootstrap 5 ml-3 compatibility */
+.ml-3 {
+    margin-left: 1rem !important;
+}
