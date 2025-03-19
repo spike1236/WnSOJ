@@ -15,6 +15,7 @@ class Problem(models.Model):
     categories = models.ManyToManyField(Category, related_name='problems')
     code = models.TextField(max_length=65536, default='')
 
+
 class Submission(models.Model):
     VERDICT_CHOICES = [
         ('IQ', 'In queue'),

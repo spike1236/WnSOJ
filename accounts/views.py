@@ -17,7 +17,7 @@ def register(request):
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.account_type = 1 if form.cleaned_data.get('is_business') else 0
+            user.account_type = 2 if form.cleaned_data.get('is_business') else 1
             if form.cleaned_data.get('icon'):
                 icon = form.cleaned_data.get('icon')
                 icon64_dir = os.path.join(settings.BASE_DIR,

@@ -10,7 +10,7 @@
                 <div class="mt-3">
                   <h4>{{ profile_user.username }}</h4>
                 </div>
-                {% if profile_user.account_type != 0 %}
+                {% if profile_user.account_type != 1 %}
                     <a class="btn btn-primary mt-2" href="/jobs?author={{ profile_user.username }}">{{ user.username }}'s jobs</a>
                 {% endif %}
                 </div>
