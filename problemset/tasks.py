@@ -36,12 +36,12 @@ def configure_logger():
 logger = configure_logger()
 
 LANGUAGE_CONFIGS = {
-    'GNU C++17': {
+    'cpp': {
         'compile': ['/usr/bin/g++', '-std=c++17', 'source.cpp', '-o', 'program'],
         'run': ['./program'],
         'source_file': 'source.cpp'
     },
-    'Python 3': {
+    'py': {
         'run': ['/usr/bin/python3', 'source.py'],
         'source_file': 'source.py'
     }
