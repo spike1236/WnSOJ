@@ -83,7 +83,6 @@ def problem_statement(request, problem_id):
     form = SubmitForm()
     if request.method == "POST":
         form = SubmitForm(request.POST, request.FILES)
-        print(form.is_bound, form.errors)
         if form.is_valid():
             if request.user.is_authenticated:
                 submission = models.Submission(

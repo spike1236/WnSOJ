@@ -66,7 +66,7 @@ def test_submission_task(submission_id):
     language = submission.language
     config = LANGUAGE_CONFIGS.get(language)
 
-    box_id = random.randint(1, 1000000)
+    box_id = random.randint(1, 999)
 
     try:
         subprocess.run(
