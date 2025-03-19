@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import path
 from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
