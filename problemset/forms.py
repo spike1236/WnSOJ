@@ -5,7 +5,7 @@ from .models import Problem, Category
 class AddProblemForm(forms.Form):
     title = forms.CharField(max_length=255, required=True)
     categories = forms.ModelMultipleChoiceField(
-        queryset=Category.objects.all(),
+        queryset=Category.objects.exclude(short_name='problemset'),
         widget=forms.CheckboxSelectMultiple,
         required=True,
         help_text="Select problem categories"
@@ -23,6 +23,11 @@ class AddProblemForm(forms.Form):
     time_limit = forms.FloatField(required=True)
     memory_limit = forms.IntegerField(required=True)
     test_data = forms.FileField(required=True, help_text="ZIP file")
+    solution = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 10, 'id': 'code_area'}),
+        required=True,
+        help_text="Solution code for this problem"
+    )
 
     class Meta:
         model = Problem

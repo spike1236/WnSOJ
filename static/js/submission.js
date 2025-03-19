@@ -7,7 +7,7 @@ let editor = CodeMirror.fromTextArea(codeElement, {
     lineNumbers: true,
     styleActiveLine: true,
     matchBrackets: true,
-    readOnly: true,
+    // readOnly: true,
     tabSize: 4,
     indentUnit: 4,
     theme: "default",

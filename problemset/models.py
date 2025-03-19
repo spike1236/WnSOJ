@@ -7,6 +7,9 @@ class Category(models.Model):
     long_name = models.CharField(max_length=100)
     img_url = models.CharField(max_length=200)
 
+    def __str__(self):
+        return self.long_name
+
 
 class Problem(models.Model):
     title = models.CharField(max_length=200)
