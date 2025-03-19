@@ -86,7 +86,7 @@ def test_submission_task(submission_id):
     isolate_box_path = f'{ISOLATE_PATH}/{box_id}/box'
     try:
         with open(os.path.join(isolate_box_path, config['source_file']), 'w') as f:
-            f.write(submission.source_code)
+            f.write(submission.code)
         logger.info(
             f"Copied source file to isolate box: {submission_id} -> {isolate_box_path}"
         )
