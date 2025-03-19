@@ -12,6 +12,8 @@ class Problem(models.Model):
     title = models.CharField(max_length=200)
     time_limit = models.FloatField()
     memory_limit = models.IntegerField()
+    statement = models.TextField()
+    editorial = models.TextField()
     categories = models.ManyToManyField(Category, related_name='problems')
     code = models.TextField(max_length=65536, default='')
 

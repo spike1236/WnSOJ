@@ -237,18 +237,6 @@
     font-weight: 500;
 }
 
-.status-solved {
-    background-color: #d4edda;
-}
-
-.status-attempted {
-    background-color: #fff3cd;
-}
-
-.status-error {
-    background-color: #f8d7da;
-}
-
 .accounts-input-group,
 .input-group {
     position: relative;

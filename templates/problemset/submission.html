@@ -30,18 +30,18 @@
             <tbody>
                 <tr>
                     <th scope="row">{{ item.id }}</th>
-                    <td>{{ item.send_time }}</td>
+                    <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
                     <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
                     <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
                     <td>{{ item.language }}</td>
                     {% if item.verdict == 'AC' %}
-                        <td class="verdict-cell"><span class="submission-status status-accepted">{{ item.verdict }}</span></td>
+                        <td class="submission-status status-accepted">{{ item.verdict }}</td>
                     {% elif item.verdict == 'CE' %}
-                        <td class="verdict-cell"><span class="submission-status status-warning">{{ item.verdict }}</span></td>
-                    {% elif item.verdict == 'In queue' or item.verdict == 'IQ' %}
-                        <td class="verdict-cell"><span class="submission-status status-pending">{{ item.verdict }}</span></td>
+                        <td class="submission-status status-attempted"></td>{{ item.verdict }}</td>
+                    {% elif item.verdict == 'IQ' %}
+                        <td class="submission-status status-pending">{{ item.verdict }}</td>
                     {% else %}
-                        <td class="verdict-cell"><span class="submission-status status-error">{{ item.verdict }}</span></td>
+                        <td class="submission-status status-error">{{ item.verdict }}</td>
                     {% endif %}
                     <td>{{ item.time }} ms</td>
                     <td>{{ item.memory }} KB</td>
@@ -74,5 +74,5 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript" src="/static/js/submission_js.js"></script>
+    <script type="text/javascript" src="/static/js/submission.js"></script>
 {% endblock %}

@@ -37,7 +37,6 @@ def add_job(request):
             max_salary = request.POST.get('max_salary', '')
             currency = request.POST.get('currency', '$')
 
-            # Validate salary range
             salary_error = None
             if min_salary and max_salary and float(min_salary) > float(max_salary):
                 salary_error = "Minimum salary cannot be greater than maximum salary."
@@ -108,7 +107,6 @@ def edit_job(request, job_id):
             max_salary = request.POST.get('max_salary', '')
             currency = request.POST.get('currency', '$')
 
-            # Validate salary range
             salary_error = None
             if min_salary and max_salary and float(min_salary) > float(max_salary):
                 salary_error = "Minimum salary cannot be greater than maximum salary."

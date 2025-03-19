@@ -70,17 +70,13 @@
     </div>
     
     <script>
-        // Configure marked options
         marked.setOptions({
             breaks: true,
             gfm: true,
             headerIds: false
         });
-        
         const jobContent = document.getElementById("job-content");
-        // Get the raw text content
         const content = jobContent.textContent.trim();
-        // Parse the markdown and update the content
         jobContent.innerHTML = marked.parse(content);
     </script>
 {% endblock %}

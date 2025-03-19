@@ -51,7 +51,9 @@ def add_problem(request):
             problem = models.Problem(
                 time_limit=form.cleaned_data['time_limit'],
                 memory_limit=form.cleaned_data['memory_limit'],
-                title=form.cleaned_data['title']
+                title=form.cleaned_data['title'],
+                statement=form.cleaned_data['statement'],
+                editorial=form.cleaned_data['editorial']
             )
             problem.save()
 
@@ -59,27 +61,11 @@ def add_problem(request):
             with ZipFile(BytesIO(request.FILES['test_data'].read()), 'r') as file:
                 file.extractall(f'data/problems/{problem.id}')
 
-            os.makedirs(f'templates/problems/{problem.id}', exist_ok=True)
+            # Add selected categories
+            selected_categories = form.cleaned_data['categories']
+            for category in selected_categories:
+                problem.categories.add(category)
 
-            statement_file = request.FILES['statement']
-            statement_content = statement_file.read().decode('utf-8', errors='strict')
-            with open(f'templates/problems/{problem.id}/statement.html', 'wb') as file:
-                file.write('\n'.join([line.rstrip('\n') for line in
-                                      statement_content.split('\n')]).encode('utf-8'))
-
-            editorial_file = request.FILES['editorial']
-            editorial_content = editorial_file.read().decode('utf-8', errors='strict')
-            with open(f'templates/problems/{problem.id}/editorial.html', 'wb') as file:
-                file.write('\n'.join([line.rstrip('\n') for line in
-                                      editorial_content.split('\n')]).encode('utf-8'))
-
-            cats = form.cleaned_data['category'].split(', ')
-            for sn_cat in cats:
-                try:
-                    cat = models.Category.objects.get(short_name=sn_cat)
-                    problem.categories.add(cat)
-                except models.Category.DoesNotExist:
-                    pass
             return redirect('problems')
 
     context = {
@@ -116,21 +102,17 @@ def problem_statement(request, problem_id):
         'current_bar_id': 1,
         'navbar_item_id': 2,
         'problem': problem,
-        'problem_statement': f'problems/{problem_id}/statement.html',
         'form': form
     })
 
 
 def problem_editorial(request, problem_id):
     problem = get_object_or_404(models.Problem, id=problem_id)
-    solution = problem.code
     return render(request, 'problemset/editorial.html', {
         'title': f'{problem.title} | WnSOJ',
         'navbar_item_id': 2,
-        'problem': problem,
         'current_bar_id': 2,
-        'solution': solution,
-        'problem_editorial': f'problems/{problem_id}/editorial.html'
+        'problem': problem
     })
 
 
