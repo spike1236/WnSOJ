@@ -54,34 +54,45 @@
           <div class="card shadow-sm">
             <div class="card-body p-3">
               <h5 class="card-title mb-3">Submission Stats</h5>
-              <div class="status-row status-solved">
-                <span>Accepted (AC)</span>
-                <span class="badge bg-success">{{ cnt['AC'] }}</span>
-              </div>
-              <div class="status-row status-attempted">
-                <span>Compilation Error (CE)</span>
-                <span class="badge bg-warning text-dark">{{ cnt['CE'] }}</span>
-              </div>
-              <div class="status-row status-error">
-                <span>Runtime Error (RE)</span>
-                <span class="badge bg-danger">{{ cnt['RE'] }}</span>
-              </div>
-              <div class="status-row status-error">
-                <span>Wrong Answer (WA)</span>
-                <span class="badge bg-danger">{{ cnt['WA'] }}</span>
-              </div>
-              <div class="status-row status-error">
-                <span>Time Limit (TLE)</span>
-                <span class="badge bg-danger">{{ cnt['TLE'] }}</span>
-              </div>
-              <div class="status-row status-error">
-                <span>Memory Limit (MLE)</span>
-                <span class="badge bg-danger">{{ cnt['MLE'] }}</span>
+              <div class="table-responsive">
+                <table class="table table-sm submission-stats-table">
+                  <thead>
+                    <tr class="table-light">
+                      <th class="ps-3">Verdict</th>
+                      <th class="text-center">Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="ps-3 verdict-type solved-verdict">Accepted (AC)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-success">{{ cnt['AC'] }}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-3 verdict-type attempted-verdict">Compilation Error (CE)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-warning text-dark">{{ cnt['CE'] }}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-3 verdict-type error-verdict">Runtime Error (RE)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-danger">{{ cnt['RE'] }}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-3 verdict-type error-verdict">Wrong Answer (WA)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-danger">{{ cnt['WA'] }}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-3 verdict-type error-verdict">Time Limit (TLE)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-danger">{{ cnt['TLE'] }}</span></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-3 verdict-type error-verdict">Memory Limit (MLE)</td>
+                      <td class="text-center"><span class="badge rounded-pill bg-danger">{{ cnt['MLE'] }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
-        
         <div class="col-12 mt-4">
           <div class="card shadow-sm mb-4">
             <div class="card-header bg-light">
@@ -106,19 +117,19 @@
                       {% for item in submissions %}
                         <tr>
                             <th scope="row"><a href="/submission/{{ item.id }}">{{ item.id }}</a></th>
-                            <td>{{ item.send_time }}</td>
+                            <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
                             <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
                             <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
                             <td>{{ item.language }}</td>
-                            {% if item.verdict == 'AC' %}
-                                <td class="verdict-cell"><span class="submission-status status-accepted">{{ item.verdict }}</span></td>
-                            {% elif item.verdict == 'CE' %}
-                                <td class="verdict-cell"><span class="submission-status status-warning">{{ item.verdict }}</span></td>
-                            {% elif item.verdict == 'IQ' %}
-                                <td class="verdict-cell"><span class="submission-status status-pending">{{ item.verdict }}</span></td>
-                            {% else %}
-                                <td class="verdict-cell"><span class="submission-status status-error">{{ item.verdict }}</span></td>
-                            {% endif %}
+                              {% if item.verdict == 'AC' %}
+                                <td class="submission-status status-accepted">{{ item.verdict }}</td>
+                              {% elif item.verdict == 'CE' %}
+                                <td class="submission-status status-attempted"></td>{{ item.verdict }}</td>
+                              {% elif item.verdict == 'IQ' %}
+                                <td class="submission-status status-pending">{{ item.verdict }}</td>
+                              {% else %}
+                                <td class="submission-status status-error">{{ item.verdict }}</td>
+                              {% endif %}
                             <td>{{ item.time }} ms</td>
                             <td>{{ item.memory }} KB</td>
                         </tr>

@@ -59,9 +59,7 @@
                             </span>
                         </div>
                         <div class="truncated-content">
-                            <div class="card-text markdown-content" id="content-{{ job.id }}">
-                                {{ job.info }}
-                            </div>
+                            <div class="card-text markdown-content" id="content-{{ job.id }}">{{ job.info }}</div>
                         </div>
                         <a href="/job/{{ job.id }}" class="btn btn-outline-primary">
                             <i class="fa fa-eye me-1"></i> View Details
@@ -78,20 +76,15 @@
                 No jobs available at the moment. Check back later!
             </div>
         {% endif %}
-        
         <script>
-            // Configure marked options
             marked.setOptions({
                 breaks: true,
                 gfm: true,
                 headerIds: false
             });
-            
             const elements = document.querySelectorAll(".markdown-content");
             for(const element of elements) {
-                // Get the raw text content
                 const content = element.textContent.trim();
-                // Parse the markdown and update the content
                 element.innerHTML = marked.parse(content);
             }
         </script>

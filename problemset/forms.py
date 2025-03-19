@@ -1,13 +1,25 @@
 from django import forms
-from .models import Problem
+from .models import Problem, Category
 
 
 class AddProblemForm(forms.Form):
     title = forms.CharField(max_length=255, required=True)
-    category = forms.CharField(max_length=255, required=True,
-                               help_text="Comma-separated category short names")
-    statement = forms.FileField(required=True, help_text="HTML file")
-    editorial = forms.FileField(required=True, help_text="HTML file")
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True,
+        help_text="Select problem categories"
+    )
+    statement = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 10}),
+        required=True,
+        help_text="Markdown format"
+    )
+    editorial = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 10}),
+        required=True,
+        help_text="Markdown format"
+    )
     time_limit = forms.FloatField(required=True)
     memory_limit = forms.IntegerField(required=True)
     test_data = forms.FileField(required=True, help_text="ZIP file")
@@ -18,8 +30,9 @@ class AddProblemForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs.update({'class': 'form-control'})
+        for field_name, field in self.fields.items():
+            if field_name != 'categories':
+                field.widget.attrs.update({'class': 'form-control'})
 
 
 class SubmitForm(forms.Form):

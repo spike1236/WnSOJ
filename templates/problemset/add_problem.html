@@ -21,10 +21,12 @@
                 </div>
 
                 <div class="problem-form-group mb-3">
-                    <label for="{{ form.category.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.category.label }}</label>
-                    {{ form.category }}
-                    <div class="problem-help-text form-text text-muted">{{ form.category.help_text }}</div>
-                    {% for error in form.category.errors %}
+                    <label for="{{ form.categories.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.categories.label }}</label>
+                    <div class="category-checkboxes">
+                        {{ form.categories }}
+                    </div>
+                    <div class="problem-help-text form-text text-muted">{{ form.categories.help_text }}</div>
+                    {% for error in form.categories.errors %}
                         <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
                             <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                         </div>
@@ -66,10 +68,7 @@
 
                 <div class="problem-form-group mb-3">
                     <label for="{{ form.statement.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.statement.label }}</label>
-                    <div class="problem-input-group input-group">
-                        <span class="input-group-text"><i class="fa fa-file-alt"></i></span>
-                        {{ form.statement }}
-                    </div>
+                    {{ form.statement }}
                     <div class="problem-help-text form-text text-muted">{{ form.statement.help_text }}</div>
                     {% for error in form.statement.errors %}
                         <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
@@ -80,10 +79,7 @@
 
                 <div class="problem-form-group mb-3">
                     <label for="{{ form.editorial.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.editorial.label }}</label>
-                    <div class="problem-input-group input-group">
-                        <span class="input-group-text"><i class="fa fa-file-code"></i></span>
-                        {{ form.editorial }}
-                    </div>
+                    {{ form.editorial }}
                     <div class="problem-help-text form-text text-muted">{{ form.editorial.help_text }}</div>
                     {% for error in form.editorial.errors %}
                         <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
@@ -115,4 +111,16 @@
         </div>
     </div>
 </div>
+
+<style>
+.category-checkboxes ul {
+    list-style: none;
+    padding-left: 0;
+}
+.category-checkboxes li {
+    display: inline-block;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+</style>
 {% endblock %}

@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-    <!-- MathJax -->
-    <script id="MathJax-script" async src="/static/plugins/MathJax/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- CodeMirror -->
     <link rel="stylesheet" type="text/css" href="/static/plugins/CodeMirror/lib/codemirror.css">
@@ -13,7 +15,7 @@
     <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
     <script src="/static/plugins/CodeMirror/addon/display/autorefresh.js"></script>
     <link rel="stylesheet" href="/static/css/code_display.css">
-    
+
     <div class="container problem-container mt-4">
         {% include "problemset/problem_navbar.html" %}
         
@@ -22,9 +24,7 @@
                 <h2 class="problem-section-header mb-0">Editorial</h2>
             </div>
             <div class="card-body problem-card-body">
-                <div class="problem-description">
-                    {% include problem_editorial %}
-                </div>
+                <div class="problem-description" id="problem-description">{{ problem.editorial }}</div>
             </div>
         </div>
         
@@ -57,24 +57,12 @@
                     </button>
                 </div>
                 <div class="problem-code-container">
-                    <textarea id="code_area" name="code_area">{{ solution }}</textarea>
+                    <textarea id="code_area" name="code_area">{{ problem.code }}</textarea>
                     <div style="display: none" id="code_language">GNU C++17</div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <script type="text/javascript" src="/static/js/submission_js.js"></script>
-    <script type="text/javascript">
-        // Initialize MathJax rendering for LaTeX formulas
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.MathJax) {
-                MathJax.typesetPromise().then(() => {
-                    console.log('MathJax initialization completed');
-                }).catch(err => {
-                    console.error('MathJax initialization failed:', err);
-                });
-            }
-        });
-    </script>
+    <script type="text/javascript" src="/static/js/submission.js"></script>
+    <script type="text/javascript" src="/static/js/problem_parser.js"></script>
 {% endblock %}
