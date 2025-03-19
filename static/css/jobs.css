@@ -1,0 +1,124 @@
+/* Job card styling */
+.job-card {
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-left: 4px solid #4e73df;
+}
+
+.job-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.job-card .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+    color: #3a3b45;
+}
+
+.job-card .card-footer {
+    background-color: #f8f9fc;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    font-size: 0.875rem;
+    color: #6e707e;
+}
+
+/* Job details page */
+.job-details {
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.15);
+    padding: 1.5rem;
+}
+
+.job-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.job-meta-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.job-meta-label {
+    font-size: 0.875rem;
+    color: #858796;
+    font-weight: 600;
+}
+
+.job-meta-value {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.job-description {
+    padding: 1rem 0;
+}
+
+/* Job form styling */
+.job-form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.15);
+}
+
+.job-form h3 {
+    margin-bottom: 1.5rem;
+    color: #3a3b45;
+    font-weight: 600;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.job-form label {
+    font-weight: 500;
+    color: #5a5c69;
+    margin-bottom: 0.5rem;
+}
+
+.job-form .form-control {
+    margin-bottom: 1rem;
+}
+
+.job-form textarea {
+    min-height: 200px;
+}
+
+/* Salary range slider */
+.salary-range-container {
+    margin-bottom: 1rem;
+}
+
+.salary-range-values {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    color: #5a5c69;
+    font-size: 0.875rem;
+}
+
+/* Job action buttons */
+.job-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Job listings header */
+.jobs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e3e6f0;
+}

@@ -7,7 +7,7 @@ import os
 
 class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
-    account_type = models.IntegerField(default=0)
+    account_type = models.IntegerField(default=1)
     icon_id = models.IntegerField(null=True)
     problems_solved = models.ManyToManyField('problemset.Problem',
                                              related_name='users_solved',

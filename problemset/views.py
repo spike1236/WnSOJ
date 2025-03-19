@@ -185,5 +185,5 @@ def submission(request, submission_id):
 def faq(request):
     return render(request, 'faq.html', {
         'title': 'FAQ | WnSOJ',
-        'navbar_item_id': 3
+        'navbar_item_id': 4
     })

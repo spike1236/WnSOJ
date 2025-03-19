@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from accounts import views as accounts_views
 from problemset import views as problem_views
 from jobboard import views as job_views
-from accounts import views as accounts_views
 from . import settings
 from django.conf.urls.static import static
 
@@ -40,4 +40,8 @@ urlpatterns = [
     path('submissions/', problem_views.submissions, name='submissions'),
     path('submission/<int:submission_id>/', problem_views.submission, name='submission'),
     path('faq/', problem_views.faq, name='faq'),
+    path('jobs/', job_views.jobs, name='jobs'),
+    path('add_job/', job_views.add_job, name='add_job'),
+    path('job/<int:job_id>/', job_views.job, name='job'),
+    path('job/<int:job_id>/edit/', job_views.edit_job, name='edit_job'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
