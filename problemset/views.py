@@ -35,7 +35,7 @@ def problems(request, category):
     return render(request, 'problemset/problems_list.html', {
         'title': f'{cat.long_name} | WnSOJ',
         'navbar_item_id': 2,
-        'problems': list(problems.all())
+        'problems': list(problems)
     })
 
 
@@ -53,7 +53,8 @@ def add_problem(request):
                 memory_limit=form.cleaned_data['memory_limit'],
                 title=form.cleaned_data['title'],
                 statement=form.cleaned_data['statement'],
-                editorial=form.cleaned_data['editorial']
+                editorial=form.cleaned_data['editorial'],
+                code=form.cleaned_data['solution']
             )
             problem.save()
 
@@ -61,10 +62,11 @@ def add_problem(request):
             with ZipFile(BytesIO(request.FILES['test_data'].read()), 'r') as file:
                 file.extractall(f'data/problems/{problem.id}')
 
-            # Add selected categories
             selected_categories = form.cleaned_data['categories']
             for category in selected_categories:
                 problem.categories.add(category)
+
+            problem.categories.add(models.Category.objects.get(short_name='problemset'))
 
             return redirect('problems')
 

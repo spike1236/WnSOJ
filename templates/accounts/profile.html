@@ -11,7 +11,7 @@
                   <h4>{{ profile_user.username }}</h4>
                 </div>
                 {% if profile_user.account_type != 1 %}
-                    <a class="btn btn-primary mt-2" href="/jobs?author={{ profile_user.username }}">{{ user.username }}'s jobs</a>
+                  <a class="btn btn-outline-primary mt-2" href="/jobs?author={{ profile_user.username }}"><i class="fa fa-briefcase me-1"></i>{{ user.username }}'s jobs</a>
                 {% endif %}
                 </div>
                 <div class="d-flex justify-content-center mt-3">
