@@ -54,7 +54,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
 def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
     path_to_tests = os.path.join('data', 'problems', str(problem_id), 'tests')
     stat = {
-        'verdict': 'IQ',
+        'verdict': 'AC',
         'time': 0,
         'memory': 0
     }
