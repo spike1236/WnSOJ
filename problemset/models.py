@@ -36,7 +36,7 @@ class Submission(models.Model):
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE,
                                 related_name='submissions')
     verdict = models.CharField(max_length=20, choices=VERDICT_CHOICES,
-                               default='In queue')
+                               default='IQ')
     time = models.IntegerField(default=0)
     memory = models.IntegerField(default=0)
     language = models.CharField(max_length=20)

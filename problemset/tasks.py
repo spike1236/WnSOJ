@@ -136,6 +136,6 @@ def test_submission_task(submission_id):
 
 @shared_task
 def process_submission_queue():
-    submissions = Submission.objects.filter(verdict='IQ')
+    submissions = Submission.objects.filter(verdict='IQ')[:30]
     for submission in submissions:
         test_submission_task.delay(submission.id)

@@ -35,7 +35,7 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute='*/1')
     },
 }
-CELERY_TIMEZONE = "Europe/London"
+CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 10 * 60
 
