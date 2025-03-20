@@ -1,0 +1,352 @@
+/* Account-related styling */
+
+.accounts-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.accounts-card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+    position: relative;
+    background-color: #fff;
+    border: 0 solid rgba(0, 0, 0, 0.125);
+    overflow: hidden;
+}
+
+.accounts-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.accounts-card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+.accounts-form-group {
+    margin-bottom: 1rem;
+}
+
+.accounts-form-label {
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.accounts-input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+.accounts-input-group .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.accounts-input-group .form-control {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-input-group .form-control:focus + .input-group-text,
+.accounts-input-group .input-group-text + .form-control:focus {
+    border-color: #86b7fe;
+    z-index: 5;
+}
+
+.accounts-input-group:focus-within {
+    box-shadow: none;
+}
+
+.accounts-input-group input[type="file"] {
+    padding: 0.25rem 0.5rem;
+    line-height: 1.5;
+    height: auto;
+}
+
+.accounts-input-group input[type="file"]::file-selector-button {
+    margin: -0.25rem 0.5rem -0.25rem -0.5rem;
+    padding: 0.25rem 0.5rem;
+    height: calc(1.5em + 0.5rem + 2px);
+    background-color: #f0f0f0;
+}
+
+.accounts-alert {
+    border-left: 4px solid #dc3545;
+    border-radius: 0.25rem;
+    padding: 0.6rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    padding-left: 0;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.form-check input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.accounts-checkbox,
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.accounts-checkbox-label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.accounts-checkbox input[type="checkbox"] {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.accounts-checkbox input[type="checkbox"],
+.custom-checkbox input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    margin-left: 0 !important; 
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+}
+
+.accounts-submit {
+    margin-top: 1.5rem;
+}
+
+.accounts-submit button {
+    width: auto;
+}
+
+.accounts-btn {
+    padding: 0.5rem 2rem;
+}
+
+.accounts-link {
+    color: #4e73df;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.accounts-link:hover {
+    color: #224abe;
+    text-decoration: underline;
+}
+
+.accounts-footer {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+/* Profile Page Styles */
+.profile-container {
+    padding: 1.5rem 0;
+}
+
+.profile-img-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.profile-img-container img {
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.profile-img {
+    border: 4px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-img:hover {
+    transform: scale(1.03);
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.accounts-input-group,
+.input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+.accounts-card .input-group-text,
+.accounts-input-group .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.accounts-card .input-group .form-control,
+.accounts-input-group .form-control {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-card .input-group .form-control:focus,
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-card .input-group:focus-within .input-group-text,
+.accounts-input-group:focus-within .input-group-text {
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+    color: #4e73df;
+}
+
+.accounts-card .input-group:focus-within,
+.accounts-input-group:focus-within {
+    box-shadow: none;
+}
+
+.accounts-card .input-group,
+.accounts-input-group {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+.accounts-card .input-group .input-group-text,
+.accounts-input-group .input-group-text {
+    background-color: transparent !important;
+    border-right: none;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
+    border-color: #ced4da;
+}
+
+.accounts-card .input-group .form-control,
+.accounts-input-group .form-control {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    flex: 1 1 auto;
+    border-color: #ced4da;
+    background-color: #fff;
+}
+
+.accounts-card .input-group .form-control:focus,
+.accounts-input-group .form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    border-left: 0;
+    z-index: 5;
+}
+
+.accounts-card .input-group:focus-within .input-group-text,
+.accounts-input-group:focus-within .input-group-text {
+    border-color: #86b7fe;
+    background-color: transparent !important;
+    color: #4e73df;
+}
+
+.accounts-card .input-group:focus-within,
+.accounts-input-group:focus-within {
+    box-shadow: none !important;
+}
+
+
+.accounts-card .input-group input[type="file"]::file-selector-button,
+.accounts-input-group input[type="file"]::file-selector-button {
+    background-color: #f0f0f0;
+}

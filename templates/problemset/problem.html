@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js" integrity="sha384-Rma6DA2IPUwhNxmrB/7S3Tno0YY7sFu9WSYMCuulLhIqYSGZ2gKCJWIqhBWqMQfh" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/static/plugins/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/darcula.css">
+    <link rel="stylesheet" href="/static/plugins/CodeMirror/theme/eclipse.css">
+    <script src="/static/plugins/CodeMirror/lib/codemirror.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/clike/clike.js"></script>
+    <script src="/static/plugins/CodeMirror/mode/python/python.js"></script>
+    <script src="/static/plugins/CodeMirror/addon/edit/matchbrackets.js"></script>
+    <link rel="stylesheet" href="/static/css/code_display.css">
+
+    <div class="container problem-container mt-4">
+        {% include "problemset/problem_navbar.html" %}
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h2 class="mb-0">{{ problem.title }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <span class="badge bg-info text-dark">Time limit: {{ problem.time_limit }} sec</span>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="badge bg-info text-dark">Memory limit: {{ problem.memory_limit }} MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">Problem Statement</h3>
+            </div>
+            <div class="card-body problem-statement" id="problem-description">{{ problem.statement }}</div>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">Code Editor</h3>
+            </div>
+            <div class="card-body">
+                <form action="" method="post" id="all-form">{{ csrf_input }}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Language:</span>
+                                <select id="language" name="language" class="form-select" onchange="selectLanguage()">
+                                    <option selected value="cpp">GNU C++17</option>
+                                    <option value="py">Python 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">Theme:</span>
+                                <select id="theme_select" class="form-select" onchange="selectTheme()">
+                                    <option selected value="0">default</option>
+                                    <option value="1">darcula</option>
+                                    <option value="2">eclipse</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <textarea id="code_area" name="code"></textarea>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                            <button type="submit" class="btn btn-primary">Submit Solution</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/static/js/submission.js"></script>
+    <script type="text/javascript" src="/static/js/problem_parser.js"></script>
+{% endblock %}

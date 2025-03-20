@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container problem-container mt-4">
+        <div class="card problem-card shadow-sm mb-4">
+            <div class="card-header problem-card-header bg-light">
+                <h2 class="problem-section-header mb-0">Submissions</h2>
+            </div>
+            <div class="card-body problem-card-body">
+                <table class="table table-bordered table-striped text-center submissions-table mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 7%">ID</th>
+                            <th scope="col" style="width: 20%">Sending time</th>
+                            <th scope="col" style="width: 20%">User</th>
+                            <th scope="col" style="width: 23%">Problem</th>
+                            <th scope="col" style="width: 5%">Language</th>
+                            <th scope="col" style="width: 5%">Verdict</th>
+                            <th scope="col" style="width: 10%">Time</th>
+                            <th scope="col" style="width: 10%">Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in submissions %}
+                            <tr>
+                                <th scope="row"><a href="/submission/{{ item.id }}">{{ item.id }}</a></th>
+                                <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
+                                <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
+                                <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
+                                <td>{{ item.language }}</td>
+                                {% if item.verdict == 'AC' %}
+                                    <td class="submission-status status-accepted">{{ item.verdict }}</td>
+                                {% elif item.verdict == 'CE' %}
+                                    <td class="submission-status status-attempted"></td>{{ item.verdict }}</td>
+                                {% elif item.verdict == 'IQ' %}
+                                    <td class="submission-status status-pending">{{ item.verdict }}</td>
+                                {% else %}
+                                    <td class="submission-status status-error">{{ item.verdict }}</td>
+                                {% endif %}
+                                <td>{{ item.time }} ms</td>
+                                <td>{{ item.memory }} KB</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

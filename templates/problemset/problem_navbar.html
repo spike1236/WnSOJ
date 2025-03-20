@@ -1,0 +1,23 @@
+<ul class="problem-navbar nav nav-tabs" style="margin-top: 10px">
+    <li class="problem-nav-item nav-item">
+        {% if current_bar_id == 1 %}
+            <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}">Statement</a>
+        {% else %}
+            <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}">Statement</a>
+    {% endif %}
+    </li>
+    <li class="problem-nav-item nav-item">
+    {% if current_bar_id == 2 %}
+            <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}/editorial">Editorial</a>
+    {% else %}
+            <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}/editorial">Editorial</a>
+    {% endif %}
+    </li>
+    <li class="problem-nav-item nav-item">
+    {% if current_bar_id == 3 %}
+        <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}/submissions">Submissions</a>
+    {% else %}
+        <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}/submissions">Submissions</a>
+    {% endif %}
+    </li>
+</ul>

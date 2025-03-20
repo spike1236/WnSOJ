@@ -1,0 +1,653 @@
+form.css_form {
+    max-width: 500px;
+    justify-content: center;
+    margin: auto;
+    margin-top: 2%;
+}
+
+/* Alert styles specific to forms */
+form .alert {
+    position: static;
+    box-shadow: none;
+    margin-top: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Card styles */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0, 0, 0, 0.125);
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+.card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Input group styles */
+.input-group-text {
+    background-color: transparent;
+    border-right: none;
+}
+
+.input-group .form-control {
+    border-left: 0;
+}
+
+.input-group .input-group-text:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .input-group-text:last-child {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group .form-control:not(:first-child):not(:last-child) {
+    border-radius: 0;
+}
+
+.input-group .form-control:focus {
+    z-index: 3;
+    position: relative;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.2);
+}
+
+.input-group:focus-within {
+    box-shadow: none;
+}
+
+.input-group:focus-within .input-group-text,
+.input-group:focus-within .form-control {
+    border-color: #86b7fe;
+}
+
+/* File input styles */
+.input-group input[type="file"],
+input[type="file"] {
+    padding: 0.375rem 0.75rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    height: calc(1.5em + 0.75rem + 2px);
+}
+
+.input-group input[type="file"]::file-selector-button,
+input[type="file"]::file-selector-button {
+    margin: -0.375rem 0.75rem -0.375rem -0.75rem;
+    padding: 0.375rem 0.75rem;
+    height: calc(1.5em + 0.75rem + 2px);
+    border-radius: 0.25rem 0 0 0.25rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-right: none;
+    color: #495057;
+    transition: all 0.2s ease-in-out;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #e9ecef;
+}
+
+.input-group > input[type="file"] {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+}
+
+.input-group-sm input[type="file"] {
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.input-group-sm input[type="file"]::file-selector-button {
+    margin: -0.25rem 0.5rem -0.25rem -0.5rem;
+    padding: 0.25rem 0.5rem;
+    height: calc(1.5em + 0.5rem + 2px);
+}
+
+/* Form styles */
+.form-label.fw-bold, label {
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.form-text.text-muted {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.section-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Profile styles */
+.main-body {
+    padding: 15px;
+}
+
+.gutters-sm {
+    margin-right: -8px;
+    margin-left: -8px;
+}
+
+.gutters-sm > .col, 
+.gutters-sm > [class*=col-] {
+    padding-right: 8px;
+    padding-left: 8px;
+}
+
+.bg-gray-300 {
+    background-color: #e2e8f0;
+}
+
+.shadow-none {
+    box-shadow: none !important;
+}
+
+.profile-img-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.profile-img-container img {
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-img {
+    border: 4px solid #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.profile-img:hover {
+    transform: scale(1.03);
+}
+
+.card .img-fluid.rounded-circle {
+    margin: 0 auto;
+    display: block;
+}
+
+/* Card variations */
+.compact-card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.compact-card .card-header {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+    background-color: #f8f9fa;
+}
+
+.compact-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Small input group styles */
+.input-group-sm .input-group-text {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.input-group-sm .form-control {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.alert.py-1 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+/* Table styles */
+.table-stats {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.table-stats th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 0.75rem;
+}
+
+/* Common table styles */
+.table-common {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.table-common th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.table-common tr {
+    transition: background-color 0.2s;
+}
+
+.table-common tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status styles */
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+}
+
+.status-solved {
+    background-color: #d4edda;
+}
+
+.status-attempted {
+    background-color: #fff3cd;
+}
+
+.status-error {
+    background-color: #f8d7da;
+}
+
+/* Submissions table */
+.submissions-table {
+    margin-top: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.submissions-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+/* Category styling */
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-img-container {
+    height: 160px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.card-img-top {
+    max-height: 160px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-footer {
+    background-color: transparent;
+    border-top: 1px solid #f0f0f0;
+    padding: 0.75rem 1.25rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+.card a {
+    color: #3a5bbf;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.card a:hover {
+    color: #264299;
+}
+
+/* Problem table styling */
+.problem-table {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.problem-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.problem-table tr {
+    transition: background-color 0.2s;
+}
+
+.problem-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.problem-status {
+    font-weight: 500;
+    text-align: center;
+}
+
+.category-section {
+    margin-bottom: 2.5rem;
+}
+
+.categories-divider {
+    margin: 2rem 0;
+    height: 2px;
+    background-color: #f0f0f0;
+}
+
+/* Form check styles */
+.form-check {
+    padding-left: 0;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.form-check-inline {
+    display: inline-flex;
+    align-items: center;
+    padding-left: 0;
+    margin-right: 0.75rem;
+}
+
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    margin-top: 0.25em;
+    margin-right: 0.5rem;
+    background-color: #fff;
+    border: 1px solid #adb5bd;
+    margin-left: 0;
+}
+
+.form-check-label {
+    font-weight: normal;
+    color: #495057;
+    margin-bottom: 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.form-check input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+}
+
+/* Custom checkbox styling */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.custom-checkbox label {
+    display: flex;
+    align-items: center;
+    width: auto;
+    cursor: pointer;
+    margin-bottom: 0;
+    font-weight: normal;
+}
+
+.custom-checkbox input[type="checkbox"] {
+    position: relative;
+    margin-right: 8px;
+    width: 16px !important;
+    height: 16px !important;
+    cursor: pointer;
+    flex-shrink: 0;
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    opacity: 1;
+    z-index: 1;
+    margin-left: 0 !important;
+}
+
+/* Feature card styles */
+.feature-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.feature-card .card-img-container {
+    height: 200px;
+}
+
+.feature-card .card-title {
+    color: #3a5bbf;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.divider {
+    max-width: 100px;
+    margin: 0 auto;
+    height: 4px;
+    background-color: #4e73df;
+    opacity: 0.7;
+    border-radius: 2px;
+}
+
+/* Dropdown menu styles */
+.dropdown-menu {
+    padding: 0.5rem 0;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f4ff;
+}
+
+/* Verdict and submission status styling */
+.verdict-cell {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.submission-status {
+    overflow: auto;
+}
+
+.status-accepted {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    display: block !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.status-error {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    display: block !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.status-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    display: block !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+.status-pending {
+    background-color: #e2e3e5 !important;
+    color: #383d41 !important;
+    display: block !important;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+/* Form button styles */
+.btn-form {
+    padding: 0.5rem 2rem;
+    font-weight: 500;
+}
+
+.form-submit {
+    margin-top: 1.5rem;
+}
+
+.form-submit button {
+    width: auto;
+}
+
+/* Submission stats table */
+.submission-stats-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 0;
+    font-size: 0.875rem;
+}
+
+.submission-stats-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.6rem 0.5rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.submission-stats-table td {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 0.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.submission-stats-table tr.status-solved {
+    background-color: #d4edda;
+}
+
+.submission-stats-table tr.status-attempted {
+    background-color: #fff3cd;
+}
+
+.submission-stats-table tr.status-error {
+    background-color: #f8d7da;
+}
+
+.submission-stats-table .badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    min-width: 2.5em;
+}
+
+.submission-stats-table tr:last-child td {
+    border-bottom: 0;
+}
+
+/* Verdict type indicators */
+.verdict-type {
+    position: relative;
+    padding-left: 2rem !important;
+}
+
+.verdict-type::before {
+    content: "";
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+}
+
+.solved-verdict::before {
+    background-color: #28a745;
+}
+
+.attempted-verdict::before {
+    background-color: #ffc107;
+}
+
+.error-verdict::before {
+    background-color: #dc3545;
+}
+
+.submission-stats-table tr.status-solved,
+.submission-stats-table tr.status-attempted,
+.submission-stats-table tr.status-error {
+    background-color: transparent;
+}

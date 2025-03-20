@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+    <link rel="stylesheet" href="/static/css/jobs.css">
+
+    <div class="container" style="margin-top: 20px">
+        <div class="job-details">
+            {% if user.is_authenticated and (user.account_type != 1 and job in user.jobs.all()) %}
+                <div class="job-actions">
+                    <a href="/job/{{ job.id }}/edit" class="btn btn-primary">
+                        <i class="fa fa-edit me-2"></i>Edit
+                    </a>
+                    <a href="/job/{{ job.id }}/delete" class="btn btn-danger">
+                        <i class="fa fa-trash me-2"></i>Delete
+                    </a>
+                </div>
+                <hr class="my-4">
+            {% endif %}
+            
+            <h2 class="mb-4">{{ job.title }}</h2>
+            
+            <div class="job-meta">
+                <div class="job-meta-item">
+                    <span class="job-meta-label">Location</span>
+                    <span class="job-meta-value">{{ job.location }}</span>
+                </div>
+                
+                <div class="job-meta-item">
+                    <span class="job-meta-label">Salary Range</span>
+                    <span class="job-meta-value">
+                        {% if job.salary_range %}
+                            {% if 'min' not in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
+                                Salary not specified
+                            {% elif 'min' in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
+                                At least {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }}/yr
+                            {% elif 'min' not in job.salary_range.keys() and 'max' in job.salary_range.keys() %}
+                                Up to {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
+                            {% else %}
+                                {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }} - {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
+                            {% endif %}
+                        {% else %}
+                            Salary not specified
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <div class="job-meta-item">
+                    <span class="job-meta-label">Posted By</span>
+                    <span class="job-meta-value">
+                        <a href="/profile/{{ job.user.username }}">{{ job.user.username }}</a>
+                    </span>
+                </div>
+                
+                <div class="job-meta-item">
+                    <span class="job-meta-label">Posted On</span>
+                    <span class="job-meta-value">{{ job.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                </div>
+            </div>
+            
+            <div class="job-description">
+                <h4>Job Description</h4>
+                <div id="job-content" class="mt-3">{{ job.info }}</div>
+            </div>
+            <div class="mt-4">
+                <a href="/jobs" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left me-2"></i>Back to Jobs
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false
+        });
+        const jobContent = document.getElementById("job-content");
+        const content = jobContent.textContent.trim();
+        jobContent.innerHTML = marked.parse(content);
+    </script>
+{% endblock %}
