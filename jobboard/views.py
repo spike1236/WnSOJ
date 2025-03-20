@@ -153,3 +153,13 @@ def edit_job(request, job_id):
         'currency': currency,
         'is_edit': True
     })
+
+
+def delete_job(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    if not request.user.is_authenticated or request.user.account_type == 1 or (
+        request.user != job.user and request.user.account_type == 2
+    ):
+        return redirect('job', job_id=job_id)
+    job.delete()
+    return redirect('jobs')
