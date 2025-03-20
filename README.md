@@ -40,9 +40,31 @@ There are 2 types of accounts:
 ### Profile
 In the profile, you can see user's username, email, phone number and statistics about problems: submissions statistics and last 10 attempts.\
 Also you can change your icon or password in 'Edit profile' page.
+### API
+The platform provides a comprehensive REST API with the following features:
+- JWT Authentication
+- User registration and profile management
+- Access to problems, categories, and submissions
+- Job board integration
+
+API documentation is available through:
+- Swagger UI: `/api/schema/swagger-ui/`
+- ReDoc: `/api/schema/redoc/`
+
+Main API endpoints:
+- Authentication: `/api/token/` and `/api/token/refresh/`
+- User Registration: `/api/register/`
+- User Profile: `/api/profile/`
+- Problems: `/api/problems/`
+- Categories: `/api/categories/`
+- Submissions: `/api/submissions/`
+- Jobs: `/api/jobs/`
+
 ## Technologies
 Following technologies and libraries were used to create this project:
 * [Django](https://www.djangoproject.com)
+* [Django REST Framework](https://www.django-rest-framework.org)
+* [drf-spectacular](https://drf-spectacular.readthedocs.io/) (OpenAPI Schema)
 * [PostgreSQL](https://www.postgresql.org)
 * [isolate](https://github.com/ioi/isolate)
 * [Celery](https://docs.celeryq.dev/en/stable)
@@ -57,4 +79,6 @@ Following components were used to create this project:
 * [marked](https://marked.js.org)
 * [katex](https://katex.org)
 * [FontAwesome](https://fontawesome.com)
+* [Swagger UI](https://swagger.io/tools/swagger-ui/)
+* [ReDoc](https://redocly.github.io/redoc/)
 

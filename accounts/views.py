@@ -8,6 +8,10 @@ from django.conf import settings
 from PIL import Image
 from .models import User
 from problemset.models import Submission
+import random
+from rest_framework import generics, permissions
+from .serializers import RegisterSerializer, UserSerializer, UserDetailSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 def register(request):
@@ -18,6 +22,7 @@ def register(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.account_type = 2 if form.cleaned_data.get('is_business') else 1
+            user.icon_id = random.randint(10000000, 99999999)
             if form.cleaned_data.get('icon'):
                 icon = form.cleaned_data.get('icon')
                 icon64_dir = os.path.join(settings.BASE_DIR,
@@ -35,11 +40,12 @@ def register(request):
                 img = Image.open(icon)
                 img = img.resize((64, 64))
                 img.save(icon64_path)
-
                 icon.seek(0)
                 img170 = Image.open(icon)
                 img170 = img170.resize((170, 170))
                 img170.save(icon170_path)
+            else:
+                user.icon_id = -user.icon_id
 
             user.save()
             login(request, user)
@@ -96,14 +102,11 @@ def edit_profile(request):
         elif 'change_icon_submit' in request.POST:
             icon = request.FILES.get('icon')
             if icon:
+                user.icon_id = abs(user.icon_id)
                 icon64_dir = os.path.join(settings.BASE_DIR,
-                                          'media',
-                                          'users_icons',
-                                          'icon64')
+                                          'media', 'users_icons', 'icon64')
                 icon170_dir = os.path.join(settings.BASE_DIR,
-                                           'media',
-                                           'users_icons',
-                                           'icon170')
+                                           'media', 'users_icons', 'icon170')
                 os.makedirs(icon64_dir, exist_ok=True)
                 os.makedirs(icon170_dir, exist_ok=True)
 
@@ -136,7 +139,7 @@ def profile(request, username):
 
     params = {
         'navbar_item_id': -1,
-        'title': f"{user.username}'s profile",
+        'title': f"{user.username}'s profile | WnSOJ",
         'profile_user': user,
     }
 
@@ -159,3 +162,25 @@ def profile(request, username):
         params['cnt'][submission.verdict] += 1
 
     return render(request, 'accounts/profile.html', params)
+
+
+class RegisterAPIView(generics.CreateAPIView):
+    """
+    API view to register users.
+    """
+    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = RegisterSerializer
+
+
+class UserDetailAPIView(generics.RetrieveUpdateAPIView):
+    """
+    API view to retrieve and update user details.
+    Only the authenticated user can access their own details.
+    """
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get_object(self):
+        return self.request.user

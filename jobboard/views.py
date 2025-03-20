@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Job
 from .forms import AddJobForm
+from rest_framework import viewsets, permissions
+from .serializers import JobSerializer
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 def format_number(value):
@@ -91,9 +94,9 @@ def job(request, job_id):
 def edit_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
 
-    if not request.user.is_authenticated or request.user.account_type == 1 or (
-        request.user != job.user and request.user.account_type == 2
-        ):
+    if not request.user.is_authenticated or (
+        not request.user.is_staff or request.user != job.user
+    ):
         return redirect('job', job_id=job_id)
 
     min_salary = job.salary_range.get('min', '') if job.salary_range else ''
@@ -157,9 +160,45 @@ def edit_job(request, job_id):
 
 def delete_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
-    if not request.user.is_authenticated or request.user.account_type == 1 or (
-        request.user != job.user and request.user.account_type == 2
+    if not request.user.is_authenticated or (
+        not request.user.is_staff or request.user != job.user
     ):
         return redirect('job', job_id=job_id)
     job.delete()
     return redirect('jobs')
+
+
+class JobAPIViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for viewing and editing jobs.
+    - List, Retrieve: available to all users.
+    - Create, Update, Destroy: restricted to the job's owner or admin users.
+    """
+    queryset = Job.objects.all().order_by('-created_at')
+    serializer_class = JobSerializer
+    authentication_classes = [JWTAuthentication]
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            self.permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAuthenticated]
+        else:
+            self.permission_classes = [permissions.AllowAny]
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_update(self, serializer):
+        job = self.get_object()
+        if self.request.user != job.user and not self.request.user.is_staff:
+            raise permissions.PermissionDenied("You do not have permission to edit" +
+                                               "this job.")
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if self.request.user != instance.user and not self.request.user.is_staff:
+            raise permissions.PermissionDenied("You do not have permission to delete" +
+                                               "this job.")
+        instance.delete()

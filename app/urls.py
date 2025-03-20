@@ -15,12 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from accounts import views as accounts_views
 from problemset import views as problem_views
 from jobboard import views as job_views
 from . import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
+
+router = DefaultRouter()
+router.register(r'categories', problem_views.CategoryAPIViewSet)
+router.register(r'problems', problem_views.ProblemAPIViewSet)
+router.register(r'submissions', problem_views.SubmissionAPIViewSet)
+router.register(r'jobs', job_views.JobAPIViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -45,4 +57,12 @@ urlpatterns = [
     path('job/<int:job_id>/', job_views.job, name='job'),
     path('job/<int:job_id>/edit/', job_views.edit_job, name='edit_job'),
     path('job/<int:job_id>/delete/', job_views.delete_job, name='delete_job'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Get JWT
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT
+    path('api/register/', accounts_views.RegisterAPIView.as_view(), name='register_api'),
+    path('api/profile/', accounts_views.UserDetailAPIView.as_view(), name='profile_api'),
+    path('api/', include(router.urls)),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

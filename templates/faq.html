@@ -93,67 +93,33 @@
         </ol>
     </div>
     <hr class="my-4">
-    <!-- <div>
+    <div>
         <h3>API</h3><br>
-        <p>In API you can request:</p>
+        <p>Our platform provides a comprehensive REST API. You can request:</p>
         <ul>
-            <li>users list and user by id</li>
-            <li>jobs list and job by id</li>
-            <li>submissions list and submission by id</li>
-            <li>problems list and problem by id</li>
+            <li>authentication (get JWT tokens)</li>
+            <li>user registration and profile information</li>
+            <li>problems list and problem details</li>
+            <li>categories list and category details</li>
+            <li>submissions list and submission details</li>
+            <li>jobs list and job details</li>
         </ul>
-        <p>API is located by url <a href="http://127.0.0.1:5000/api/v1">http://127.0.0.1:5000/api/v1</a></p>
-        <p>Examples:</p>
+        <p>API documentation is available at:</p>
         <ul>
-            <li>
-                request: <a href="http://127.0.0.1:5000/api/v1/user/1">http://127.0.0.1:5000/api/v1/user/1</a><br>
-                answer:<br>
-                <pre class="alert-info">
-{
-  "user": {
-    "email": "admin@admin.com",
-    "fullname": "admin admin",
-    "phone_number": "",
-    "username": "admin"
-  }
-}
-                </pre>
-            </li>
-            <li>
-                request: <a href="http://127.0.0.1:5000/api/v1/submission/1">http://127.0.0.1:5000/api/v1/submission/1</a><br>
-                answer:<br>
-                <pre class="alert-info">
-{
-  "submission": {
-    "language": "GNU C++17",
-    "memory": 2476,
-    "send_time": "24/Apr/2021  22:06  UTC+6",
-    "time": 233,
-    "user": {
-      "username": "admin"
-    },
-    "verdict": "AC"
-  }
-}
-                </pre>
-            </li>
-            <li>
-                request: <a href="http://127.0.0.1:5000/api/v1/jobs">http://127.0.0.1:5000/api/v1/jobs</a><br>
-                answer:<br>
-                <pre class="alert-info">
-{
-  "jobs": [
-    {
-      "title": "test job",
-      "user": {
-        "username": "admin"
-      }
-    }
-  ]
-}
-                </pre>
-            </li>
+            <li>Swagger UI: <a href="/api/schema/swagger-ui/">/api/schema/swagger-ui/</a></li>
+            <li>ReDoc: <a href="/api/schema/redoc/">/api/schema/redoc/</a></li>
         </ul>
-    </div> -->
+        <p>Examples of API endpoints:</p>
+        <ul>
+            <li>JWT Authentication: <code>/api/token/</code> and <code>/api/token/refresh/</code></li>
+            <li>Registration: <code>/api/register/</code></li>
+            <li>User Profile: <code>/api/profile/</code></li>
+            <li>Categories: <code>/api/categories/</code></li>
+            <li>Problems: <code>/api/problems/</code></li>
+            <li>Submissions: <code>/api/submissions/</code></li>
+            <li>Jobs: <code>/api/jobs/</code></li>
+        </ul>
+        <p>For detailed API usage, please refer to the Swagger UI or ReDoc documentation.</p>
+    </div>
 </div>
 {% endblock %}

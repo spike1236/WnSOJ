@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from . import models
+from .models import Category, Problem, Submission
 from .forms import AddProblemForm, SubmitForm
 import os
 from zipfile import ZipFile
 from io import BytesIO
+from rest_framework import viewsets, permissions
+from .serializers import CategorySerializer, ProblemSerializer, SubmissionSerializer
 
 
 def home_page(request):
@@ -23,14 +25,14 @@ def categories(request):
     return render(request, 'problemset/problems_list.html', {
         'title': 'Problems | WnSOJ',
         'navbar_item_id': 2,
-        'categories': list(models.Category.objects.all()),
+        'categories': list(Category.objects.all()),
         'show_categories': True
     })
 
 
 def problems(request, category):
-    problems = models.Problem.objects.filter(categories__short_name=category)
-    cat = models.Category.objects.get(short_name=category)
+    problems = Problem.objects.filter(categories__short_name=category)
+    cat = Category.objects.get(short_name=category)
     return render(request, 'problemset/problems_list.html', {
         'title': f'{cat.long_name} | WnSOJ',
         'navbar_item_id': 2,
@@ -47,7 +49,7 @@ def add_problem(request):
     if request.method == "POST":
         form = AddProblemForm(request.POST, request.FILES)
         if form.is_valid():
-            problem = models.Problem(
+            problem = Problem(
                 time_limit=form.cleaned_data['time_limit'],
                 memory_limit=form.cleaned_data['memory_limit'],
                 title=form.cleaned_data['title'],
@@ -65,7 +67,7 @@ def add_problem(request):
             for category in selected_categories:
                 problem.categories.add(category)
 
-            problem.categories.add(models.Category.objects.get(short_name='problemset'))
+            problem.categories.add(Category.objects.get(short_name='problemset'))
 
             return redirect('problems')
 
@@ -79,13 +81,13 @@ def add_problem(request):
 
 
 def problem_statement(request, problem_id):
-    problem = get_object_or_404(models.Problem, id=problem_id)
+    problem = get_object_or_404(Problem, id=problem_id)
     form = SubmitForm()
     if request.method == "POST":
         form = SubmitForm(request.POST, request.FILES)
         if form.is_valid():
             if request.user.is_authenticated:
-                submission = models.Submission(
+                submission = Submission(
                     problem=problem,
                     user=request.user,
                     language=form.cleaned_data['language'],
@@ -107,7 +109,7 @@ def problem_statement(request, problem_id):
 
 
 def problem_editorial(request, problem_id):
-    problem = get_object_or_404(models.Problem, id=problem_id)
+    problem = get_object_or_404(Problem, id=problem_id)
     return render(request, 'problemset/editorial.html', {
         'title': f'{problem.title} | WnSOJ',
         'navbar_item_id': 2,
@@ -117,8 +119,8 @@ def problem_editorial(request, problem_id):
 
 
 def problem_submissions_list(request, problem_id):
-    problem = get_object_or_404(models.Problem, id=problem_id)
-    submissions = models.Submission.objects.filter(problem=problem)
+    problem = get_object_or_404(Problem, id=problem_id)
+    submissions = Submission.objects.filter(problem=problem)
 
     if 'user' in request.GET and request.GET['user']:
         submissions = submissions.filter(user__username=request.GET['user'])
@@ -138,7 +140,7 @@ def problem_submissions_list(request, problem_id):
 
 
 def submissions(request):
-    submissions = models.Submission.objects.all()
+    submissions = Submission.objects.all()
 
     if 'user' in request.GET and request.GET['user']:
         submissions = submissions.filter(user__username=request.GET['user'])
@@ -156,7 +158,7 @@ def submissions(request):
 
 
 def submission(request, submission_id):
-    submission = get_object_or_404(models.Submission, id=submission_id)
+    submission = get_object_or_404(Submission, id=submission_id)
     return render(request, 'problemset/submission.html', {
         'title': 'Submission | WnSOJ',
         'navbar_item_id': 2,
@@ -169,3 +171,54 @@ def faq(request):
         'title': 'FAQ | WnSOJ',
         'navbar_item_id': 4
     })
+
+
+class CategoryAPIViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class ProblemAPIViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for viewing and editing problems.
+    - List, Retrieve: available to all users.
+    - Create, Update, Destroy: restricted to admin users.
+    """
+    queryset = Problem.objects.all()
+    serializer_class = ProblemSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAdminUser]
+        else:
+            self.permission_classes = [permissions.AllowAny]
+        return super().get_permissions()
+
+
+class SubmissionAPIViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for viewing and creating submissions.
+    - List: available to authenticated users.
+    - Create: available to authenticated users.
+    - Retrieve: available to the submitting user or admin.
+    - Update, Destroy: restricted to admin users.
+    """
+    queryset = Submission.objects.all()
+    serializer_class = SubmissionSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            return Submission.objects.filter(user=user)
+        return Submission.objects.none()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user, verdict='IQ')
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']:
+            self.permission_classes = [permissions.IsAdminUser]
+        else:
+            self.permission_classes = [permissions.IsAuthenticated]
+        return super().get_permissions()
