@@ -44,4 +44,5 @@ urlpatterns = [
     path('add_job/', job_views.add_job, name='add_job'),
     path('job/<int:job_id>/', job_views.job, name='job'),
     path('job/<int:job_id>/edit/', job_views.edit_job, name='edit_job'),
+    path('job/<int:job_id>/delete/', job_views.delete_job, name='delete_job'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
