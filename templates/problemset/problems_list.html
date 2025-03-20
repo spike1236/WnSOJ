@@ -4,7 +4,7 @@
     <div class="container problem-container">
         <div class="problem-category-header category-header">
             <h2 class="problem-section-header section-header">Problem Categories</h2>
-            {% if user.is_authenticated and user.account_type == 777 %}
+            {% if user.is_authenticated and user.is_staff %}
                 <a href="/add_problem"><button class="problem-btn btn btn-primary">Add Problem</button></a>
             {% endif %}
         </div>
