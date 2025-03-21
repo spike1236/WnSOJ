@@ -7,14 +7,14 @@ import subprocess
 import logging
 from logging.handlers import RotatingFileHandler
 from .utils import run_isolate, run_tests
-from app.settings import ISOLATE_PATH, BASE_DIR
+from app import settings
 
 
 def configure_logger():
     logger = logging.getLogger(__name__)
 
     if not logger.handlers:
-        log_file = BASE_DIR / 'logs' / 'problemset.log'
+        log_file = settings.BASE_DIR / 'logs' / 'problemset.log'
         os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
         handler = RotatingFileHandler(
@@ -83,7 +83,7 @@ def test_submission_task(submission_id):
         logger.error(f"Failed to initialize isolate box for submission {submission_id}")
         return
 
-    isolate_box_path = f'{ISOLATE_PATH}/{box_id}/box'
+    isolate_box_path = f'{settings.ISOLATE_PATH}/{box_id}/box'
     try:
         with open(os.path.join(isolate_box_path, config['source_file']), 'w') as f:
             f.write(submission.code)
@@ -137,5 +137,15 @@ def test_submission_task(submission_id):
 @shared_task
 def process_submission_queue():
     submissions = Submission.objects.filter(verdict='IQ')[:30]
+    if settings.NO_ISOLATE:
+        for submission in submissions:
+            submission.verdict = 'RE 1'
+            submission.time = random.randint(0,
+                                            int(submission.problem.time_limit * 1000))
+            submission.memory = random.randint(0,
+                                            int(submission.problem.memory_limit * 1024))
+            submission.save()
+        logger.warning("NO_ISOLATE is set to True. Skipping submission processing.")
+        return
     for submission in submissions:
         test_submission_task.delay(submission.id)
