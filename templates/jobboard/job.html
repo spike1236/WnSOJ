@@ -31,7 +31,7 @@
                             {% if 'min' not in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
                                 Salary not specified
                             {% elif 'min' in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
-                                {% if str(job.salary_range.min) == "0" %}
+                                {% if job.salary_range.min|string() == "0" %}
                                     Salary not specified
                                 {% else %}
                                     At least {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }}/yr
