@@ -11,7 +11,7 @@ let editor = CodeMirror.fromTextArea(codeElement, {
     tabSize: 4,
     indentUnit: 4,
     theme: "default",
-    mode: (lang === 'GNU C++17') ? "text/x-c++src" : "text/x-python",
+    mode: (lang === 'GNU C++17' || lang == 'cpp') ? "text/x-c++src" : "text/x-python",
     lineWrapping: true,
     viewportMargin: Infinity,
     autoRefresh: true
