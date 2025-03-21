@@ -42,7 +42,7 @@ def problems(request, category):
 
 @login_required
 def add_problem(request):
-    if request.user.account_type == 1:
+    if not request.user.is_staff:
         return HttpResponseForbidden()
 
     form = AddProblemForm()
