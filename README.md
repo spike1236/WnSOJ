@@ -1,6 +1,8 @@
 # WnSOJ - Work and Solve online judge! 
 WnSOJ is a platform where you can solve programming and math tasks, learn new algorithms and concepts and find job. Platform offers `effective testing system`, `categorized problemset`, `editorials and solutions`, `submissions`, `job search`, `users` and `statistics`.
 
+### Check it out at [wnsoj.xyz](https://wnsoj.xyz)!
+
 ![Main Page](https://github.com/spike1236/WnSOJ/blob/main/readme_screenshots/screenshot_1.png)
 
 ## Getting Started
