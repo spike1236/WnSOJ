@@ -1,3 +1,8 @@
+# WnSOJ stuff
+.ruff_cache
+data/
+media/
+
 ### Django ###
 *.log
 *.pot
@@ -7,9 +12,6 @@ local_settings.py
 
 ### PostgreSQL ###
 .pgpass
-
-# Ruff stuff
-.ruff_cache
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
