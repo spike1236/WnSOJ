@@ -1,7 +1,7 @@
 let codeElement = document.getElementById("code_area");
 let themeSelect = document.getElementById("theme_select");
 let langElement = document.getElementById("code_language");
-let lang = langElement ? langElement.innerHTML : 'GNU C++17';
+let lang = langElement ? langElement.value : 'cpp';
 
 let editor = CodeMirror.fromTextArea(codeElement, {
     lineNumbers: true,
