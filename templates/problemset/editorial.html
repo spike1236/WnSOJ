@@ -50,7 +50,7 @@
             <div class="card-body problem-card-body collapse" id="solution_content">
                 <div class="problem-code-header d-flex justify-content-between align-items-center mb-2">
                     <div class="problem-code-language">
-                        <span class="badge bg-light text-dark" id="code_language_badge">GNU C++17</span>
+                        <span class="badge bg-light text-dark">GNU C++17</span>
                     </div>
                     <button id="copy_button" class="btn btn-outline-dark btn-sm" onclick="copyCode(editor)">
                         <i class="bi bi-clipboard"></i> Copy Code
@@ -59,7 +59,7 @@
                 <div class="problem-code-container">
                     <textarea id="code_area" name="code_area">{{ problem.code }}</textarea>
                     <select style="display: none;" id="code_language" name="language" class="form-select">
-                        <option selected value="cpp">GNU C++17</option>
+                        <option style="display: none;" selected value="cpp"></option>
                     </select>
                 </div>
             </div>
