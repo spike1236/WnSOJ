@@ -9,17 +9,6 @@
             </div>
             <div class="accounts-card-body p-4">
                 <form action="" method="post" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
-                    <!-- Full name field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.fullname.id_for_label }}" class="accounts-form-label fw-bold">{{ form.fullname.label }}</label>
-                        {{ form.fullname }}
-                        {% for error in form.fullname.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
                     <!-- Username field -->
                     <div class="accounts-form-group mb-3">
                         <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }}</label>
@@ -34,6 +23,27 @@
                                 <i class="fa fa-exclamation-circle me-2"></i>{{ username_error_message }}
                             </div>
                         {% endif %}
+                    </div>
+                    <!-- First name field -->
+                    <div class="accounts-form-group mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="accounts-form-label fw-bold">{{ form.first_name.label }}</label>
+                        {{ form.first_name }}
+                        {% for error in form.first_name.errors %}
+                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Last name field -->
+                    <div class="accounts-form-group mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="accounts-form-label fw-bold">{{ form.last_name.label }}</label>
+                        {{ form.last_name }}
+                        {% for error in form.last_name.errors %}
+                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            </div>
+                        {% endfor %}
                     </div>
                     
                     <!-- Email field -->
