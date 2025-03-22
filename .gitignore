@@ -2,6 +2,7 @@
 .ruff_cache
 data/
 media/
+static/admin/
 
 ### Django ###
 *.log
