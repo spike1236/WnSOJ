@@ -71,7 +71,10 @@
             <div class="card-body p-0">
                 <div class="submission-code-wrapper">
                     <textarea id="code_area" name="code_area">{{ item.code }}</textarea>
-                    <div style="display: none" id="code_language" value="{{ item.language }}">{{ item.language }}</div>
+                    <select style="display: none;" id="code_language" name="language" class="form-select">
+                        <option selected value="{{ item.language }}">{{ item.language }}</option>
+                    </select>
+
                 </div>
             </div>
         </div>
