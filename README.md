@@ -23,6 +23,8 @@ pip install -r requirements.txt
 python3 manage.py runserver
 celery -A app worker -B -l info
 ```
+> You can also wrap launches as systemd services (which is recommended).
+
 6. Open [Main page](http://127.0.0.1:8000)
 7. Enjoy the project! :sunglasses:
 
