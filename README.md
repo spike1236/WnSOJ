@@ -113,5 +113,5 @@ Following components were used to create this project:
 ## Author
 * **Rakhmetulla Akram** - [spike1236](https://github.com/spike1236)
 ## License
-This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License](https://creativecommons.org/licenses/by-nc-nd/4.0).\
+This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0).\
 See [LICENSE](https://github.com/spike1236/WnSOJ/blob/main/LICENSE.md) file for details.
