@@ -33,9 +33,9 @@ def register(request):
                 os.makedirs(icon170_dir, exist_ok=True)
 
                 icon64_path = os.path.join(icon64_dir,
-                                           f'icon64_user_{user.icon_id}.png')
+                                           f'{user.icon_id}.png')
                 icon170_path = os.path.join(icon170_dir,
-                                            f'icon170_user_{user.icon_id}.png')
+                                            f'{user.icon_id}.png')
 
                 img = Image.open(icon)
                 img = img.resize((64, 64))
