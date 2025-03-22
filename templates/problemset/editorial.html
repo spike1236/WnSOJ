@@ -58,7 +58,9 @@
                 </div>
                 <div class="problem-code-container">
                     <textarea id="code_area" name="code_area">{{ problem.code }}</textarea>
-                    <div style="display: none" id="code_language">GNU C++17</div>
+                    <select style="display: none;" id="code_language" name="language" class="form-select">
+                        <option selected value="cpp">GNU C++17</option>
+                    </select>
                 </div>
             </div>
         </div>
