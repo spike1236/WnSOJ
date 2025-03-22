@@ -32,6 +32,12 @@ function selectTheme() {
     editor.refresh();
 }
 
+function selectLanguage() {
+    let lang = langElement.value;
+    editor.setOption("mode", (lang == "GNU C++17" || lang == "cpp") ? "text/x-c++src" : "text/x-python");
+    editor.refresh();
+}
+
 function toggleSolution() {
     const solutionContent = document.getElementById('solution_content');
     const toggleButton = document.getElementById('toggle_solution');
