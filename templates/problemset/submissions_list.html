@@ -30,7 +30,7 @@
                                 {% if item.verdict == 'AC' %}
                                     <td class="submission-status status-accepted">{{ item.verdict }}</td>
                                 {% elif item.verdict == 'CE' %}
-                                    <td class="submission-status status-attempted"></td>{{ item.verdict }}</td>
+                                    <td class="submission-status status-attempted">{{ item.verdict }}</td>
                                 {% elif item.verdict == 'IQ' %}
                                     <td class="submission-status status-pending">{{ item.verdict }}</td>
                                 {% else %}
