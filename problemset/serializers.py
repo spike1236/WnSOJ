@@ -8,7 +8,7 @@ from accounts.serializers import UserSerializer
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'short_name', 'long_name', 'img_url']
+        fields = ["id", "short_name", "long_name", "img_url"]
 
 
 class ProblemSerializer(serializers.ModelSerializer):
@@ -18,8 +18,18 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Problem
-        fields = ['id', 'title', 'time_limit', 'memory_limit', 'statement', 'editorial',
-                  'categories', 'code', 'users_solved', 'users_unsolved']
+        fields = [
+            "id",
+            "title",
+            "time_limit",
+            "memory_limit",
+            "statement",
+            "editorial",
+            "categories",
+            "code",
+            "users_solved",
+            "users_unsolved",
+        ]
 
 
 class SubmissionSerializer(serializers.ModelSerializer):
@@ -28,6 +38,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ['id', 'user', 'problem', 'verdict', 'time', 'memory',
-                  'language', 'code', 'send_time']
-        read_only_fields = ['verdict', 'time', 'memory', 'send_time']
+        fields = [
+            "id",
+            "user",
+            "problem",
+            "verdict",
+            "time",
+            "memory",
+            "language",
+            "code",
+            "send_time",
+        ]
+        read_only_fields = ["verdict", "time", "memory", "send_time"]

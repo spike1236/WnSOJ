@@ -16,26 +16,26 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 def register(request):
     if request.user.is_authenticated:
-        return redirect('home')
-    if request.method == 'POST':
+        return redirect("home")
+    if request.method == "POST":
         form = RegisterForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.account_type = 2 if form.cleaned_data.get('is_business') else 1
+            user.account_type = 2 if form.cleaned_data.get("is_business") else 1
             user.icon_id = random.randint(10000000, 99999999)
-            if form.cleaned_data.get('icon'):
-                icon = form.cleaned_data.get('icon')
-                icon64_dir = os.path.join(settings.BASE_DIR,
-                                          'media', 'users_icons', 'icon64')
-                icon170_dir = os.path.join(settings.BASE_DIR,
-                                           'media', 'users_icons', 'icon170')
+            if form.cleaned_data.get("icon"):
+                icon = form.cleaned_data.get("icon")
+                icon64_dir = os.path.join(
+                    settings.BASE_DIR, "media", "users_icons", "icon64"
+                )
+                icon170_dir = os.path.join(
+                    settings.BASE_DIR, "media", "users_icons", "icon170"
+                )
                 os.makedirs(icon64_dir, exist_ok=True)
                 os.makedirs(icon170_dir, exist_ok=True)
 
-                icon64_path = os.path.join(icon64_dir,
-                                           f'{user.icon_id}.png')
-                icon170_path = os.path.join(icon170_dir,
-                                            f'{user.icon_id}.png')
+                icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
+                icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
 
                 img = Image.open(icon)
                 img = img.resize((64, 64))
@@ -49,69 +49,79 @@ def register(request):
 
             user.save()
             login(request, user)
-            return redirect('home')
+            return redirect("home")
         else:
             messages.error(request, "Please correct the error below.")
     else:
         form = RegisterForm()
-    return render(request, 'accounts/register.html', {'form': form,
-                                                      'navbar_item_id': -1,
-                                                      'title': 'Registration | WnSOJ'})
+    return render(
+        request,
+        "accounts/register.html",
+        {"form": form, "navbar_item_id": -1, "title": "Registration | WnSOJ"},
+    )
 
 
 def user_login(request):
     if request.user.is_authenticated:
-        return redirect('home')
-    if request.method == 'POST':
+        return redirect("home")
+    if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
-            user = authenticate(username=form.cleaned_data.get('username'),
-                                password=form.cleaned_data.get('password'))
+            user = authenticate(
+                username=form.cleaned_data.get("username"),
+                password=form.cleaned_data.get("password"),
+            )
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect("home")
         messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
-    return render(request, 'accounts/login.html', {
-        'form': form,
-        'navbar_item_id': -1,
-        'title': 'Authorization | WnSOJ',
-    })
+    return render(
+        request,
+        "accounts/login.html",
+        {
+            "form": form,
+            "navbar_item_id": -1,
+            "title": "Authorization | WnSOJ",
+        },
+    )
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('home')
+    return redirect("home")
 
 
 @login_required
 def edit_profile(request):
     user = request.user
-    if request.method == 'POST':
-        if 'password_change_submit' in request.POST:
+    if request.method == "POST":
+        if "password_change_submit" in request.POST:
             password_form = PasswordChangeForm(user, request.POST)
             if password_form.is_valid():
                 user = password_form.save()
                 login(request, user)
                 messages.success(request, "Password updated successfully.")
-                return redirect('edit_profile')
+                return redirect("edit_profile")
             else:
                 messages.error(request, "Please correct the errors below.")
-        elif 'change_icon_submit' in request.POST:
-            icon = request.FILES.get('icon')
+        elif "change_icon_submit" in request.POST:
+            icon = request.FILES.get("icon")
             if icon:
                 user.icon_id = abs(user.icon_id)
-                icon64_dir = os.path.join(settings.BASE_DIR,
-                                          'media', 'users_icons', 'icon64')
-                icon170_dir = os.path.join(settings.BASE_DIR,
-                                           'media', 'users_icons', 'icon170')
+                icon64_dir = os.path.join(
+                    settings.BASE_DIR, "media", "users_icons", "icon64"
+                )
+                icon170_dir = os.path.join(
+                    settings.BASE_DIR, "media", "users_icons", "icon170"
+                )
                 os.makedirs(icon64_dir, exist_ok=True)
                 os.makedirs(icon170_dir, exist_ok=True)
 
-                icon64_path = os.path.join(icon64_dir, f'{user.icon_id}.png')
-                icon170_path = os.path.join(icon170_dir, f'{user.icon_id}.png')
+                icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
+                icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
 
                 img = Image.open(icon)
                 img = img.resize((64, 64))
@@ -123,51 +133,49 @@ def edit_profile(request):
                 img170.save(icon170_path)
 
                 messages.success(request, "Icon updated successfully.")
-                return redirect('edit_profile')
+                return redirect("edit_profile")
 
-    return render(request, 'accounts/edit_profile.html', {
-        'user': user,
-        'navbar_item_id': -1,
-        'title': 'Edit Profile | WnSOJ',
-        'change_icon_form': ChangeIconForm(),
-        'password_change_form': PasswordChangeForm(user),
-    })
+    return render(
+        request,
+        "accounts/edit_profile.html",
+        {
+            "user": user,
+            "navbar_item_id": -1,
+            "title": "Edit Profile | WnSOJ",
+            "change_icon_form": ChangeIconForm(),
+            "password_change_form": PasswordChangeForm(user),
+        },
+    )
 
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
 
     params = {
-        'navbar_item_id': -1,
-        'title': f"{user.username}'s profile | WnSOJ",
-        'profile_user': user,
+        "navbar_item_id": -1,
+        "title": f"{user.username}'s profile | WnSOJ",
+        "profile_user": user,
     }
 
-    submissions = Submission.objects.filter(user_id=user.id).order_by('-id')
+    submissions = Submission.objects.filter(user_id=user.id).order_by("-id")
     all_submissions = list(submissions)
-    params['submissions'] = all_submissions[:10]
+    params["submissions"] = all_submissions[:10]
 
-    params['cnt'] = {
-        'AC': 0,
-        'CE': 0,
-        'WA': 0,
-        'TLE': 0,
-        'MLE': 0,
-        'RE': 0
-    }
+    params["cnt"] = {"AC": 0, "CE": 0, "WA": 0, "TLE": 0, "MLE": 0, "RE": 0}
 
     for submission in all_submissions:
-        if submission.verdict == 'IQ':
+        if submission.verdict == "IQ":
             continue
-        params['cnt'][submission.verdict.split()[0]] += 1
+        params["cnt"][submission.verdict.split()[0]] += 1
 
-    return render(request, 'accounts/profile.html', params)
+    return render(request, "accounts/profile.html", params)
 
 
 class RegisterAPIView(generics.CreateAPIView):
     """
     API view to register users.
     """
+
     queryset = User.objects.all()
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
@@ -178,6 +186,7 @@ class UserDetailAPIView(generics.RetrieveUpdateAPIView):
     API view to retrieve and update user details.
     Only the authenticated user can access their own details.
     """
+
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
