@@ -39,15 +39,14 @@ def categories(request):
 
 
 def problems(request, category):
-    problems = Problem.objects.filter(categories__short_name=category)
-    cat = Category.objects.get(short_name=category)
+    cat = get_object_or_404(Category, short_name=category)
     return render(
         request,
         "problemset/problems_list.html",
         {
             "title": f"{cat.long_name} | WnSOJ",
             "navbar_item_id": 2,
-            "problems": list(problems),
+            "problems": cat.problems.all(),
         },
     )
 
