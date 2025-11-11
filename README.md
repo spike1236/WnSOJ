@@ -91,10 +91,3 @@ Following components were used to create this project:
 ## License
 This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0).\
 See [LICENSE](https://github.com/spike1236/WnSOJ/blob/main/LICENSE.md) file for details.
-
-## Support the Project
-
-- USDT TRC20: TTH6RmF1WZgEo4Cy8EMr3j9CNsumhJKxvT
-- BTC: 14w77gqVkFLrYL6BNKHNaTAugT7WaVqEh1
-- SOL: 4NBbQWwJwLTBp7R9RSs7mCGvg1jCHU9K6QbgFEZFcsip
-- TON: UQAMJHIuaHL4ZAMnM3b4QQ0nRXs35cIauJ0SLdx0ygCTQ-Ox
