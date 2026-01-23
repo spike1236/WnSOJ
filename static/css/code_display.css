@@ -38,7 +38,6 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     margin: 1rem 0;
-    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: var(--shadow-md);
 }
