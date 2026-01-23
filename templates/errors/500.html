@@ -1,5 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mt-3" align="center">500 Internal Server Error</h2>
-<h5 class="mt-3" align="center">The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</h5>
+<div class="container py-5">
+    <div class="error-page text-center">
+        <div class="error-content mx-auto" style="max-width: 500px;">
+            <div class="error-code mb-4">
+                <span class="display-1 fw-bold text-gradient">500</span>
+            </div>
+            
+            <div class="error-icon mb-4">
+                <div class="icon-wrapper bg-danger-soft rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                    <i class="fa fa-exclamation-triangle fa-3x text-danger"></i>
+                </div>
+            </div>
+            
+            <h2 class="fw-bold mb-3">Internal Server Error</h2>
+            <p class="text-muted lead mb-4">
+                Something went wrong on our end. Our team has been notified and we're working to fix the issue.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/" class="btn btn-primary btn-lg px-4">
+                    <i class="fa fa-home me-2"></i>Go Home
+                </a>
+                <button onclick="location.reload()" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fa fa-redo me-2"></i>Try Again
+                </button>
+            </div>
+            
+            <div class="mt-5 pt-4 border-top">
+                <p class="text-muted small mb-0">
+                    <i class="fa fa-info-circle me-1"></i>
+                    If this problem persists, please try again later
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #7f1d1d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-danger-soft {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+</style>
 {% endblock %}

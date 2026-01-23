@@ -1,95 +1,164 @@
 {% extends "base.html" %}
 {% block content %}
     <link rel="stylesheet" href="/static/css/jobs.css">
-    <style>
-        .truncated-content {
-            position: relative;
-            max-height: 120px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        
-        .truncated-content::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(transparent, white);
-            pointer-events: none;
-        }
-        
-        .card-text {
-            margin-bottom: 0.5rem;
-        }
-    </style>
-    <div class="container" style="margin-top: 10px">
-        <div class="jobs-header">
-            <h2>Job Listings</h2>
-            {% if user.is_authenticated and user.account_type != 1 %}
-                <a href="/add_job" class="btn btn-primary">
-                    <i class="fa fa-plus me-2"></i>Post a New Job
-                </a>
-            {% endif %}
+    
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="jobs-page-header mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2 class="page-title fw-bold mb-1">
+                        <i class="fa fa-briefcase me-2 text-primary"></i>Job Opportunities
+                    </h2>
+                    <p class="text-muted mb-0">Find your next career opportunity</p>
+                </div>
+                {% if user.is_authenticated and user.account_type != 1 %}
+                    <a href="/add_job" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="fa fa-plus me-2"></i>Post a Job
+                    </a>
+                {% endif %}
+            </div>
         </div>
         
         {% if jobs %}
-            {% for job in jobs %}
-                <div class="card job-card">
-                    <h5 class="card-header">{{ job.title }}</h5>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <span class="badge bg-primary">{{ job.location }}</span>
-                            <span class="text-muted">
-                                {% if job.salary_range %}
-                                    {% if 'min' not in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
-                                        Salary not specified
-                                    {% elif 'min' in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
-                                        {% if job.salary_range.min|string() == "0" %}
-                                            Salary not specified
-                                        {% else %}
-                                            At least {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }}/yr
-                                        {% endif %}
-                                    {% elif 'min' not in job.salary_range.keys() and 'max' in job.salary_range.keys() %}
-                                        Up to {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
-                                    {% else %}
-                                        {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }} - {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
-                                    {% endif %}
-                                {% else %}
-                                    Salary not specified
-                                {% endif %}
-                            </span>
+            <div class="row g-4">
+                {% for job in jobs %}
+                <div class="col-12">
+                    <div class="job-card card border-0 shadow-sm rounded-4 overflow-hidden hover-lift">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+                                <div>
+                                    <h4 class="job-title fw-bold mb-2">
+                                        <a href="/job/{{ job.id }}" class="text-decoration-none text-dark stretched-link">
+                                            {{ job.title }}
+                                        </a>
+                                    </h4>
+                                    <div class="job-meta d-flex flex-wrap gap-2">
+                                        <span class="badge bg-primary-soft text-primary px-3 py-2">
+                                            <i class="fa fa-map-marker-alt me-1"></i>{{ job.location }}
+                                        </span>
+                                        <span class="badge bg-success-soft text-success px-3 py-2">
+                                            <i class="fa fa-dollar-sign me-1"></i>
+                                            {% if job.salary_range %}
+                                                {% if 'min' not in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
+                                                    Salary not specified
+                                                {% elif 'min' in job.salary_range.keys() and 'max' not in job.salary_range.keys() %}
+                                                    {% if job.salary_range.min|string() == "0" %}
+                                                        Salary not specified
+                                                    {% else %}
+                                                        From {{ format_number(job.salary_range.min) }}{{ job.salary_range.currency }}/yr
+                                                    {% endif %}
+                                                {% elif 'min' not in job.salary_range.keys() and 'max' in job.salary_range.keys() %}
+                                                    Up to {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
+                                                {% else %}
+                                                    {{ format_number(job.salary_range.min) }} - {{ format_number(job.salary_range.max) }}{{ job.salary_range.currency }}/yr
+                                                {% endif %}
+                                            {% else %}
+                                                Salary not specified
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="job-date text-muted small text-end">
+                                    <i class="fa fa-calendar me-1"></i>{{ job.created_at.strftime('%b %d, %Y') }}
+                                </div>
+                            </div>
+                            
+                            <div class="job-description text-muted mb-3 truncated-content" id="content-{{ job.id }}">
+                                {{ job.info }}
+                            </div>
+                            
+                            <div class="job-footer d-flex justify-content-between align-items-center pt-3 border-top">
+                                <div class="job-author d-flex align-items-center">
+                                    <div class="author-avatar bg-light rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
+                                        <i class="fa fa-user text-muted"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted">Posted by</small>
+                                        <div class="fw-semibold">
+                                            <a href="/profile/{{ job.user.username }}" class="text-decoration-none position-relative" style="z-index: 2;">
+                                                {{ job.user.username }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="truncated-content">
-                            <div class="card-text markdown-content" id="content-{{ job.id }}">{{ job.info }}</div>
-                        </div>
-                        <a href="/job/{{ job.id }}" class="btn btn-outline-primary">
-                            <i class="fa fa-eye me-1"></i> View Details
-                        </a>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <span>Posted by: <a href="/profile/{{ job.user.username }}">{{ job.user.username }}</a></span>
-                        <span>{{ job.created_at.strftime('%B %d, %Y') }}</span>
                     </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         {% else %}
-            <div class="alert alert-info">
-                No jobs available at the moment. Check back later!
+            <div class="empty-state text-center py-5">
+                <div class="empty-icon mb-4">
+                    <i class="fa fa-briefcase fa-4x text-muted"></i>
+                </div>
+                <h4 class="fw-bold text-muted">No Jobs Available</h4>
+                <p class="text-muted mb-4">Check back later for new opportunities!</p>
+                {% if user.is_authenticated and user.account_type != 1 %}
+                    <a href="/add_job" class="btn btn-primary">
+                        <i class="fa fa-plus me-2"></i>Post the First Job
+                    </a>
+                {% endif %}
             </div>
         {% endif %}
-        <script>
-            marked.setOptions({
-                breaks: true,
-                gfm: true,
-                headerIds: false
-            });
-            const elements = document.querySelectorAll(".markdown-content");
-            for(const element of elements) {
-                const content = element.textContent.trim();
-                element.innerHTML = marked.parse(content);
-            }
-        </script>
     </div>
+
+    <style>
+    .bg-primary-soft { background-color: rgba(79, 70, 229, 0.1); }
+    .bg-success-soft { background-color: rgba(16, 185, 129, 0.1); }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg) !important;
+    }
+    
+    .truncated-content {
+        max-height: 80px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .truncated-content::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: linear-gradient(transparent, white);
+    }
+    
+    .job-title a:hover {
+        color: var(--primary-color) !important;
+    }
+    
+    .empty-icon {
+        opacity: 0.5;
+    }
+    
+    .page-title {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    </style>
+    
+    <script>
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: false
+        });
+        const elements = document.querySelectorAll(".job-description");
+        for(const element of elements) {
+            const content = element.textContent.trim();
+            element.innerHTML = marked.parse(content);
+        }
+    </script>
 {% endblock %}

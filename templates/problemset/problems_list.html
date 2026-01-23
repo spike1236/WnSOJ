@@ -2,146 +2,200 @@
 {% block content %}
 {% if show_categories is defined %}
     <div class="container problem-container">
-        <div class="problem-category-header category-header">
-            <h2 class="problem-section-header section-header">Problem Categories</h2>
-            {% if user.is_authenticated and user.is_staff %}
-                <a href="/add_problem"><button class="problem-btn btn btn-primary">Add Problem</button></a>
-            {% endif %}
+        <div class="problem-page-header mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2 class="problem-section-header section-header mb-1">
+                        <i class="fa fa-layer-group me-2 text-primary"></i>Problem Categories
+                    </h2>
+                    <p class="text-muted mb-0">Choose a category to start solving problems</p>
+                </div>
+                {% if user.is_authenticated and user.is_staff %}
+                    <a href="/add_problem" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="fa fa-plus me-2"></i>Add Problem
+                    </a>
+                {% endif %}
+            </div>
         </div>
         
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for item in categories %}
-            {% if loop.index >= 3 %}
-                {% if loop.index % 3 == 0 %}
-                    {% set first = categories[loop.index - 3] %}
-                    {% set second = categories[loop.index - 2] %}
-                    {% set third = categories[loop.index - 1] %}
-                    <div class="row problem-category-section category-section">
-                        <div class="col-sm-4">
-                            <div class="problem-category-card card h-100">
-                                <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
-                                    <img class="card-img-top" src="/static/{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
-                                </a>
-                                <div class="problem-card-body card-body">
-                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="problem-category-card card h-100">
-                                <a href="/problems/{{ second['short_name'] }}" class="problem-card-img-container card-img-container">
-                                    <img class="card-img-top" src="/static/{{ second['img_url'] }}" alt="{{ second['long_name'] }}">
-                                </a>
-                                <div class="problem-card-body card-body">
-                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="problem-category-card card h-100">
-                                <a href="/problems/{{ third['short_name'] }}" class="problem-card-img-container card-img-container">
-                                    <img class="card-img-top" src="/static/{{ third['img_url'] }}" alt="{{ third['long_name'] }}">
-                                </a>
-                                <div class="problem-card-body card-body">
-                                    <h5 class="problem-card-footer card-footer"><a href="/problems/{{ third['short_name'] }}">{{ third['long_name'] }}</a></h5>
-                                </div>
-                            </div>
-                        </div>
+            <div class="col">
+                <div class="problem-category-card card h-100 border-0 shadow-sm hover-lift">
+                    <a href="/problems/{{ item['short_name'] }}" class="problem-card-img-container card-img-container">
+                        <div class="category-img-overlay"></div>
+                        <img class="card-img-top" src="/static/{{ item['img_url'] }}" alt="{{ item['long_name'] }}">
+                    </a>
+                    <div class="problem-card-body card-body text-center">
+                        <h5 class="card-title fw-bold mb-2">
+                            <a href="/problems/{{ item['short_name'] }}" class="text-decoration-none text-dark stretched-link">
+                                {{ item['long_name'] }}
+                            </a>
+                        </h5>
+                        <span class="badge bg-primary-soft text-primary">
+                            <i class="fa fa-code me-1"></i>Explore
+                        </span>
                     </div>
-                    <div class="problem-categories-divider categories-divider"></div>
-                {% endif %}
-            {% endif %}
+                </div>
+            </div>
         {% endfor %}
-        {% if categories|length % 3 == 1 %}
-            {% set first = categories[categories|length - 1] %}
-                <div class="row problem-category-section category-section">
-                    <div class="col-sm-4">
-                        <div class="problem-category-card card h-100">
-                            <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
-                                <img class="card-img-top" src="/static/{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
-                            </a>
-                            <div class="problem-card-body card-body">
-                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        {% elif categories|length % 3 == 2 %}
-            {% set first = categories[categories|length - 2] %}
-            {% set second = categories[categories|length - 1] %}
-                <div class="row problem-category-section category-section">
-                    <div class="col-sm-4">
-                        <div class="problem-category-card card h-100">
-                            <a href="/problems/{{ first['short_name'] }}" class="problem-card-img-container card-img-container">
-                                <img class="card-img-top" src="/static/{{ first['img_url'] }}" alt="{{ first['long_name'] }}">
-                            </a>
-                            <div class="problem-card-body card-body">
-                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ first['short_name'] }}">{{ first['long_name'] }}</a></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="problem-category-card card h-100">
-                            <a href="/problems/{{ second['short_name'] }}" class="problem-card-img-container card-img-container">
-                                <img class="card-img-top" src="/static/{{ second['img_url'] }}" alt="{{ second['long_name'] }}">
-                            </a>
-                            <div class="problem-card-body card-body">
-                                <h5 class="problem-card-footer card-footer"><a href="/problems/{{ second['short_name'] }}">{{ second['long_name'] }}</a></h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        {% endif %}
+        </div>
     </div>
 {% else %}
     <div class="container problem-container">
-        <h2 class="problem-section-header section-header">Problem List</h2>
-        <table class="table table-bordered problem-table">
-            <thead>
-                <tr>
-                    <th scope="col" style="width: 15%">ID</th>
-                    <th scope="col" style="width: 40%">Title</th>
-                    <th scope="col" style="width: 30%">Category</th>
-                    <th scope="col" style="width: 15%">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in problems %}
-                    {% if user.is_authenticated %}
-                        <tr>
-                            <th scope="row">{{ item.id }}</th>
-                            <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
-                            {% set cats = [] %}
-                            {% for cat in item.categories.all() %}
-                                {% if cat.long_name != 'Problemset' %}
-                                    {% set _ = cats.append(cat.long_name) %}
-                                {% endif %}
+        <div class="problem-page-header mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2 class="problem-section-header section-header mb-1">
+                        <i class="fa fa-list-check me-2 text-primary"></i>Problem List
+                    </h2>
+                    <p class="text-muted mb-0">Browse and solve programming challenges</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover problem-table mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 10%" class="ps-4">
+                                    <i class="fa fa-hashtag me-1 text-muted"></i>ID
+                                </th>
+                                <th scope="col" style="width: 40%">
+                                    <i class="fa fa-file-alt me-1 text-muted"></i>Title
+                                </th>
+                                <th scope="col" style="width: 30%">
+                                    <i class="fa fa-tags me-1 text-muted"></i>Category
+                                </th>
+                                <th scope="col" style="width: 20%" class="text-center">
+                                    <i class="fa fa-users me-1 text-muted"></i>Solved
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in problems %}
+                                <tr class="problem-row">
+                                    <td class="ps-4 fw-semibold text-muted">{{ item.id }}</td>
+                                    <td>
+                                        <a href="/problem/{{ item.id }}" class="problem-link fw-semibold text-decoration-none">
+                                            {{ item.title }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% set cats = [] %}
+                                        {% for cat in item.categories.all() %}
+                                            {% if cat.long_name != 'Problemset' %}
+                                                {% set _ = cats.append(cat.long_name) %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        <div class="category-badges">
+                                            {% for cat in cats %}
+                                                <span class="badge bg-light text-dark me-1">{{ cat }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+                                    {% if user.is_authenticated %}
+                                        {% if user in item.users_solved.all() %}
+                                            <td class="text-center">
+                                                <a href="/problem/{{ item.id }}/submissions?verdict=AC" class="btn btn-sm btn-success px-3">
+                                                    <i class="fa fa-check me-1"></i>{{ item.users_solved.all()|length }}
+                                                </a>
+                                            </td>
+                                        {% elif user in item.users_unsolved.all() %}
+                                            <td class="text-center">
+                                                <a href="/problem/{{ item.id }}/submissions?verdict=AC" class="btn btn-sm btn-warning px-3">
+                                                    <i class="fa fa-clock me-1"></i>{{ item.users_solved.all()|length }}
+                                                </a>
+                                            </td>
+                                        {% else %}
+                                            <td class="text-center">
+                                                <a href="/problem/{{ item.id }}/submissions?verdict=AC" class="btn btn-sm btn-outline-secondary px-3">
+                                                    <i class="fa fa-users me-1"></i>{{ item.users_solved.all()|length }}
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td class="text-center">
+                                            <a href="/problem/{{ item.id }}/submissions?verdict=AC" class="btn btn-sm btn-outline-secondary px-3">
+                                                <i class="fa fa-users me-1"></i>{{ item.users_solved.all()|length }}
+                                            </a>
+                                        </td>
+                                    {% endif %}
+                                </tr>
                             {% endfor %}
-                            <td>{{ cats|join(', ') }}</td>
-                            {% if user in item.users_solved.all() %}
-                                <td class="status-solved problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
-                            {% elif user in item.users_unsolved.all() %}
-                                <td class="status-attempted problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
-                            {% else %}
-                                <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
-                            {% endif %}
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <th scope="row">{{ item.id }}</th>
-                            <td><a href="/problem/{{ item.id }}">{{ item.title }}</a></td>
-                            {% set cats = [] %}
-                            {% for cat in item.categories.all() %}
-                                {% if cat.long_name != 'Problemset' %}
-                                    {% set _ = cats.append(cat.long_name) %}
-                                {% endif %}
-                            {% endfor %}
-                            <td>{{ cats|join(', ') }}</td>
-                            <td class="problem-status"><a href="/problem/{{ item.id }}/submissions?verdict=AC">{{ item.users_solved.all()|length }}</a></td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 {% endif %}
+
+<style>
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.category-img-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.problem-category-card:hover .category-img-overlay {
+    opacity: 1;
+}
+
+.bg-primary-soft {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+
+.problem-row {
+    transition: background-color 0.2s ease;
+}
+
+.problem-row:hover {
+    background-color: rgba(79, 70, 229, 0.02);
+}
+
+.problem-link {
+    color: var(--text-primary);
+    transition: color 0.2s ease;
+}
+
+.problem-link:hover {
+    color: var(--primary-color);
+}
+
+.problem-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem 0.75rem;
+}
+
+.problem-table td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+.category-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+</style>
 {% endblock %}

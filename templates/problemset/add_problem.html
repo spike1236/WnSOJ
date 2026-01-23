@@ -13,157 +13,259 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js" integrity="sha512-GSYCbN/le5gNmfAWVEjg1tKnOH7ilK6xCLgA7c48IReoIR2g2vldxTM6kZlN6o3VtWIe6fHu/qhwxIt11J8EBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/display/autorefresh.min.js" integrity="sha512-vAsKB7xXQAWMn5kcwda0HkFVKUxSYwrmrGprVhmbGFNAG1Ij+2epT3zzdwjHTJyDsKXsiEdrUdhIxh7loHyX+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <div class="container problem-container py-4">
-        <div class="problem-card card shadow border-0 rounded-lg">
-            <div class="problem-card-header card-header bg-primary text-white">
-                <h3 class="mb-0 text-center">Add New Problem</h3>
-            </div>
-            <div class="problem-card-body card-body p-4">
-                <form action="" method="post" enctype="multipart/form-data" class="problem-form">{{ csrf_input }}
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.title.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.title.label }}</label>
-                        <div class="problem-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-heading"></i></span>
-                            {{ form.title }}
-                        </div>
-                        {% for error in form.title.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <div class="icon-circle bg-primary-soft text-primary mx-auto mb-3">
+                        <i class="fa fa-plus fa-2x"></i>
                     </div>
-
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.categories.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.categories.label }}</label>
-                        <div class="category-checkboxes">
-                            {{ form.categories }}
-                        </div>
-                        <div class="problem-help-text form-text text-muted">{{ form.categories.help_text }}</div>
-                        {% for error in form.categories.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="problem-form-group">
-                                <label for="{{ form.time_limit.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.time_limit.label }}</label>
-                                <div class="problem-input-group input-group">
-                                    <span class="input-group-text"><i class="fa fa-clock"></i></span>
-                                    {{ form.time_limit }}
-                                    <span class="input-group-text">sec</span>
-                                </div>
-                                {% for error in form.time_limit.errors %}
-                                    <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                    <h2 class="fw-bold">Add New Problem</h2>
+                    <p class="text-muted">Create a new programming challenge</p>
+                </div>
+                
+                <!-- Form Card -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 p-lg-5">
+                        <form action="" method="post" enctype="multipart/form-data">{{ csrf_input }}
+                            
+                            <!-- Basic Info Section -->
+                            <div class="form-section mb-5">
+                                <h5 class="fw-bold mb-4 text-primary">
+                                    <i class="fa fa-info-circle me-2"></i>Basic Information
+                                </h5>
+                                
+                                <!-- Title -->
+                                <div class="mb-4">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-heading text-muted me-2"></i>{{ form.title.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa fa-file-alt text-muted"></i></span>
+                                        {{ form.title }}
                                     </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="problem-form-group">
-                                <label for="{{ form.memory_limit.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.memory_limit.label }}</label>
-                                <div class="problem-input-group input-group">
-                                    <span class="input-group-text"><i class="fa fa-microchip"></i></span>
-                                    {{ form.memory_limit }}
-                                    <span class="input-group-text">MB</span>
+                                    {% for error in form.title.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                                {% for error in form.memory_limit.errors %}
-                                    <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                
+                                <!-- Categories -->
+                                <div class="mb-4">
+                                    <label for="{{ form.categories.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-tags text-muted me-2"></i>{{ form.categories.label }}
+                                    </label>
+                                    <div class="category-checkboxes card bg-light p-3 rounded-3">
+                                        {{ form.categories }}
                                     </div>
-                                {% endfor %}
+                                    <div class="form-text text-muted small mt-2">
+                                        <i class="fa fa-info-circle me-1"></i>{{ form.categories.help_text }}
+                                    </div>
+                                    {% for error in form.categories.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.statement.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.statement.label }}</label>
-                        {{ form.statement }}
-                        <div class="problem-help-text form-text text-muted">{{ form.statement.help_text }}</div>
-                        {% for error in form.statement.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.editorial.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.editorial.label }}</label>
-                        {{ form.editorial }}
-                        <div class="problem-help-text form-text text-muted">{{ form.editorial.help_text }}</div>
-                        {% for error in form.editorial.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.solution.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.solution.label }}</label>
-                        <div class="card shadow-sm mb-2">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fs-6">Solution Code</h5>
-                                <div class="d-flex gap-3 align-items-center">
-                                    <div class="d-flex align-items-center">
-                                        <label for="solution_theme_select" class="me-2 mb-0">Theme:</label>
-                                        <select id="solution_theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectSolutionTheme()">
-                                            <option selected value="default">default</option>
-                                            <option value="darcula">darcula</option>
-                                            <option value="eclipse">eclipse</option>
-                                        </select>
+                            
+                            <!-- Limits Section -->
+                            <div class="form-section mb-5">
+                                <h5 class="fw-bold mb-4 text-primary">
+                                    <i class="fa fa-sliders-h me-2"></i>Constraints
+                                </h5>
+                                
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.time_limit.id_for_label }}" class="form-label fw-semibold">
+                                            <i class="fa fa-clock text-muted me-2"></i>{{ form.time_limit.label }}
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fa fa-stopwatch text-muted"></i></span>
+                                            {{ form.time_limit }}
+                                            <span class="input-group-text bg-light">seconds</span>
+                                        </div>
+                                        {% for error in form.time_limit.errors %}
+                                            <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.memory_limit.id_for_label }}" class="form-label fw-semibold">
+                                            <i class="fa fa-memory text-muted me-2"></i>{{ form.memory_limit.label }}
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fa fa-microchip text-muted"></i></span>
+                                            {{ form.memory_limit }}
+                                            <span class="input-group-text bg-light">MB</span>
+                                        </div>
+                                        {% for error in form.memory_limit.errors %}
+                                            <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body p-0">
-                                <div class="submission-code-wrapper">
-                                    {{ form.solution }}
+                            
+                            <!-- Content Section -->
+                            <div class="form-section mb-5">
+                                <h5 class="fw-bold mb-4 text-primary">
+                                    <i class="fa fa-file-alt me-2"></i>Problem Content
+                                </h5>
+                                
+                                <!-- Statement -->
+                                <div class="mb-4">
+                                    <label for="{{ form.statement.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-align-left text-muted me-2"></i>{{ form.statement.label }}
+                                    </label>
+                                    {{ form.statement }}
+                                    <div class="form-text text-muted small mt-2">
+                                        <i class="fab fa-markdown me-1"></i>{{ form.statement.help_text }}
+                                    </div>
+                                    {% for error in form.statement.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <!-- Editorial -->
+                                <div class="mb-4">
+                                    <label for="{{ form.editorial.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-lightbulb text-muted me-2"></i>{{ form.editorial.label }}
+                                    </label>
+                                    {{ form.editorial }}
+                                    <div class="form-text text-muted small mt-2">
+                                        <i class="fab fa-markdown me-1"></i>{{ form.editorial.help_text }}
+                                    </div>
+                                    {% for error in form.editorial.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
-                        </div>
-                        <div class="problem-help-text form-text text-muted">{{ form.solution.help_text }}</div>
-                        {% for error in form.solution.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            
+                            <!-- Solution Section -->
+                            <div class="form-section mb-5">
+                                <h5 class="fw-bold mb-4 text-primary">
+                                    <i class="fa fa-code me-2"></i>Solution & Testing
+                                </h5>
+                                
+                                <!-- Solution Code -->
+                                <div class="mb-4">
+                                    <label for="{{ form.solution.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-file-code text-muted me-2"></i>{{ form.solution.label }}
+                                    </label>
+                                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                                        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                            <span class="badge bg-primary-soft text-primary">
+                                                <i class="fa fa-code me-1"></i> C++ Solution
+                                            </span>
+                                            <div class="d-flex align-items-center">
+                                                <label for="solution_theme_select" class="me-2 text-muted small">Theme:</label>
+                                                <select id="solution_theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectSolutionTheme()">
+                                                    <option selected value="default">Light</option>
+                                                    <option value="darcula">Dark</option>
+                                                    <option value="eclipse">Eclipse</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="submission-code-wrapper">
+                                                {{ form.solution }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-text text-muted small mt-2">
+                                        <i class="fa fa-info-circle me-1"></i>{{ form.solution.help_text }}
+                                    </div>
+                                    {% for error in form.solution.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                
+                                <!-- Test Data -->
+                                <div class="mb-4">
+                                    <label for="{{ form.test_data.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-file-archive text-muted me-2"></i>{{ form.test_data.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa fa-upload text-muted"></i></span>
+                                        {{ form.test_data }}
+                                    </div>
+                                    <div class="form-text text-muted small mt-2">
+                                        <i class="fa fa-info-circle me-1"></i>{{ form.test_data.help_text }}
+                                    </div>
+                                    {% for error in form.test_data.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                        {% endfor %}
-                    </div>
-
-                    <div class="problem-form-group mb-3">
-                        <label for="{{ form.test_data.id_for_label }}" class="problem-form-label form-label fw-bold">{{ form.test_data.label }}</label>
-                        <div class="problem-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-file-archive"></i></span>
-                            {{ form.test_data }}
-                        </div>
-                        <div class="problem-help-text form-text text-muted">{{ form.test_data.help_text }}</div>
-                        {% for error in form.test_data.errors %}
-                            <div class="problem-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            
+                            <!-- Submit -->
+                            <div class="d-flex flex-wrap gap-3 pt-4 border-top justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg px-5">
+                                    <i class="fa fa-save me-2"></i>Create Problem
+                                </button>
+                                <a href="/problems" class="btn btn-outline-secondary btn-lg px-5">
+                                    <i class="fa fa-times me-2"></i>Cancel
+                                </a>
                             </div>
-                        {% endfor %}
+                        </form>
                     </div>
-
-                    <div class="problem-submit d-grid gap-2 d-md-flex justify-content-md-center">
-                        <button type="submit" class="problem-btn btn btn-primary btn-lg px-5">
-                            <i class="fa fa-save me-2"></i>Submit
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 
     <style>
+    .icon-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .bg-primary-soft { background-color: rgba(79, 70, 229, 0.1); }
     .category-checkboxes ul {
         list-style: none;
         padding-left: 0;
+        margin-bottom: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
     }
     .category-checkboxes li {
-        display: inline-block;
-        margin-right: 15px;
-        margin-bottom: 5px;
+        display: inline-flex;
+        align-items: center;
+        background: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s;
+    }
+    .category-checkboxes li:hover {
+        border-color: #4f46e5;
+    }
+    .category-checkboxes li input {
+        margin-right: 6px;
+    }
+    .form-section {
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .form-section:last-of-type {
+        border-bottom: none;
     }
     </style>
     <script src="/static/js/add_problem.js"></script>

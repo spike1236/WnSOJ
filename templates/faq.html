@@ -1,125 +1,345 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container" style="margin-top: 10px">
-    <div>
-        <p>This site contains an archive of Olympiad programming tasks with a built-in testing system and work search platform.</p>
-        <ul>
-            <li>To open problems list go to "Problems" section.</li>
-            <li>To open work search platform platform go to "Jobs" section.</li>
-        </ul>
-        <!-- FOR DEVELOPERS: Our platform is rich for API. -->
+<div class="container py-4">
+    <!-- Hero Header -->
+    <div class="faq-header text-center mb-5">
+        <span class="badge bg-primary-soft text-primary mb-3 px-3 py-2">
+            <i class="fa fa-question-circle me-1"></i>Help Center
+        </span>
+        <h1 class="fw-bold display-5 mb-3">Frequently Asked Questions</h1>
+        <p class="text-muted lead mb-0">Everything you need to know about using WnSOJ</p>
     </div>
-    <hr class="my-4">
-    <div>
-        <h3>"Problems" section</h3><br>
-        <p>
-            In "Problems" section you can solve various programming and math tasks.<br>
-            To submit solution to problem go to "Problems" section, then choose problem, paste your code in code editor and click on submit button.<br>
-            After submitting system runs your solution on tests and then reports verdict.<br>
-            Each problem has editorial and solution in C++ language.
-            Also, platform administrators can add new problems.
-        </p>
-        <p>Testing system uses the following compilers:</p>
-        <div class="d-flex justify-content-left">
-            <button type="button" class="btn btn-primary collapse-btn" data-bs-toggle="collapse" data-bs-target="#language_1">GNU C++17</button>
-            <br>
-            <div id="language_1" class="collapse col py-2 px-0 code-collapse">
-                <div class="card card-body py-2 px-3 ml-3">
-                    <p class="m-0">g++ source.cpp -std=c++17 -o source</p>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mb-5">
+        <div class="col-md-4">
+            <a href="#problems-section" class="quick-link-card card border-0 shadow-sm h-100 text-decoration-none">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="quick-link-icon bg-primary-soft text-primary me-3">
+                        <i class="fa fa-code"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">Problems</h6>
+                        <small class="text-muted">Solve coding challenges</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#jobs-section" class="quick-link-card card border-0 shadow-sm h-100 text-decoration-none">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="quick-link-icon bg-success-soft text-success me-3">
+                        <i class="fa fa-briefcase"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">Jobs</h6>
+                        <small class="text-muted">Find opportunities</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#api-section" class="quick-link-card card border-0 shadow-sm h-100 text-decoration-none">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="quick-link-icon bg-info-soft text-info me-3">
+                        <i class="fa fa-server"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-1 fw-bold">API</h6>
+                        <small class="text-muted">Integrate with us</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4 p-md-5">
+            <div class="d-flex align-items-start mb-4">
+                <div class="section-icon bg-primary text-white rounded-circle me-3">
+                    <i class="fa fa-info"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-3">About WnSOJ</h3>
+                    <p class="text-muted mb-0">
+                        This site contains an archive of Olympiad programming tasks with a built-in testing system and a job search platform. 
+                        Whether you're preparing for competitions or looking for your next career opportunity, WnSOJ has you covered.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="info-card bg-light rounded-3 p-3 h-100">
+                        <i class="fa fa-tasks text-primary me-2"></i>
+                        <strong>Problems:</strong> Access our collection of programming challenges
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-card bg-light rounded-3 p-3 h-100">
+                        <i class="fa fa-briefcase text-success me-2"></i>
+                        <strong>Jobs:</strong> Browse job listings and career opportunities
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-left mt-md-2">
-            <button type="button" class="btn btn-primary collapse-btn" data-bs-toggle="collapse" data-bs-target="#language_2">Python 3</button>
-            <div id="language_2" class="collapse col py-2 px-0 code-collapse">
-                <div class="card card-body py-2 px-3 ml-3">
-                    <p class="m-0">python3 source.py</p>
+    </div>
+
+    <!-- Problems Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" id="problems-section">
+        <div class="card-header bg-white border-0 p-4 pb-0">
+            <div class="d-flex align-items-center">
+                <div class="section-icon bg-primary text-white rounded-circle me-3">
+                    <i class="fa fa-code"></i>
+                </div>
+                <h3 class="fw-bold mb-0">Problems Section</h3>
+            </div>
+        </div>
+        <div class="card-body p-4 p-md-5 pt-4">
+            <p class="text-muted mb-4">
+                In the "Problems" section, you can solve various programming and math tasks. 
+                Each problem has an editorial and solution in C++ language. Platform administrators can add new problems.
+            </p>
+            
+            <h5 class="fw-bold mb-3"><i class="fa fa-play-circle text-primary me-2"></i>How to Submit a Solution</h5>
+            <ol class="mb-4">
+                <li class="mb-2">Go to the "Problems" section</li>
+                <li class="mb-2">Choose a problem that interests you</li>
+                <li class="mb-2">Paste your code in the code editor</li>
+                <li class="mb-2">Click the submit button</li>
+                <li>Wait for the system to run tests and report the verdict</li>
+            </ol>
+
+            <h5 class="fw-bold mb-3"><i class="fa fa-terminal text-primary me-2"></i>Supported Languages</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="language-card card bg-light border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-primary me-2">C++</span>
+                                <span class="fw-bold">GNU C++17</span>
+                            </div>
+                            <code class="d-block bg-dark text-light p-3 rounded small">g++ source.cpp -std=c++17 -o source</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="language-card card bg-light border-0 h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">Python</span>
+                                <span class="fw-bold">Python 3</span>
+                            </div>
+                            <code class="d-block bg-dark text-light p-3 rounded small">python3 source.py</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-3"><i class="fa fa-gavel text-primary me-2"></i>Verdicts Explained</h5>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 15%">Verdict</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge bg-success fs-6 px-3">AC</span></td>
+                            <td><strong>Accepted.</strong> Your program works correctly and passed all tests. Congratulations!</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-secondary fs-6 px-3">IQ</span></td>
+                            <td><strong>In Queue.</strong> Your solution is in the queue for testing. Please wait.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-warning text-dark fs-6 px-3">CE</span></td>
+                            <td><strong>Compilation Error.</strong> There's a syntax or compile-time error in your code.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-danger fs-6 px-3">WA</span></td>
+                            <td><strong>Wrong Answer.</strong> The output of your program doesn't match the expected output.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-danger fs-6 px-3">RE</span></td>
+                            <td><strong>Runtime Error.</strong> Your program terminated with a non-zero return code.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-danger fs-6 px-3">TLE</span></td>
+                            <td><strong>Time Limit Exceeded.</strong> Your program runs longer than the allocated time.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-danger fs-6 px-3">MLE</span></td>
+                            <td><strong>Memory Limit Exceeded.</strong> Your program uses more than the allocated memory.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jobs Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" id="jobs-section">
+        <div class="card-header bg-white border-0 p-4 pb-0">
+            <div class="d-flex align-items-center">
+                <div class="section-icon bg-success text-white rounded-circle me-3">
+                    <i class="fa fa-briefcase"></i>
+                </div>
+                <h3 class="fw-bold mb-0">Jobs Section</h3>
+            </div>
+        </div>
+        <div class="card-body p-4 p-md-5 pt-4">
+            <p class="text-muted mb-4">In the "Jobs" section, you can find work opportunities or post job listings.</p>
+            
+            <h5 class="fw-bold mb-3"><i class="fa fa-users text-success me-2"></i>Account Types</h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="account-type-card card bg-light border-0 h-100">
+                        <div class="card-body p-4">
+                            <div class="account-icon bg-primary-soft text-primary rounded-circle mb-3">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <h5 class="fw-bold">Common Account</h5>
+                            <p class="text-muted mb-0">
+                                Browse job listings and communicate with employers. Open a job that interests you, 
+                                read the description, and contact the employer via email or phone if the position suits you.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="account-type-card card bg-light border-0 h-100">
+                        <div class="card-body p-4">
+                            <div class="account-icon bg-success-soft text-success rounded-circle mb-3">
+                                <i class="fa fa-building"></i>
+                            </div>
+                            <h5 class="fw-bold">Business Account</h5>
+                            <p class="text-muted mb-0">
+                                Post, edit, and delete job listings. Wait for qualified specialists to contact you 
+                                via email or phone number. Perfect for recruiters and companies.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <br>
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th scope="col"><pre>Verdict</pre></th>
-                    <th scope="col"><pre>Description</pre></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><pre class="text-success">AC</pre></td>
-                    <td><pre>Accepted. Program works correctly and passed all tests. Most likely, tests are week :)</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-">IQ</pre></td>
-                    <td><pre>In queue. Solution is in queue for testing.</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-warning">CE</pre></td>
-                    <td><pre>Compilation error. Syntax or another error in the code.</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-danger">WA</pre></td>
-                    <td><pre>Wrong answer. The output of the program is not correct.</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-danger">RE</pre></td>
-                    <td><pre>Runtime error. Program terminated with a non-zero return code.</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-danger">TLE</pre></td>
-                    <td><pre>Time limit exceeded. Program runs longer than the allocated time.</pre></td>
-                </tr>
-                <tr>
-                    <td><pre class="text-danger">MLE</pre></td>
-                    <td><pre>Memory limit exceeded. Program uses more than the allocated memory.</pre></td>
-                </tr>
-            </tbody>
-        </table>
     </div>
-    <hr class="my-4">
-    <div>
-        <h3>"Jobs" section</h3><br>
-        <p>In "Jobs" section you can find work.</p>
-        There are 2 types of accounts:
-        <ol>
-            <li>Common account - these users can find job and communicate with employers by email or phone.<br>
-                Open job that you liked, read the description and if job suits you, communicate with employer by email or phone.
-            </li>
-            <li style="margin-top: 10px">
-                Business account - these users or companies can publish, edit or delete jobs, also find and communicate by email or phone with other users.<br>
-                Publish job, edit it if it is need, and just wait until some qualified specialist will communicate with you by email or phone number.
-            </li>
-        </ol>
-    </div>
-    <hr class="my-4">
-    <div>
-        <h3>API</h3><br>
-        <p>Our platform provides a comprehensive REST API. You can request:</p>
-        <ul>
-            <li>authentication (get JWT tokens)</li>
-            <li>user registration and profile information</li>
-            <li>problems list and problem details</li>
-            <li>categories list and category details</li>
-            <li>submissions list and submission details</li>
-            <li>jobs list and job details</li>
-        </ul>
-        <p>API documentation is available at:</p>
-        <ul>
-            <li>Swagger UI: <a href="/api/schema/swagger-ui/">/api/schema/swagger-ui/</a></li>
-            <li>ReDoc: <a href="/api/schema/redoc/">/api/schema/redoc/</a></li>
-        </ul>
-        <p>Examples of API endpoints:</p>
-        <ul>
-            <li>JWT Authentication: <code>/api/token/</code> and <code>/api/token/refresh/</code></li>
-            <li>Registration: <code>/api/register/</code></li>
-            <li>User Profile: <code>/api/profile/</code></li>
-            <li>Categories: <code>/api/categories/</code></li>
-            <li>Problems: <code>/api/problems/</code></li>
-            <li>Submissions: <code>/api/submissions/</code></li>
-            <li>Jobs: <code>/api/jobs/</code></li>
-        </ul>
-        <p>For detailed API usage, please refer to the Swagger UI or ReDoc documentation.</p>
+
+    <!-- API Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" id="api-section">
+        <div class="card-header bg-white border-0 p-4 pb-0">
+            <div class="d-flex align-items-center">
+                <div class="section-icon bg-info text-white rounded-circle me-3">
+                    <i class="fa fa-server"></i>
+                </div>
+                <h3 class="fw-bold mb-0">API Documentation</h3>
+            </div>
+        </div>
+        <div class="card-body p-4 p-md-5 pt-4">
+            <p class="text-muted mb-4">Our platform provides a comprehensive REST API for integration.</p>
+            
+            <h5 class="fw-bold mb-3"><i class="fa fa-plug text-info me-2"></i>Available Endpoints</h5>
+            <div class="row g-2 mb-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-key text-primary me-2"></i>
+                        <span>JWT Authentication</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-user-plus text-success me-2"></i>
+                        <span>User Registration</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-user text-info me-2"></i>
+                        <span>User Profiles</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-code text-warning me-2"></i>
+                        <span>Problems & Categories</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-paper-plane text-danger me-2"></i>
+                        <span>Submissions</span>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="api-feature d-flex align-items-center p-2">
+                        <i class="fa fa-briefcase text-secondary me-2"></i>
+                        <span>Job Listings</span>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="fw-bold mb-3"><i class="fa fa-book text-info me-2"></i>Documentation</h5>
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="/api/schema/swagger-ui/" class="btn btn-outline-primary">
+                    <i class="fa fa-file-code me-2"></i>Swagger UI
+                </a>
+                <a href="/api/schema/redoc/" class="btn btn-outline-secondary">
+                    <i class="fa fa-book me-2"></i>ReDoc
+                </a>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+.bg-primary-soft { background-color: rgba(79, 70, 229, 0.1); }
+.bg-success-soft { background-color: rgba(16, 185, 129, 0.1); }
+.bg-info-soft { background-color: rgba(14, 165, 233, 0.1); }
+
+.section-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.quick-link-card {
+    transition: all 0.3s ease;
+    border-radius: var(--radius-lg);
+}
+
+.quick-link-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md) !important;
+}
+
+.quick-link-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.account-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.api-feature {
+    background: #f8f9fa;
+    border-radius: var(--radius);
+}
+</style>
 {% endblock %}

@@ -3,12 +3,80 @@
 <div class="container py-4">
     <!-- Hero section -->
     <div class="home-hero text-center mb-5">
-        <h1 class="home-hero-title display-4 mb-3">Welcome to WnSOJ!</h1>
-        <p class="home-hero-subtitle lead mb-4">Your platform for programming challenges, problem-solving, and career opportunities</p>
+        <div class="hero-badge mb-3">
+            <span class="badge bg-primary-soft text-primary px-3 py-2 rounded-pill">
+                <i class="fa fa-rocket me-2"></i>Start your coding journey today
+            </span>
+        </div>
+        <h1 class="home-hero-title display-3 mb-3">Master Programming with <span class="text-gradient">WnSOJ</span></h1>
+        <p class="home-hero-subtitle lead mb-4">Your all-in-one platform for programming challenges, skill development, and career advancement. Join thousands of developers improving their craft.</p>
+        <div class="hero-cta d-flex justify-content-center gap-3 flex-wrap mb-4">
+            {% if not user.is_authenticated %}
+            <a href="/register" class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                <i class="fa fa-user-plus me-2"></i>Get Started Free
+            </a>
+            <a href="/problems" class="btn btn-outline-primary btn-lg px-4 py-2">
+                <i class="fa fa-eye me-2"></i>Browse Problems
+            </a>
+            {% else %}
+            <a href="/problems" class="btn btn-primary btn-lg px-4 py-2 shadow-sm">
+                <i class="fa fa-code me-2"></i>Start Coding
+            </a>
+            <a href="/submissions?username={{ user.username }}" class="btn btn-outline-primary btn-lg px-4 py-2">
+                <i class="fa fa-history me-2"></i>My Submissions
+            </a>
+            {% endif %}
+        </div>
         <hr class="home-divider my-4">
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-banner mb-5">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary-soft">
+                        <i class="fa fa-code text-primary"></i>
+                    </div>
+                    <h3 class="stat-number" data-count="500">500+</h3>
+                    <p class="stat-label">Problems</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success-soft">
+                        <i class="fa fa-users text-success"></i>
+                    </div>
+                    <h3 class="stat-number" data-count="1000">1K+</h3>
+                    <p class="stat-label">Active Users</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning-soft">
+                        <i class="fa fa-check-circle text-warning"></i>
+                    </div>
+                    <h3 class="stat-number" data-count="10000">10K+</h3>
+                    <p class="stat-label">Submissions</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info-soft">
+                        <i class="fa fa-briefcase text-info"></i>
+                    </div>
+                    <h3 class="stat-number" data-count="100">100+</h3>
+                    <p class="stat-label">Job Listings</p>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Feature cards -->
+    <div class="section-header text-center mb-4">
+        <h2 class="fw-bold">Why Choose WnSOJ?</h2>
+        <p class="text-muted">Everything you need to become a better programmer</p>
+    </div>
     <div class="home-features row row-cols-1 row-cols-md-3 g-4">
         <div class="col">
             <div class="home-feature-card card h-100">
@@ -56,21 +124,208 @@
         </div>
     </div>
     
+    <!-- Features List Section -->
+    <div class="features-list-section my-5 py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="features-content">
+                    <span class="badge bg-primary-soft text-primary mb-3 px-3 py-2">
+                        <i class="fa fa-star me-1"></i>Platform Features
+                    </span>
+                    <h2 class="fw-bold mb-4">Everything you need to excel</h2>
+                    <div class="feature-item d-flex mb-4">
+                        <div class="feature-icon-sm bg-primary text-white rounded-circle me-3">
+                            <i class="fa fa-bolt"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Real-time Code Judging</h5>
+                            <p class="text-muted mb-0">Get instant feedback on your solutions with our powerful testing system supporting C++ and Python.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex mb-4">
+                        <div class="feature-icon-sm bg-success text-white rounded-circle me-3">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Detailed Editorials</h5>
+                            <p class="text-muted mb-0">Learn from comprehensive editorials with step-by-step solutions and author's code.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex mb-4">
+                        <div class="feature-icon-sm bg-warning text-white rounded-circle me-3">
+                            <i class="fa fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">Track Your Progress</h5>
+                            <p class="text-muted mb-0">Monitor your submissions, success rate, and overall improvement over time.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item d-flex">
+                        <div class="feature-icon-sm bg-info text-white rounded-circle me-3">
+                            <i class="fa fa-server"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">RESTful API</h5>
+                            <p class="text-muted mb-0">Integrate with our comprehensive API for custom solutions and automation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="code-preview-card p-4 bg-dark rounded-4 shadow-lg">
+                    <div class="code-header d-flex align-items-center mb-3">
+                        <span class="code-dot bg-danger"></span>
+                        <span class="code-dot bg-warning"></span>
+                        <span class="code-dot bg-success"></span>
+                        <span class="ms-3 text-muted small">solution.cpp</span>
+                    </div>
+                    <pre class="text-light mb-0" style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;"><code><span class="text-info">#include</span> <span class="text-success">&lt;bits/stdc++.h&gt;</span>
+<span class="text-info">using namespace</span> std;
+
+<span class="text-warning">int</span> main() {
+    <span class="text-warning">int</span> n;
+    cin >> n;
+    
+    <span class="text-secondary">// Your solution here</span>
+    cout << <span class="text-success">"Hello, WnSOJ!"</span> << endl;
+    
+    <span class="text-info">return</span> <span class="text-warning">0</span>;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Call to action section -->
-    <div class="text-center mt-5 pt-4">
-        <div class="bg-white p-5 rounded-4 shadow-sm">
-            <h3 class="fw-bold mb-3">Ready to get started?</h3>
-            <p class="text-muted mb-4">Join our community of developers and start your coding journey today.</p>
-            {% if not user.is_authenticated %}
-            <a href="/register" class="btn btn-primary btn-lg px-5">
-                <i class="fa fa-rocket me-2"></i>Get Started for Free
-            </a>
-            {% else %}
-            <a href="/problems" class="btn btn-primary btn-lg px-5">
-                <i class="fa fa-code me-2"></i>Explore Problems
-            </a>
-            {% endif %}
+    <div class="cta-section text-center mt-5 pt-4">
+        <div class="cta-card bg-gradient-primary p-5 rounded-4 shadow position-relative overflow-hidden">
+            <div class="cta-pattern"></div>
+            <div class="position-relative">
+                <h3 class="fw-bold mb-3 text-white">Ready to level up your coding skills?</h3>
+                <p class="text-white-50 mb-4 lead">Join our growing community of developers and start solving problems today.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    {% if not user.is_authenticated %}
+                    <a href="/register" class="btn btn-light btn-lg px-5 shadow-sm">
+                        <i class="fa fa-rocket me-2 text-primary"></i>Get Started for Free
+                    </a>
+                    <a href="/faq" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fa fa-question-circle me-2"></i>Learn More
+                    </a>
+                    {% else %}
+                    <a href="/problems" class="btn btn-light btn-lg px-5 shadow-sm">
+                        <i class="fa fa-code me-2 text-primary"></i>Explore Problems
+                    </a>
+                    <a href="/jobs" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fa fa-briefcase me-2"></i>Browse Jobs
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-primary-soft {
+    background-color: rgba(79, 70, 229, 0.1);
+}
+
+.bg-success-soft {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.bg-warning-soft {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+.bg-info-soft {
+    background-color: rgba(14, 165, 233, 0.1);
+}
+
+.stats-banner {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.stat-card {
+    padding: 1rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.feature-icon-sm {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.code-preview-card {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.code-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.cta-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+}
+
+.section-header h2 {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
 {% endblock %}

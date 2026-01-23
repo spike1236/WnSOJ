@@ -1,48 +1,132 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container problem-container mt-4">
-        <div class="card problem-card shadow-sm mb-4">
-            <div class="card-header problem-card-header bg-light">
-                <h2 class="problem-section-header mb-0">Submissions</h2>
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="submissions-header mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h2 class="page-title fw-bold mb-1">
+                        <i class="fa fa-list me-2 text-primary"></i>Submissions
+                    </h2>
+                    <p class="text-muted mb-0">View all code submissions</p>
+                </div>
             </div>
-            <div class="card-body problem-card-body">
-                <table class="table table-bordered table-striped text-center submissions-table mb-0">
-                    <thead>
-                        <tr>
-                            <th scope="col" style="width: 7%">ID</th>
-                            <th scope="col" style="width: 20%">Sending time</th>
-                            <th scope="col" style="width: 20%">User</th>
-                            <th scope="col" style="width: 23%">Problem</th>
-                            <th scope="col" style="width: 5%">Language</th>
-                            <th scope="col" style="width: 5%">Verdict</th>
-                            <th scope="col" style="width: 10%">Time</th>
-                            <th scope="col" style="width: 10%">Memory</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in submissions %}
+        </div>
+        
+        <!-- Submissions Table Card -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th scope="row"><a href="/submission/{{ item.id }}">{{ item.id }}</a></th>
-                                <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
-                                <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
-                                <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
-                                <td>{{ item.language }}</td>
-                                {% if item.verdict == 'AC' %}
-                                    <td class="submission-status status-accepted">{{ item.verdict }}</td>
-                                {% elif item.verdict == 'CE' %}
-                                    <td class="submission-status status-warning">{{ item.verdict }}</td>
-                                {% elif item.verdict == 'IQ' %}
-                                    <td class="submission-status status-pending">{{ item.verdict }}</td>
-                                {% else %}
-                                    <td class="submission-status status-error">{{ item.verdict }}</td>
-                                {% endif %}
-                                <td>{{ item.time }} ms</td>
-                                <td>{{ item.memory }} KB</td>
+                                <th class="ps-4" style="width: 8%">
+                                    <i class="fa fa-hashtag me-1 text-muted"></i>ID
+                                </th>
+                                <th style="width: 18%">
+                                    <i class="fa fa-clock me-1 text-muted"></i>Time
+                                </th>
+                                <th style="width: 15%">
+                                    <i class="fa fa-user me-1 text-muted"></i>User
+                                </th>
+                                <th style="width: 25%">
+                                    <i class="fa fa-file-code me-1 text-muted"></i>Problem
+                                </th>
+                                <th style="width: 8%" class="text-center">
+                                    <i class="fa fa-code me-1 text-muted"></i>Lang
+                                </th>
+                                <th style="width: 10%" class="text-center">
+                                    <i class="fa fa-gavel me-1 text-muted"></i>Verdict
+                                </th>
+                                <th style="width: 16%" class="text-end pe-4">
+                                    <i class="fa fa-tachometer-alt me-1 text-muted"></i>Performance
+                                </th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for item in submissions %}
+                            <tr class="submission-row">
+                                <td class="ps-4">
+                                    <a href="/submission/{{ item.id }}" class="fw-semibold text-decoration-none text-primary">
+                                        #{{ item.id }}
+                                    </a>
+                                </td>
+                                <td class="text-muted small">
+                                    {{ item.send_time.strftime("%b %d, %Y %H:%M") }}
+                                </td>
+                                <td>
+                                    <a href="/profile/{{ item.user.username }}" class="text-decoration-none fw-semibold">
+                                        {{ item.user.username }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="/problem/{{ item.problem.id }}" class="text-decoration-none">
+                                        {{ item.problem.title }}
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark">{{ item.language }}</span>
+                                </td>
+                                <td class="text-center">
+                                    {% if item.verdict == 'AC' %}
+                                        <span class="badge bg-success px-3 py-2">
+                                            <i class="fa fa-check me-1"></i>{{ item.verdict }}
+                                        </span>
+                                    {% elif item.verdict == 'CE' %}
+                                        <span class="badge bg-warning text-dark px-3 py-2">
+                                            <i class="fa fa-exclamation me-1"></i>{{ item.verdict }}
+                                        </span>
+                                    {% elif item.verdict == 'IQ' %}
+                                        <span class="badge bg-secondary px-3 py-2">
+                                            <i class="fa fa-hourglass-half me-1"></i>{{ item.verdict }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger px-3 py-2">
+                                            <i class="fa fa-times me-1"></i>{{ item.verdict }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4 small text-muted">
+                                    <i class="fa fa-clock me-1"></i>{{ item.time }}ms
+                                    <span class="mx-1">|</span>
+                                    <i class="fa fa-memory me-1"></i>{{ item.memory }}KB
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+    .page-title {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .submission-row {
+        transition: background-color 0.2s ease;
+    }
+    
+    .submission-row:hover {
+        background-color: rgba(79, 70, 229, 0.02);
+    }
+    
+    .table th {
+        font-weight: 600;
+        color: var(--text-secondary);
+        border-bottom: 2px solid var(--border-color);
+        padding: 1rem 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .table td {
+        padding: 1rem 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    </style>
 {% endblock %}

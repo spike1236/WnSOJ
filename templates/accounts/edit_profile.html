@@ -1,40 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container py-3">
-    <div class="row g-3">
+<div class="container py-4">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">
+            <i class="fa fa-cog text-primary me-2"></i>Account Settings
+        </h2>
+        <p class="text-muted">Manage your profile and security</p>
+    </div>
+    
+    <div class="row g-4">
         <!-- Profile Image Card -->
-        <div class="col-md-4">
-            <div class="accounts-card compact-card shadow-sm border-0 rounded-lg mb-3">
-                <div class="accounts-card-header bg-light text-primary py-2">
-                    <h5 class="mb-0 text-center">Profile Picture</h5>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-center">
+                        <i class="fa fa-camera text-primary me-2"></i>Profile Picture
+                    </h5>
                 </div>
-                <div class="accounts-card-body p-3">
-                    <div class="text-center mb-3">
-                        <img src="{{ user.icon170_url }}" alt="{{ user.username }}'s profile picture" class="img-fluid rounded-circle profile-img" style="width: 120px; height: 120px; object-fit: cover;">
-                        <div class="mt-2">
-                            <h5>{{ user.username }}</h5>
-                        </div>
-                        <a href="/profile/{{ user.username }}" class="accounts-btn btn btn-sm btn-outline-primary mt-1">
-                            <i class="fa fa-user me-1"></i>View Profile
-                        </a>
+                <div class="card-body p-4 text-center">
+                    <!-- Current Avatar -->
+                    <div class="avatar-wrapper mx-auto mb-4">
+                        <img src="{{ user.icon170_url }}" alt="{{ user.username }}'s profile picture" 
+                             class="rounded-circle shadow-sm" 
+                             style="width: 140px; height: 140px; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                     </div>
+                    <h5 class="fw-bold mb-1">{{ user.username }}</h5>
+                    <a href="/profile/{{ user.username }}" class="btn btn-outline-primary btn-sm mb-4">
+                        <i class="fa fa-user me-1"></i>View Profile
+                    </a>
                     
-                    <form action="" method="post" id="icon_change" name="icon_change" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
-                        <div class="accounts-form-group mb-3">
-                            <label for="{{ change_icon_form.icon.id_for_label }}" class="accounts-form-label small fw-bold">{{ change_icon_form.icon.label }}</label>
-                            <div class="input-group input-group-sm accounts-input-group">
-                                <span class="input-group-text"><i class="fa fa-image"></i></span>
-                                {{ change_icon_form.icon }}
-                            </div>
+                    <hr>
+                    
+                    <!-- Upload New Picture -->
+                    <form action="" method="post" id="icon_change" name="icon_change" enctype="multipart/form-data">{{ csrf_input }}
+                        <div class="mb-3 text-start">
+                            <label for="{{ change_icon_form.icon.id_for_label }}" class="form-label small fw-semibold">
+                                <i class="fa fa-image text-muted me-1"></i>{{ change_icon_form.icon.label }}
+                            </label>
+                            {{ change_icon_form.icon }}
                             {% for error in change_icon_form.icon.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-1 small" role="alert">
+                                <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
                                     <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                                 </div>
                             {% endfor %}
                         </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" name="change_icon_submit" class="accounts-btn btn btn-outline-primary btn-sm">
-                                <i class="fa fa-upload me-1"></i>Update Picture
+                        <div class="d-grid">
+                            <button type="submit" name="change_icon_submit" class="btn btn-primary">
+                                <i class="fa fa-upload me-2"></i>Update Picture
                             </button>
                         </div>
                     </form>
@@ -43,58 +56,82 @@
         </div>
         
         <!-- Password Change Card -->
-        <div class="col-md-8">
-            <div class="accounts-card compact-card shadow-sm border-0 rounded-lg">
-                <div class="accounts-card-header bg-light text-primary py-2">
-                    <h5 class="mb-0 text-center">Change Password</h5>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 fw-bold text-center">
+                        <i class="fa fa-shield-alt text-primary me-2"></i>Change Password
+                    </h5>
                 </div>
-                <div class="accounts-card-body p-4">
-                    <form action="" method="post" id="password_change" name="password_change" class="accounts-form">{{ csrf_input }}
-                        <!-- Old Password field -->
-                        <div class="accounts-form-group mb-3">
-                            <label for="{{ password_change_form.old_password.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.old_password.label }}</label>
-                            <div class="input-group input-group-sm accounts-input-group">
-                                <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                <div class="card-body p-4">
+                    <form action="" method="post" id="password_change" name="password_change">{{ csrf_input }}
+                        <!-- Current Password -->
+                        <div class="mb-4">
+                            <label for="{{ password_change_form.old_password.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fa fa-lock text-muted me-2"></i>{{ password_change_form.old_password.label }}
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa fa-lock text-muted"></i></span>
                                 {{ password_change_form.old_password }}
                             </div>
                             {% for error in password_change_form.old_password.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-1 small" role="alert">
+                                <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
                                     <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                                 </div>
                             {% endfor %}
                         </div>
                         
-                        <!-- New Password field -->
-                        <div class="accounts-form-group mb-3">
-                            <label for="{{ password_change_form.new_password1.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.new_password1.label }}</label>
-                            <div class="input-group input-group-sm accounts-input-group">
-                                <span class="input-group-text"><i class="fa fa-key"></i></span>
-                                {{ password_change_form.new_password1 }}
+                        <div class="row g-3">
+                            <!-- New Password -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="{{ password_change_form.new_password1.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-key text-muted me-2"></i>{{ password_change_form.new_password1.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa fa-key text-muted"></i></span>
+                                        {{ password_change_form.new_password1 }}
+                                    </div>
+                                    {% for error in password_change_form.new_password1.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% for error in password_change_form.new_password1.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-1 small" role="alert">
-                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            
+                            <!-- Confirm New Password -->
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="{{ password_change_form.new_password2.id_for_label }}" class="form-label fw-semibold">
+                                        <i class="fa fa-check-circle text-muted me-2"></i>{{ password_change_form.new_password2.label }}
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fa fa-check text-muted"></i></span>
+                                        {{ password_change_form.new_password2 }}
+                                    </div>
+                                    {% for error in password_change_form.new_password2.errors %}
+                                        <div class="alert alert-danger mt-2 py-2 small rounded-3" role="alert">
+                                            <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
-                        </div>
-                        
-                        <!-- Confirm New Password field -->
-                        <div class="accounts-form-group mb-4">
-                            <label for="{{ password_change_form.new_password2.id_for_label }}" class="accounts-form-label small fw-bold">{{ password_change_form.new_password2.label }}</label>
-                            <div class="input-group input-group-sm accounts-input-group">
-                                <span class="input-group-text"><i class="fa fa-key"></i></span>
-                                {{ password_change_form.new_password2 }}
                             </div>
-                            {% for error in password_change_form.new_password2.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-1 small" role="alert">
-                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                                </div>
-                            {% endfor %}
                         </div>
                         
-                        <!-- Submit button -->
-                        <div class="accounts-submit d-grid gap-2 d-md-flex justify-content-md-center">
-                            <button type="submit" name="password_change_submit" class="accounts-btn btn btn-outline-primary">
+                        <!-- Password Tips -->
+                        <div class="alert alert-light border rounded-3 mb-4">
+                            <h6 class="fw-bold mb-2"><i class="fa fa-info-circle text-primary me-2"></i>Password Tips</h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li>Use at least 8 characters</li>
+                                <li>Include uppercase and lowercase letters</li>
+                                <li>Add numbers and special characters</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid d-md-flex justify-content-md-center pt-3 border-top">
+                            <button type="submit" name="password_change_submit" class="btn btn-primary btn-lg px-5">
                                 <i class="fa fa-save me-2"></i>Update Password
                             </button>
                         </div>

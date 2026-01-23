@@ -1,6 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mt-3" align="center">401 Unauthorized</h2>
-<h5 class="mt-3" align="center">The server could not verify that you are authorized to access the URL requested.</h5>
-<h5 class="mt-3" align="center">You either supplied the wrong credentials (e.g. a bad password), or your browser doesn't understand how to supply the credentials required.</h5>
+<div class="container py-5">
+    <div class="error-page text-center">
+        <div class="error-content mx-auto" style="max-width: 500px;">
+            <div class="error-code mb-4">
+                <span class="display-1 fw-bold text-gradient">401</span>
+            </div>
+            
+            <div class="error-icon mb-4">
+                <div class="icon-wrapper bg-warning-soft rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                    <i class="fa fa-lock fa-3x text-warning"></i>
+                </div>
+            </div>
+            
+            <h2 class="fw-bold mb-3">Unauthorized Access</h2>
+            <p class="text-muted lead mb-4">
+                You need to authenticate to access this page. Please log in with valid credentials to continue.
+            </p>
+            
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/login" class="btn btn-primary btn-lg px-4">
+                    <i class="fa fa-sign-in-alt me-2"></i>Log In
+                </a>
+                <a href="/register" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="fa fa-user-plus me-2"></i>Register
+                </a>
+            </div>
+            
+            <div class="mt-5 pt-4 border-top">
+                <p class="text-muted small mb-0">
+                    <i class="fa fa-arrow-left me-1"></i>
+                    <a href="/" class="text-primary fw-semibold">Return to homepage</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg, var(--warning-color) 0%, var(--danger-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-warning-soft {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+</style>
 {% endblock %}

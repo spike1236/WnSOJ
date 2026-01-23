@@ -16,44 +16,64 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js" integrity="sha512-GSYCbN/le5gNmfAWVEjg1tKnOH7ilK6xCLgA7c48IReoIR2g2vldxTM6kZlN6o3VtWIe6fHu/qhwxIt11J8EBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/display/autorefresh.min.js" integrity="sha512-vAsKB7xXQAWMn5kcwda0HkFVKUxSYwrmrGprVhmbGFNAG1Ij+2epT3zzdwjHTJyDsKXsiEdrUdhIxh7loHyX+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <div class="container problem-container mt-4">
+    <div class="container py-4">
         {% include "problemset/problem_navbar.html" %}
         
-        <div class="card problem-card shadow-sm mb-4">
-            <div class="card-header problem-card-header bg-light">
-                <h2 class="problem-section-header mb-0">Editorial</h2>
+        <!-- Editorial Content Card -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="icon-wrapper bg-primary-soft text-primary rounded-3 p-2 me-3">
+                        <i class="fa fa-lightbulb fs-5"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-0 fw-bold">Editorial</h4>
+                        <small class="text-muted">Solution approach and explanation</small>
+                    </div>
+                </div>
             </div>
-            <div class="card-body problem-card-body">
-                <div class="problem-description" id="problem-description">{{ problem.editorial }}</div>
+            <div class="card-body p-4">
+                <div class="problem-description editorial-content" id="problem-description">{{ problem.editorial }}</div>
             </div>
         </div>
         
-        <div class="card problem-card shadow-sm mb-4">
-            <div class="card-header problem-card-header bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="problem-subsection-header mb-0">Author's Solution</h3>
-                    <div class="solution-controls d-flex align-items-center">
-                        <button id="toggle_solution" class="btn btn-sm btn-outline-primary me-3" onclick="toggleSolution()" aria-expanded="false">
-                            <i class="bi bi-chevron-down"></i> Show Solution
+        <!-- Author's Solution Card -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
+            <div class="card-header bg-white py-3 border-bottom">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-wrapper bg-success-soft text-success rounded-3 p-2 me-3">
+                            <i class="fa fa-code fs-5"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold">Author's Solution</h5>
+                            <small class="text-muted">Reference implementation</small>
+                        </div>
+                    </div>
+                    <div class="solution-controls d-flex align-items-center gap-3">
+                        <button id="toggle_solution" class="btn btn-primary btn-sm" onclick="toggleSolution()" aria-expanded="false">
+                            <i class="fa fa-eye me-1"></i> Show Solution
                         </button>
                         <div class="d-flex align-items-center">
-                            <label for="theme_select" class="me-2 fw-bold">Theme:</label>
+                            <label for="theme_select" class="me-2 text-muted small">Theme:</label>
                             <select id="theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectTheme()">
-                                <option selected value="default">default</option>
-                                <option value="darcula">darcula</option>
-                                <option value="eclipse">eclipse</option>
+                                <option selected value="default">Light</option>
+                                <option value="darcula">Dark</option>
+                                <option value="eclipse">Eclipse</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body problem-card-body collapse" id="solution_content">
-                <div class="problem-code-header d-flex justify-content-between align-items-center mb-2">
-                    <div class="problem-code-language">
-                        <span class="badge bg-light text-dark">GNU C++17</span>
+            <div class="card-body p-0 collapse" id="solution_content">
+                <div class="code-toolbar bg-light border-bottom px-4 py-2 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-primary-soft text-primary px-3 py-2">
+                            <i class="fa fa-file-code me-1"></i> GNU C++17
+                        </span>
                     </div>
-                    <button id="copy_button" class="btn btn-outline-dark btn-sm" onclick="copyCode(editor)">
-                        <i class="bi bi-clipboard"></i> Copy Code
+                    <button id="copy_button" class="btn btn-outline-primary btn-sm" onclick="copyCode(editor)">
+                        <i class="fa fa-copy me-1"></i> Copy Code
                     </button>
                 </div>
                 <div class="problem-code-container">
@@ -65,6 +85,13 @@
             </div>
         </div>
     </div>
+    
+    <style>
+    .bg-primary-soft { background-color: rgba(79, 70, 229, 0.1); }
+    .bg-success-soft { background-color: rgba(16, 185, 129, 0.1); }
+    .icon-wrapper { min-width: 40px; text-align: center; }
+    .editorial-content { line-height: 1.8; }
+    </style>
     <script type="text/javascript" src="/static/js/submission.js"></script>
     <script type="text/javascript" src="/static/js/problem_parser.js"></script>
 {% endblock %}

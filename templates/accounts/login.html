@@ -1,66 +1,147 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="accounts-container">
-        <div class="accounts-card shadow border-0 rounded-lg mx-auto">
-            <div class="accounts-card-header bg-primary text-white">
-                <h3 class="mb-0 text-center">Log in to WnSOJ</h3>
-            </div>
-            <div class="accounts-card-body p-4">
-                <form action="" method="post" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
-                    <!-- Username field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }}</label>
-                        <div class="accounts-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-user"></i></span>
-                            {{ form.username }}
-                        </div>
-                        {% for error in form.username.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="login-card card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Decorative Header -->
+                <div class="login-header text-center py-4 bg-gradient-primary position-relative">
+                    <div class="login-icon-wrapper mx-auto mb-3">
+                        <i class="fa fa-user-circle fa-3x text-white"></i>
+                    </div>
+                    <h3 class="text-white mb-1 fw-bold">Welcome Back!</h3>
+                    <p class="text-white-50 mb-0 small">Sign in to continue to WnSOJ</p>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <form action="" method="post" enctype="multipart/form-data" class="login-form">{{ csrf_input }}
+                        <!-- Username field -->
+                        <div class="form-floating mb-4">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fa fa-user text-primary"></i>
+                                </span>
+                                {{ form.username }}
                             </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <!-- Password field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password.label }}</label>
-                        <div class="accounts-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                            {{ form.password }}
+                            {% for error in form.username.errors %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
                         </div>
-                        {% for error in form.password.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                        
+                        <!-- Password field -->
+                        <div class="form-floating mb-4">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fa fa-lock text-primary"></i>
+                                </span>
+                                {{ form.password }}
                             </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <!-- Remember me checkbox -->
-                    <div class="accounts-form-group mb-3">
-                        <div class="form-check d-flex align-items-center">
-                            {{ form.remember }}
-                            <label for="{{ form.remember.id_for_label }}" class="form-check-label ms-2">
-                                {{ form.remember.label }}
-                            </label>
+                            {% for error in form.password.errors %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
                         </div>
-                    </div>
+                        
+                        <!-- Remember me checkbox -->
+                        <div class="form-check mb-4">
+                            <div class="d-flex align-items-center">
+                                {{ form.remember }}
+                                <label for="{{ form.remember.id_for_label }}" class="form-check-label ms-2 text-muted">
+                                    {{ form.remember.label }}
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">
+                                <i class="fa fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+                        </div>
+                    </form>
                     
-                    <!-- Submit button -->
-                    <div class="accounts-submit d-grid gap-2 d-md-flex justify-content-md-center">
-                        <button type="submit" class="accounts-btn btn btn-primary btn-lg px-5">
-                            <i class="fa fa-sign-in-alt me-2"></i>Login
-                        </button>
+                    <!-- Divider -->
+                    <div class="divider my-4">
+                        <span class="divider-text bg-white px-3 text-muted">or</span>
                     </div>
                     
                     <!-- Register link -->
-                    <div class="accounts-footer text-center mt-4">
-                        <p>Don't have an account? <a href="/register" class="accounts-link text-primary">Register now</a></p>
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Don't have an account? 
+                            <a href="/register" class="text-primary fw-bold text-decoration-none">Create one now</a>
+                        </p>
                     </div>
-                </form>
+                </div>
+            </div>
+            
+            <!-- Back to home -->
+            <div class="text-center mt-4">
+                <a href="/" class="text-muted text-decoration-none">
+                    <i class="fa fa-arrow-left me-2"></i>Back to Home
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.login-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+}
+
+.login-form .input-group-text {
+    border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.login-form .form-control {
+    border-left: 0;
+}
+
+.login-form .input-group:focus-within .input-group-text {
+    border-color: var(--primary-light);
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.login-form .input-group:focus-within .form-control {
+    border-color: var(--primary-light);
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>
 {% endblock %}

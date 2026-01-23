@@ -13,58 +13,119 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js" integrity="sha512-GSYCbN/le5gNmfAWVEjg1tKnOH7ilK6xCLgA7c48IReoIR2g2vldxTM6kZlN6o3VtWIe6fHu/qhwxIt11J8EBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/display/autorefresh.min.js" integrity="sha512-vAsKB7xXQAWMn5kcwda0HkFVKUxSYwrmrGprVhmbGFNAG1Ij+2epT3zzdwjHTJyDsKXsiEdrUdhIxh7loHyX+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    <div class="container mt-4">
-        <h2 class="section-title mb-3">Submission #{{ item.id }}</h2>
+    <div class="container py-4">
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="/submissions" class="btn btn-outline-secondary btn-sm">
+                <i class="fa fa-arrow-left me-2"></i>Back to Submissions
+            </a>
+        </div>
         
-        <table class="table table-bordered table-striped text-center mb-4">
-            <thead>
-                <tr>
-                    <th scope="col" style="width: 5%">ID</th>
-                    <th scope="col" style="width: 18%">Time</th>
-                    <th scope="col" style="width: 15%">User</th>
-                    <th scope="col" style="width: 22%">Problem</th>
-                    <th scope="col" style="width: 10%">Language</th>
-                    <th scope="col" style="width: 10%">Verdict</th>
-                    <th scope="col" style="width: 10%">Time</th>
-                    <th scope="col" style="width: 10%">Memory</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">{{ item.id }}</th>
-                    <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
-                    <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
-                    <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
-                    <td>{{ item.language }}</td>
-                    {% if item.verdict == 'AC' %}
-                        <td class="submission-status status-accepted">{{ item.verdict }}</td>
-                    {% elif item.verdict == 'CE' %}
-                        <td class="submission-status status-warning">{{ item.verdict }}</td>
-                    {% elif item.verdict == 'IQ' %}
-                        <td class="submission-status status-pending">{{ item.verdict }}</td>
-                    {% else %}
-                        <td class="submission-status status-error">{{ item.verdict }}</td>
-                    {% endif %}
-                    <td>{{ item.time }} ms</td>
-                    <td>{{ item.memory }} KB</td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Submission Header -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                    <div class="card-header py-3 
+                        {% if item.verdict == 'AC' %}bg-success text-white
+                        {% elif item.verdict == 'CE' %}bg-warning text-dark
+                        {% elif item.verdict == 'IQ' %}bg-secondary text-white
+                        {% else %}bg-danger text-white{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 fw-bold">
+                                {% if item.verdict == 'AC' %}
+                                    <i class="fa fa-check-circle me-2"></i>Accepted
+                                {% elif item.verdict == 'CE' %}
+                                    <i class="fa fa-exclamation-triangle me-2"></i>Compilation Error
+                                {% elif item.verdict == 'IQ' %}
+                                    <i class="fa fa-hourglass-half me-2"></i>In Queue
+                                {% elif item.verdict == 'WA' %}
+                                    <i class="fa fa-times-circle me-2"></i>Wrong Answer
+                                {% elif item.verdict == 'TLE' %}
+                                    <i class="fa fa-clock me-2"></i>Time Limit Exceeded
+                                {% elif item.verdict == 'MLE' %}
+                                    <i class="fa fa-memory me-2"></i>Memory Limit Exceeded
+                                {% elif item.verdict == 'RE' %}
+                                    <i class="fa fa-bug me-2"></i>Runtime Error
+                                {% else %}
+                                    <i class="fa fa-question-circle me-2"></i>{{ item.verdict }}
+                                {% endif %}
+                            </h4>
+                            <span class="badge bg-white text-dark fs-6">Submission #{{ item.id }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">
+                            <a href="/problem/{{ item.problem.id }}" class="text-decoration-none">
+                                <i class="fa fa-file-code me-2 text-primary"></i>{{ item.problem.title }}
+                            </a>
+                        </h5>
+                        <p class="text-muted mb-0">
+                            Submitted by 
+                            <a href="/profile/{{ item.user.username }}" class="fw-semibold text-decoration-none">{{ item.user.username }}</a>
+                            on {{ item.send_time.strftime("%B %d, %Y at %H:%M") }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">
+                            <i class="fa fa-chart-bar text-primary me-2"></i>Statistics
+                        </h5>
+                        
+                        <div class="stat-row d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-icon bg-primary-soft text-primary rounded-circle me-3">
+                                    <i class="fa fa-code"></i>
+                                </div>
+                                <span class="text-muted">Language</span>
+                            </div>
+                            <span class="badge bg-light text-dark px-3 py-2">{{ item.language }}</span>
+                        </div>
+                        
+                        <div class="stat-row d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-icon bg-info-soft text-info rounded-circle me-3">
+                                    <i class="fa fa-clock"></i>
+                                </div>
+                                <span class="text-muted">Execution Time</span>
+                            </div>
+                            <span class="fw-bold">{{ item.time }} ms</span>
+                        </div>
+                        
+                        <div class="stat-row d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="stat-icon bg-success-soft text-success rounded-circle me-3">
+                                    <i class="fa fa-memory"></i>
+                                </div>
+                                <span class="text-muted">Memory Used</span>
+                            </div>
+                            <span class="fw-bold">{{ item.memory }} KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 fs-5">Source Code</h3>
+        <!-- Source Code Card -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <h5 class="mb-0 fw-bold">
+                    <i class="fa fa-file-code text-primary me-2"></i>Source Code
+                </h5>
                 <div class="d-flex gap-3 align-items-center">
                     <div class="d-flex align-items-center">
-                        <label for="theme_select" class="me-2 mb-0">Theme:</label>
+                        <label for="theme_select" class="me-2 text-muted small">Theme:</label>
                         <select id="theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectTheme()">
-                            <option selected value="default">default</option>
-                            <option value="darcula">darcula</option>
-                            <option value="eclipse">eclipse</option>
+                            <option selected value="default">Light</option>
+                            <option value="darcula">Dark</option>
+                            <option value="eclipse">Eclipse</option>
                         </select>
                     </div>
-                    <button id="copy_button" class="btn btn-outline-dark btn-sm" onclick="copyCode(editor)">
-                        <i class="bi bi-clipboard"></i> Copy Code
+                    <button id="copy_button" class="btn btn-outline-primary btn-sm" onclick="copyCode(editor)">
+                        <i class="fa fa-copy me-1"></i>Copy Code
                     </button>
                 </div>
             </div>
@@ -74,10 +135,26 @@
                     <select style="display: none;" id="code_language" name="language" class="form-select">
                         <option selected value="{{ item.language }}">{{ item.language }}</option>
                     </select>
-
                 </div>
             </div>
         </div>
     </div>
+    
+    <style>
+    .bg-primary-soft { background-color: rgba(79, 70, 229, 0.1); }
+    .bg-info-soft { background-color: rgba(14, 165, 233, 0.1); }
+    .bg-success-soft { background-color: rgba(16, 185, 129, 0.1); }
+    
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        min-width: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    </style>
+    
     <script type="text/javascript" src="/static/js/submission.js"></script>
 {% endblock %}

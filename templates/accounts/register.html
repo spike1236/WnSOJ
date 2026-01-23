@@ -1,156 +1,262 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="accounts-container">
-        <div class="accounts-card shadow border-0 rounded-lg mx-auto">
-            <div class="accounts-card-header bg-primary text-white">
-                <h3 class="mb-0 text-center">Register in WnSOJ</h3>
-            </div>
-            <div class="accounts-card-body p-4">
-                <form action="" method="post" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
-                    <!-- Username field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }}</label>
-                        {{ form.username }}
-                        {% for error in form.username.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                        {% if username_error_message %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ username_error_message }}
-                            </div>
-                        {% endif %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+            <div class="register-card card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Decorative Header -->
+                <div class="register-header text-center py-4 bg-gradient-primary position-relative">
+                    <div class="register-icon-wrapper mx-auto mb-3">
+                        <i class="fa fa-user-plus fa-3x text-white"></i>
                     </div>
-                    <!-- First name field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.first_name.id_for_label }}" class="accounts-form-label fw-bold">{{ form.first_name.label }}</label>
-                        {{ form.first_name }}
-                        {% for error in form.first_name.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                    <h3 class="text-white mb-1 fw-bold">Create Your Account</h3>
+                    <p class="text-white-50 mb-0 small">Join WnSOJ and start your coding journey</p>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <form action="" method="post" enctype="multipart/form-data" class="register-form">{{ csrf_input }}
+                        <!-- Username field -->
+                        <div class="mb-4">
+                            <label for="{{ form.username.id_for_label }}" class="form-label fw-bold">
+                                <i class="fa fa-at me-1 text-primary"></i>{{ form.username.label }}
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0"><i class="fa fa-user text-muted"></i></span>
+                                {{ form.username }}
                             </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <!-- Last name field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.last_name.id_for_label }}" class="accounts-form-label fw-bold">{{ form.last_name.label }}</label>
-                        {{ form.last_name }}
-                        {% for error in form.last_name.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <!-- Email field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.email.id_for_label }}" class="accounts-form-label fw-bold">{{ form.email.label }}</label>
-                        <div class="accounts-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                            {{ form.email }}
-                        </div>
-                        {% for error in form.email.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                        {% if email_error_message %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ email_error_message }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Password fields -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.password1.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password1.label }}</label>
-                            <div class="accounts-input-group input-group">
-                                <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                                {{ form.password1 }}
-                            </div>
-                            {% for error in form.password1.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                            {% for error in form.username.errors %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
                                     <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                                 </div>
                             {% endfor %}
-                            {% if password_error_message %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                    <i class="fa fa-exclamation-circle me-2"></i>{{ password_error_message }}
+                            {% if username_error_message %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ username_error_message }}
                                 </div>
                             {% endif %}
                         </div>
                         
-                        <div class="col-md-6 mb-3">
-                            <label for="{{ form.password2.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password2.label }}</label>
-                            <div class="accounts-input-group input-group">
-                                <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                                {{ form.password2 }}
+                        <!-- Name fields row -->
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fa fa-id-card me-1 text-primary"></i>{{ form.first_name.label }}
+                                </label>
+                                {{ form.first_name }}
+                                {% for error in form.first_name.errors %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                    </div>
+                                {% endfor %}
                             </div>
-                            {% for error in form.password2.errors %}
-                                <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fa fa-id-card me-1 text-primary"></i>{{ form.last_name.label }}
+                                </label>
+                                {{ form.last_name }}
+                                {% for error in form.last_name.errors %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Email field -->
+                        <div class="mb-4">
+                            <label for="{{ form.email.id_for_label }}" class="form-label fw-bold">
+                                <i class="fa fa-envelope me-1 text-primary"></i>{{ form.email.label }}
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0"><i class="fa fa-envelope text-muted"></i></span>
+                                {{ form.email }}
+                            </div>
+                            {% for error in form.email.errors %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
                                     <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
                                 </div>
                             {% endfor %}
+                            {% if email_error_message %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ email_error_message }}
+                                </div>
+                            {% endif %}
                         </div>
-                    </div>
-                    
-                    <!-- Phone number field -->
-                    <div class="accounts-form-group mb-3">
-                        <label for="{{ form.phone_number.id_for_label }}" class="accounts-form-label fw-bold">{{ form.phone_number.label }}</label>
-                        <div class="accounts-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                            {{ form.phone_number }}
+                        
+                        <!-- Password fields row -->
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fa fa-lock me-1 text-primary"></i>{{ form.password1.label }}
+                                </label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fa fa-lock text-muted"></i></span>
+                                    {{ form.password1 }}
+                                </div>
+                                {% for error in form.password1.errors %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center small" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                    </div>
+                                {% endfor %}
+                                {% if password_error_message %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center small" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ password_error_message }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fa fa-lock me-1 text-primary"></i>{{ form.password2.label }}
+                                </label>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fa fa-check-double text-muted"></i></span>
+                                    {{ form.password2 }}
+                                </div>
+                                {% for error in form.password2.errors %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center small" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        {% for error in form.phone_number.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
-                            </div>
-                        {% endfor %}
-                        {% if phone_number_error_message %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ phone_number_error_message }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Business account checkbox -->
-                    <div class="accounts-form-group mb-3">
-                        <div class="form-check d-flex align-items-center">
-                            {{ form.is_business }}
-                            <label for="{{ form.is_business.id_for_label }}" class="form-check-label ms-2">
-                                {{ form.is_business.label }}
+                        
+                        <!-- Phone number field -->
+                        <div class="mb-4">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-bold">
+                                <i class="fa fa-phone me-1 text-primary"></i>{{ form.phone_number.label }}
                             </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Icon field -->
-                    <div class="accounts-form-group mb-4">
-                        <label for="{{ form.icon.id_for_label }}" class="accounts-form-label fw-bold">{{ form.icon.label }}</label>
-                        <div class="accounts-input-group input-group">
-                            <span class="input-group-text"><i class="fa fa-image"></i></span>
-                            {{ form.icon }}
-                        </div>
-                        {% for error in form.icon.errors %}
-                            <div class="accounts-alert alert alert-danger mt-2 py-2" role="alert">
-                                <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-light border-end-0"><i class="fa fa-phone text-muted"></i></span>
+                                {{ form.phone_number }}
                             </div>
-                        {% endfor %}
+                            {% for error in form.phone_number.errors %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                </div>
+                            {% endfor %}
+                            {% if phone_number_error_message %}
+                                <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                    <i class="fa fa-exclamation-circle me-2"></i>{{ phone_number_error_message }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Business account and Icon row -->
+                        <div class="row align-items-end">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-check form-switch p-3 bg-light rounded-3">
+                                    {{ form.is_business }}
+                                    <label for="{{ form.is_business.id_for_label }}" class="form-check-label ms-2 fw-semibold">
+                                        <i class="fa fa-briefcase me-1 text-primary"></i>{{ form.is_business.label }}
+                                    </label>
+                                    <div class="text-muted small mt-1">Enable to post jobs</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="{{ form.icon.id_for_label }}" class="form-label fw-bold">
+                                    <i class="fa fa-image me-1 text-primary"></i>{{ form.icon.label }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fa fa-camera text-muted"></i></span>
+                                    {{ form.icon }}
+                                </div>
+                                {% for error in form.icon.errors %}
+                                    <div class="alert alert-danger mt-2 py-2 d-flex align-items-center" role="alert">
+                                        <i class="fa fa-exclamation-circle me-2"></i>{{ error }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <!-- Submit button -->
+                        <div class="d-grid mt-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold">
+                                <i class="fa fa-rocket me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Divider -->
+                    <div class="divider my-4">
+                        <span class="divider-text bg-white px-3 text-muted">or</span>
                     </div>
                     
-                    <!-- Submit button -->
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg px-5">
-                            <i class="fa fa-user-plus me-2"></i>Register
-                        </button>
+                    <!-- Login link -->
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Already have an account? 
+                            <a href="/login" class="text-primary fw-bold text-decoration-none">Sign in here</a>
+                        </p>
                     </div>
-                </form>
+                </div>
+            </div>
+            
+            <!-- Back to home -->
+            <div class="text-center mt-4">
+                <a href="/" class="text-muted text-decoration-none">
+                    <i class="fa fa-arrow-left me-2"></i>Back to Home
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.register-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-card {
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.register-form .input-group-text {
+    border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.register-form .input-group .form-control {
+    border-left: 0;
+}
+
+.register-form .input-group:focus-within .input-group-text {
+    border-color: var(--primary-light);
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.register-form .input-group:focus-within .form-control {
+    border-color: var(--primary-light);
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-switch {
+    padding-left: 3.5rem;
+}
+</style>
 {% endblock %}

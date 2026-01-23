@@ -1,23 +1,38 @@
-<ul class="problem-navbar nav nav-tabs" style="margin-top: 10px">
-    <li class="problem-nav-item nav-item">
-        {% if current_bar_id == 1 %}
-            <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}">Statement</a>
-        {% else %}
-            <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}">Statement</a>
-    {% endif %}
-    </li>
-    <li class="problem-nav-item nav-item">
-    {% if current_bar_id == 2 %}
-            <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}/editorial">Editorial</a>
-    {% else %}
-            <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}/editorial">Editorial</a>
-    {% endif %}
-    </li>
-    <li class="problem-nav-item nav-item">
-    {% if current_bar_id == 3 %}
-        <a class="problem-nav-link nav-link active" href="/problem/{{ problem.id }}/submissions">Submissions</a>
-    {% else %}
-        <a class="problem-nav-link nav-link" href="/problem/{{ problem.id }}/submissions">Submissions</a>
-    {% endif %}
-    </li>
-</ul>
+<nav class="problem-nav-tabs mb-4">
+    <ul class="nav nav-pills nav-fill bg-white rounded-3 shadow-sm p-2">
+        <li class="nav-item">
+            <a class="nav-link rounded-2 {% if current_bar_id == 1 %}active{% endif %}" href="/problem/{{ problem.id }}">
+                <i class="fa fa-file-alt me-2"></i>Statement
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-2 {% if current_bar_id == 2 %}active{% endif %}" href="/problem/{{ problem.id }}/editorial">
+                <i class="fa fa-lightbulb me-2"></i>Editorial
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-2 {% if current_bar_id == 3 %}active{% endif %}" href="/problem/{{ problem.id }}/submissions">
+                <i class="fa fa-list me-2"></i>Submissions
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<style>
+.problem-nav-tabs .nav-link {
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s ease;
+}
+
+.problem-nav-tabs .nav-link:hover:not(.active) {
+    background-color: rgba(79, 70, 229, 0.05);
+    color: var(--primary-color);
+}
+
+.problem-nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+</style>
