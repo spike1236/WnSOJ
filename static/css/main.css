@@ -621,40 +621,41 @@ input[type="file"]::file-selector-button:hover {
     overflow: auto;
 }
 
+/* Status classes - applies to td cells */
+td.status-accepted,
 .status-accepted {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.15) 100%) !important;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.25) 100%) !important;
     color: #047857 !important;
-    display: block !important;
-    height: 100% !important;
-    width: 100% !important;
     font-weight: 600;
+    padding: 0.75rem 1rem !important;
+    text-align: center;
 }
 
+td.status-error,
 .status-error {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.15) 100%) !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.25) 100%) !important;
     color: #b91c1c !important;
-    display: block !important;
-    height: 100% !important;
-    width: 100% !important;
     font-weight: 600;
+    padding: 0.75rem 1rem !important;
+    text-align: center;
 }
 
+td.status-warning,
 .status-warning {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%) !important;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.25) 100%) !important;
     color: #b45309 !important;
-    display: block !important;
-    height: 100% !important;
-    width: 100% !important;
     font-weight: 600;
+    padding: 0.75rem 1rem !important;
+    text-align: center;
 }
 
+td.status-pending,
 .status-pending {
-    background: linear-gradient(135deg, rgba(100, 116, 139, 0.15) 0%, rgba(71, 85, 105, 0.15) 100%) !important;
+    background: linear-gradient(135deg, rgba(100, 116, 139, 0.25) 0%, rgba(71, 85, 105, 0.25) 100%) !important;
     color: #475569 !important;
-    display: block !important;
-    height: 100% !important;
-    width: 100% !important;
     font-weight: 600;
+    padding: 0.75rem 1rem !important;
+    text-align: center;
 }
 
 /* Form button styles */

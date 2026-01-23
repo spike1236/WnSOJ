@@ -87,7 +87,6 @@ body {
     z-index: 1;
 }
 
-/* Adjust alert container to appear above fixed navbar */
 .alert-container {
     position: fixed;
     top: 80px;
