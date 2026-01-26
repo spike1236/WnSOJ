@@ -117,6 +117,9 @@ def test_submission_task(submission_id):
                 mem_limit=256 * 1024,
                 is_compile=True,
             )
+            logger.info(
+                f"Compilation result for submission {submission_id}: {compile_result}"
+            )
             if not compile_result.get("run_success", False):
                 submission.verdict = "CE"
                 submission.time = 0
