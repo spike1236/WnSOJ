@@ -113,7 +113,7 @@ def test_submission_task(submission_id):
             compile_result = run_isolate(
                 box_id,
                 compile_cmd,
-                time_limit=5,
+                time_limit=10,
                 mem_limit=256 * 1024,
                 is_compile=True,
             )
