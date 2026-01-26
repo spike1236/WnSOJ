@@ -22,6 +22,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from problemset.serializers import SubmissionListSerializer
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers as drf_serializers
 
 
 def register(request):
@@ -214,6 +216,21 @@ class LogoutAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @extend_schema(
+        request=inline_serializer(
+            name="LogoutRequest",
+            fields={
+                "refresh": drf_serializers.CharField(),
+            },
+        ),
+        responses={
+            205: None,
+            400: inline_serializer(
+                name="LogoutError",
+                fields={"detail": drf_serializers.CharField()},
+            ),
+        },
+    )
     def post(self, request):
         refresh = request.data.get("refresh")
         if not refresh:
@@ -242,6 +259,24 @@ class PublicUserProfileAPIView(APIView):
 
     permission_classes = [permissions.AllowAny]
 
+    @extend_schema(
+        request=None,
+        responses=inline_serializer(
+            name="PublicUserProfileResponse",
+            fields={
+                "user": PublicUserSerializer(),
+                "stats": inline_serializer(
+                    name="PublicUserProfileStats",
+                    fields={
+                        "verdict_counts": drf_serializers.DictField(
+                            child=drf_serializers.IntegerField()
+                        )
+                    },
+                ),
+                "recent_submissions": SubmissionListSerializer(many=True),
+            },
+        ),
+    )
     def get(self, request, username: str):
         user = get_object_or_404(User, username=username)
 

@@ -76,10 +76,10 @@ class SubmissionSerializer(serializers.ModelSerializer):
     verdict_code = serializers.SerializerMethodField(read_only=True)
     verdict_testcase = serializers.SerializerMethodField(read_only=True)
 
-    def get_verdict_code(self, obj):
+    def get_verdict_code(self, obj: Submission) -> str | None:
         return (obj.verdict or "").split()[0] if obj.verdict else None
 
-    def get_verdict_testcase(self, obj):
+    def get_verdict_testcase(self, obj: Submission) -> int | None:
         parts = (obj.verdict or "").split()
         if len(parts) < 2:
             return None
@@ -109,17 +109,17 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
 
 class SubmissionListSerializer(serializers.ModelSerializer):
-    problem_id = serializers.IntegerField(source="problem_id", read_only=True)
+    problem_id = serializers.IntegerField(read_only=True)
     problem_title = serializers.CharField(source="problem.title", read_only=True)
-    user_id = serializers.IntegerField(source="user_id", read_only=True)
+    user_id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
     verdict_code = serializers.SerializerMethodField(read_only=True)
     verdict_testcase = serializers.SerializerMethodField(read_only=True)
 
-    def get_verdict_code(self, obj):
+    def get_verdict_code(self, obj: Submission) -> str | None:
         return (obj.verdict or "").split()[0] if obj.verdict else None
 
-    def get_verdict_testcase(self, obj):
+    def get_verdict_testcase(self, obj: Submission) -> int | None:
         parts = (obj.verdict or "").split()
         if len(parts) < 2:
             return None

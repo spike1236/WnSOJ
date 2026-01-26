@@ -10,6 +10,7 @@ from io import BytesIO
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
 from .serializers import (
     CategorySerializer,
     ProblemListSerializer,
@@ -299,6 +300,7 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
 
+    @extend_schema(operation_id="submissions_status_retrieve")
     @action(detail=True, methods=["get"], url_path="status")
     def status(self, request, pk=None):
         submission = self.get_object()
@@ -325,6 +327,7 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
             }
         )
 
+    @extend_schema(operation_id="submissions_status_list")
     @action(detail=False, methods=["get"], url_path="status")
     def bulk_status(self, request):
         ids_param = request.query_params.get("ids", "")

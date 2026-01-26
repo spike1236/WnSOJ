@@ -10,10 +10,10 @@ class UserSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
     icon170_url = serializers.SerializerMethodField(read_only=True)
 
-    def get_icon64_url(self, obj):
+    def get_icon64_url(self, obj: User) -> str | None:
         return getattr(obj, "icon64_url", None)
 
-    def get_icon170_url(self, obj):
+    def get_icon170_url(self, obj: User) -> str | None:
         return getattr(obj, "icon170_url", None)
 
     class Meta:
@@ -34,10 +34,10 @@ class PublicUserSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
     icon170_url = serializers.SerializerMethodField(read_only=True)
 
-    def get_icon64_url(self, obj):
+    def get_icon64_url(self, obj: User) -> str | None:
         return getattr(obj, "icon64_url", None)
 
-    def get_icon170_url(self, obj):
+    def get_icon170_url(self, obj: User) -> str | None:
         return getattr(obj, "icon170_url", None)
 
     class Meta:
@@ -59,10 +59,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
     icon170_url = serializers.SerializerMethodField(read_only=True)
 
-    def get_icon64_url(self, obj):
+    def get_icon64_url(self, obj: User) -> str | None:
         return getattr(obj, "icon64_url", None)
 
-    def get_icon170_url(self, obj):
+    def get_icon170_url(self, obj: User) -> str | None:
         return getattr(obj, "icon170_url", None)
 
     class Meta:
