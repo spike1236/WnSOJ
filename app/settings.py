@@ -80,6 +80,7 @@ CELERY_TASK_TIME_LIMIT = 10 * 60
 NO_ISOLATE = os.getenv('NO_ISOLATE', 'False') == 'True'
 ISOLATE_PATH = os.getenv('ISOLATE_PATH', '/var/lib/isolate')
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -94,6 +95,7 @@ INSTALLED_APPS = [
     'jobboard',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular'
 ]
 

@@ -41,3 +41,4 @@ class Submission(models.Model):
     language = models.CharField(max_length=20)
     code = models.TextField(max_length=65536, default="")
     send_time = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

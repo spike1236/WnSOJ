@@ -8,7 +8,16 @@ import os
 from zipfile import ZipFile
 from io import BytesIO
 from rest_framework import viewsets, permissions
-from .serializers import CategorySerializer, ProblemSerializer, SubmissionSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .serializers import (
+    CategorySerializer,
+    ProblemListSerializer,
+    ProblemPublicSerializer,
+    ProblemAdminSerializer,
+    SubmissionListSerializer,
+    SubmissionSerializer,
+)
 
 
 def home_page(request):
@@ -139,8 +148,9 @@ def problem_submissions_list(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
     submissions = Submission.objects.filter(problem=problem)
 
-    if "user" in request.GET and request.GET["user"]:
-        submissions = submissions.filter(user__username=request.GET["user"])
+    username = request.GET.get("user") or request.GET.get("username")
+    if username:
+        submissions = submissions.filter(user__username=username)
 
     if "verdict" in request.GET and request.GET["verdict"]:
         submissions = submissions.filter(verdict=request.GET["verdict"])
@@ -209,7 +219,34 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Problem.objects.all()
-    serializer_class = ProblemSerializer
+    serializer_class = ProblemPublicSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset().prefetch_related(
+            "categories",
+            "users_solved",
+            "users_unsolved",
+        )
+
+        category_param = self.request.query_params.get("category")
+        if category_param:
+            parts = [p.strip() for p in category_param.split(",") if p.strip()]
+            if parts:
+                qs = qs.filter(categories__short_name__in=parts).distinct()
+        return qs
+
+    def get_serializer_class(self):
+        if self.action == "list" and self.request.query_params.get("compact") == "1":
+            return ProblemListSerializer
+
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return ProblemAdminSerializer
+
+        user = getattr(self.request, "user", None)
+        if user and getattr(user, "is_staff", False):
+            return ProblemAdminSerializer
+
+        return ProblemPublicSerializer
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy"]:
@@ -234,8 +271,23 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_authenticated:
-            return Submission.objects.filter(user=user)
+            if user.is_staff:
+                return (
+                    Submission.objects.all()
+                    .select_related("user", "problem")
+                    .order_by("-id")
+                )
+            return (
+                Submission.objects.filter(user=user)
+                .select_related("user", "problem")
+                .order_by("-id")
+            )
         return Submission.objects.none()
+
+    def get_serializer_class(self):
+        if self.action == "list" and self.request.query_params.get("compact") == "1":
+            return SubmissionListSerializer
+        return super().get_serializer_class()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, verdict="IQ")
@@ -246,3 +298,73 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
+
+    @action(detail=True, methods=["get"], url_path="status")
+    def status(self, request, pk=None):
+        submission = self.get_object()
+        verdict = submission.verdict or ""
+        parts = verdict.split()
+        verdict_code = parts[0] if parts else None
+        verdict_testcase = None
+        if len(parts) >= 2:
+            try:
+                verdict_testcase = int(parts[1])
+            except (TypeError, ValueError):
+                verdict_testcase = None
+
+        return Response(
+            {
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "verdict_code": verdict_code,
+                "verdict_testcase": verdict_testcase,
+                "time": submission.time,
+                "memory": submission.memory,
+                "send_time": submission.send_time,
+                "updated_at": submission.updated_at,
+            }
+        )
+
+    @action(detail=False, methods=["get"], url_path="status")
+    def bulk_status(self, request):
+        ids_param = request.query_params.get("ids", "")
+        ids = []
+        for raw in ids_param.split(","):
+            raw = raw.strip()
+            if not raw:
+                continue
+            try:
+                ids.append(int(raw))
+            except ValueError:
+                continue
+
+        queryset = self.get_queryset()
+        if ids:
+            queryset = queryset.filter(id__in=ids)
+
+        items = []
+        for submission in queryset.order_by("-id")[:200]:
+            verdict = submission.verdict or ""
+            parts = verdict.split()
+            verdict_code = parts[0] if parts else None
+            verdict_testcase = None
+            if len(parts) >= 2:
+                try:
+                    verdict_testcase = int(parts[1])
+                except (TypeError, ValueError):
+                    verdict_testcase = None
+
+            items.append(
+                {
+                    "id": submission.id,
+                    "verdict": submission.verdict,
+                    "verdict_code": verdict_code,
+                    "verdict_testcase": verdict_testcase,
+                    "time": submission.time,
+                    "memory": submission.memory,
+                    "send_time": submission.send_time,
+                    "updated_at": submission.updated_at,
+                }
+            )
+
+        return Response({"results": items})

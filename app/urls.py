@@ -59,8 +59,11 @@ urlpatterns = [
     path('job/<int:job_id>/delete/', job_views.delete_job, name='delete_job'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Get JWT
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT
+    path('api/logout/', accounts_views.LogoutAPIView.as_view(), name='logout_api'),
     path('api/register/', accounts_views.RegisterAPIView.as_view(), name='register_api'),
     path('api/profile/', accounts_views.UserDetailAPIView.as_view(), name='profile_api'),
+    path('api/users/<str:username>/', accounts_views.PublicUserProfileAPIView.as_view(), name='public_user_profile_api'),
+    path('api/users/<str:username>/submissions/', accounts_views.PublicUserSubmissionsAPIView.as_view(), name='public_user_submissions_api'),
     path('api/', include(router.urls)),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

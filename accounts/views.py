@@ -10,8 +10,18 @@ from .models import User
 from problemset.models import Submission
 import random
 from rest_framework import generics, permissions
-from .serializers import RegisterSerializer, UserSerializer, UserDetailSerializer
+from .serializers import (
+    RegisterSerializer,
+    UserSerializer,
+    UserDetailSerializer,
+    PublicUserSerializer,
+)
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from problemset.serializers import SubmissionListSerializer
 
 
 def register(request):
@@ -193,3 +203,99 @@ class UserDetailAPIView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class LogoutAPIView(APIView):
+    """Blacklist (revoke) a refresh token.
+
+    Expected payload: {"refresh": "<refresh_token>"}
+    """
+
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request):
+        refresh = request.data.get("refresh")
+        if not refresh:
+            return Response(
+                {"detail": "Missing refresh token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            token = RefreshToken(refresh)
+            token.blacklist()
+        except Exception:
+            return Response(
+                {"detail": "Invalid refresh token."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(status=status.HTTP_205_RESET_CONTENT)
+
+
+class PublicUserProfileAPIView(APIView):
+    """Public profile data for a given user.
+
+    This is intended for Next.js pages to fetch JSON instead of parsing HTML.
+    """
+
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, username: str):
+        user = get_object_or_404(User, username=username)
+
+        submissions_qs = (
+            Submission.objects.filter(user=user)
+            .select_related("problem")
+            .order_by("-id")
+        )
+        recent = submissions_qs[:10]
+
+        cnt = {"AC": 0, "CE": 0, "WA": 0, "TLE": 0, "MLE": 0, "RE": 0}
+        for verdict in submissions_qs.exclude(verdict="IQ").values_list(
+            "verdict", flat=True
+        ):
+            code = (verdict or "").split()[0]
+            if code in cnt:
+                cnt[code] += 1
+
+        return Response(
+            {
+                "user": PublicUserSerializer(user).data,
+                "stats": {"verdict_counts": cnt},
+                "recent_submissions": SubmissionListSerializer(recent, many=True).data,
+            }
+        )
+
+
+class PublicUserSubmissionsAPIView(generics.ListAPIView):
+    """Public submissions list for a specific user.
+
+    Uses the compact submission serializer (does not expose source code).
+    Supports optional filters: ?verdict=AC and/or ?problem_id=123
+    """
+
+    permission_classes = [permissions.AllowAny]
+    serializer_class = SubmissionListSerializer
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs["username"])
+        qs = (
+            Submission.objects.filter(user=user)
+            .select_related("user", "problem")
+            .order_by("-id")
+        )
+
+        verdict = self.request.query_params.get("verdict")
+        if verdict:
+            qs = qs.filter(verdict__startswith=verdict)
+
+        problem_id = self.request.query_params.get("problem_id")
+        if problem_id:
+            try:
+                qs = qs.filter(problem_id=int(problem_id))
+            except (TypeError, ValueError):
+                pass
+
+        return qs

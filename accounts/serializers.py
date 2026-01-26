@@ -7,22 +7,63 @@ import random
 
 
 class UserSerializer(serializers.ModelSerializer):
+    icon64_url = serializers.SerializerMethodField(read_only=True)
+    icon170_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_icon64_url(self, obj):
+        return getattr(obj, "icon64_url", None)
+
+    def get_icon170_url(self, obj):
+        return getattr(obj, "icon170_url", None)
+
     class Meta:
         model = User
         fields = [
             "id",
             "username",
-            "email",
             "first_name",
             "last_name",
-            "phone_number",
             "account_type",
             "icon_id",
+            "icon64_url",
+            "icon170_url",
+        ]
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    icon64_url = serializers.SerializerMethodField(read_only=True)
+    icon170_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_icon64_url(self, obj):
+        return getattr(obj, "icon64_url", None)
+
+    def get_icon170_url(self, obj):
+        return getattr(obj, "icon170_url", None)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "account_type",
+            "icon_id",
+            "icon64_url",
+            "icon170_url",
         ]
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
     is_business = serializers.BooleanField(required=False)
+    icon64_url = serializers.SerializerMethodField(read_only=True)
+    icon170_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_icon64_url(self, obj):
+        return getattr(obj, "icon64_url", None)
+
+    def get_icon170_url(self, obj):
+        return getattr(obj, "icon170_url", None)
 
     class Meta:
         model = User
@@ -34,6 +75,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "is_business",
+            "icon64_url",
+            "icon170_url",
         ]
 
     def to_representation(self, instance):

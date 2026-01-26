@@ -55,23 +55,37 @@ def test_submission_task(submission_id):
 
     if submission.verdict != "IQ":
         logger.info(
-            "Submission {submission_id} already processed with verdict"
-            + f"{submission.verdict}."
+            f"Submission {submission_id} already processed with verdict {submission.verdict}."
         )
         return
 
     language = submission.language
     config = LANGUAGE_CONFIGS.get(language)
 
+    if not config:
+        submission.verdict = "RE 1"
+        submission.time = 0
+        submission.memory = 0
+        submission.save()
+        logger.error(
+            f"Unknown language '{language}' for submission {submission_id}."
+        )
+        return
+
     box_id = random.randint(1, 999)
 
     try:
         subprocess.run(
+            ["isolate", "--cg", "--box-id", str(box_id), "--cleanup"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        subprocess.run(
             ["isolate", "--cg", "--box-id", str(box_id), "--init"], check=True
         )
         logger.info(
-            "Initialized isolate box with box_id={box_id} for submission"
-            + f"={submission_id}"
+            f"Initialized isolate box with box_id={box_id} for submission={submission_id}"
         )
     except subprocess.CalledProcessError:
         submission.verdict = "RE 1"
@@ -97,7 +111,11 @@ def test_submission_task(submission_id):
         if "compile" in config:
             compile_cmd = config["compile"]
             compile_result = run_isolate(
-                box_id, compile_cmd, time_limit=5, mem_limit=256 * 1024, is_compile=True
+                box_id,
+                compile_cmd,
+                time_limit=5,
+                mem_limit=256 * 1024,
+                is_compile=True,
             )
             if not compile_result.get("run_success", False):
                 submission.verdict = "CE"
@@ -128,7 +146,7 @@ def test_submission_task(submission_id):
 
 @shared_task
 def process_submission_queue():
-    submissions = Submission.objects.filter(verdict="IQ")[:30]
+    submissions = Submission.objects.filter(verdict="IQ").order_by("send_time")[:30]
     if settings.NO_ISOLATE:
         for submission in submissions:
             submission.verdict = "RE 1"

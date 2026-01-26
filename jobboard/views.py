@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Job
 from .forms import AddJobForm
 from rest_framework import viewsets, permissions
-from .serializers import JobSerializer
+from rest_framework.exceptions import PermissionDenied
+from .serializers import JobListSerializer, JobSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
@@ -36,10 +38,14 @@ def jobs(request):
     )
 
 
+@login_required
 def add_job(request):
+    if request.user.account_type == 1:
+        return redirect("jobs")
+
     if request.method == "POST":
         form = AddJobForm(request.POST)
-        if form.is_valid() and request.user.account_type != 1:
+        if form.is_valid():
             min_salary = request.POST.get("min_salary", "")
             max_salary = request.POST.get("max_salary", "")
             currency = request.POST.get("currency", "$")
@@ -107,7 +113,7 @@ def edit_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
 
     if not request.user.is_authenticated or (
-        not request.user.is_staff or request.user != job.user
+        request.user != job.user and not request.user.is_staff
     ):
         return redirect("job", job_id=job_id)
 
@@ -181,7 +187,7 @@ def edit_job(request, job_id):
 def delete_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     if not request.user.is_authenticated or (
-        not request.user.is_staff or request.user != job.user
+        request.user != job.user and not request.user.is_staff
     ):
         return redirect("job", job_id=job_id)
     job.delete()
@@ -195,9 +201,14 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     - Create, Update, Destroy: restricted to the job's owner or admin users.
     """
 
-    queryset = Job.objects.all().order_by("-created_at")
+    queryset = Job.objects.all().select_related("user").order_by("-created_at")
     serializer_class = JobSerializer
     authentication_classes = [JWTAuthentication]
+
+    def get_serializer_class(self):
+        if self.action == "list" and self.request.query_params.get("compact") == "1":
+            return JobListSerializer
+        return super().get_serializer_class()
 
     def get_permissions(self):
         if self.action in ["create"]:
@@ -209,19 +220,19 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        user = self.request.user
+        if not user.is_staff and getattr(user, "account_type", 1) != 2:
+            raise PermissionDenied("Only business accounts can create jobs.")
+
+        serializer.save(user=user)
 
     def perform_update(self, serializer):
         job = self.get_object()
         if self.request.user != job.user and not self.request.user.is_staff:
-            raise permissions.PermissionDenied(
-                "You do not have permission to edit" + "this job."
-            )
+            raise PermissionDenied("You do not have permission to edit this job.")
         serializer.save()
 
     def perform_destroy(self, instance):
         if self.request.user != instance.user and not self.request.user.is_staff:
-            raise permissions.PermissionDenied(
-                "You do not have permission to delete" + "this job."
-            )
+            raise PermissionDenied("You do not have permission to delete this job.")
         instance.delete()

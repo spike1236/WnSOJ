@@ -62,6 +62,13 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
     input_dir = os.path.join(path_to_tests, "input")
     output_dir = os.path.join(path_to_tests, "output")
 
+    if not os.path.isdir(input_dir) or not os.path.isdir(output_dir):
+        submission.verdict = "RE 1"
+        submission.time = 0
+        submission.memory = 0
+        submission.save()
+        return
+
     for filename in sorted(os.listdir(input_dir)):
         test_case += 1
         input_path = os.path.join(input_dir, filename)
