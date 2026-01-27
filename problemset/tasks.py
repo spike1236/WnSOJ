@@ -114,7 +114,7 @@ def test_submission_task(submission_id):
                 box_id,
                 compile_cmd,
                 time_limit=15,
-                mem_limit=256 * 1024,
+                mem_limit=512 * 1024,
                 is_compile=True,
             )
             logger.info(
