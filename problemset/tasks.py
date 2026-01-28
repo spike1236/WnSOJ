@@ -59,6 +59,19 @@ def test_submission_task(submission_id):
         )
         return
 
+    if settings.NO_ISOLATE:
+        submission.verdict = "RE 1"
+        submission.time = random.randint(0, int(submission.problem.time_limit * 1000))
+        submission.memory = random.randint(
+            0, int(submission.problem.memory_limit * 1024)
+        )
+        submission.save()
+        logger.warning(
+            "NO_ISOLATE is set to True. Skipping isolate execution for "
+            f"submission {submission_id}."
+        )
+        return
+
     language = submission.language
     config = LANGUAGE_CONFIGS.get(language)
 
@@ -145,22 +158,3 @@ def test_submission_task(submission_id):
             f"Cleaned up isolate box with box_id={box_id} for submission"
             + f"{submission_id}"
         )
-
-
-@shared_task
-def process_submission_queue():
-    submissions = Submission.objects.filter(verdict="IQ").order_by("send_time")[:30]
-    if settings.NO_ISOLATE:
-        for submission in submissions:
-            submission.verdict = "RE 1"
-            submission.time = random.randint(
-                0, int(submission.problem.time_limit * 1000)
-            )
-            submission.memory = random.randint(
-                0, int(submission.problem.memory_limit * 1024)
-            )
-            submission.save()
-        logger.warning("NO_ISOLATE is set to True. Skipping submission processing.")
-        return
-    for submission in submissions:
-        test_submission_task.delay(submission.id)

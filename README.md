@@ -41,7 +41,7 @@ python3 manage.py createsuperuser
 6. Run:
 ```shell
 python3 manage.py runserver
-celery -A app worker -B -l info
+celery -A app worker -l info
 ```
 Open `http://127.0.0.1:8000` (Django-rendered pages) or start the Next.js frontend (below).
 

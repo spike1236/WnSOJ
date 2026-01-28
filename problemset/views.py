@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.db import transaction
 from .models import Category, Problem, Submission
 from .forms import AddProblemForm, SubmitForm
 import os
@@ -115,6 +116,13 @@ def problem_statement(request, problem_id):
                     verdict="IQ",
                 )
                 submission.save()
+                from .tasks import test_submission_task
+
+                transaction.on_commit(
+                    lambda submission_id=submission.id: test_submission_task.delay(
+                        submission_id
+                    )
+                )
                 username = request.user.username
                 return redirect(
                     f"/problem/{problem_id}/submissions?username={username}"
@@ -323,7 +331,12 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, verdict="IQ")
+        submission = serializer.save(user=self.request.user, verdict="IQ")
+        from .tasks import test_submission_task
+
+        transaction.on_commit(
+            lambda submission_id=submission.id: test_submission_task.delay(submission_id)
+        )
 
     def get_permissions(self):
         if self.action in ["create"]:
