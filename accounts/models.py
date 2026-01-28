@@ -18,7 +18,7 @@ class User(AbstractUser):
 
     @property
     def icon64_url(self):
-        if self.icon_id < 0:
+        if not self.icon_id or self.icon_id < 0:
             return os.path.join(settings.MEDIA_URL, "users_icons/icon64/default.png")
         return os.path.join(
             settings.MEDIA_URL, f"users_icons/icon64/{self.icon_id}.png"
@@ -26,7 +26,7 @@ class User(AbstractUser):
 
     @property
     def icon170_url(self):
-        if self.icon_id < 0:
+        if not self.icon_id or self.icon_id < 0:
             return os.path.join(settings.MEDIA_URL, "users_icons/icon170/default.png")
         return os.path.join(
             settings.MEDIA_URL, f"users_icons/icon170/{self.icon_id}.png"

@@ -56,6 +56,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     is_business = serializers.BooleanField(required=False)
+    is_staff = serializers.BooleanField(read_only=True)
     icon64_url = serializers.SerializerMethodField(read_only=True)
     icon170_url = serializers.SerializerMethodField(read_only=True)
 
@@ -75,6 +76,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "last_name",
             "phone_number",
             "is_business",
+            "is_staff",
             "icon64_url",
             "icon170_url",
         ]
@@ -83,6 +85,33 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ret = super().to_representation(instance)
         ret["is_business"] = instance.account_type == 2
         return ret
+
+
+class PublicUserProfileSerializer(serializers.ModelSerializer):
+    icon64_url = serializers.SerializerMethodField(read_only=True)
+    icon170_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_icon64_url(self, obj: User) -> str | None:
+        return getattr(obj, "icon64_url", None)
+
+    def get_icon170_url(self, obj: User) -> str | None:
+        return getattr(obj, "icon170_url", None)
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "account_type",
+            "icon_id",
+            "icon64_url",
+            "icon170_url",
+            "is_staff",
+        ]
 
     def update(self, instance, validated_data):
         if "is_business" in validated_data:

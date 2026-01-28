@@ -2,7 +2,7 @@
 .ruff_cache
 data/
 media/
-static/admin/
+staticfiles/
 
 ### Django ###
 *.log
@@ -10,9 +10,6 @@ static/admin/
 *.pyc
 __pycache__/
 local_settings.py
-
-### PostgreSQL ###
-.pgpass
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from .forms import RegisterForm, LoginForm, ChangeIconForm, PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,15 +15,19 @@ from .serializers import (
     UserSerializer,
     UserDetailSerializer,
     PublicUserSerializer,
+    PublicUserProfileSerializer,
 )
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
 from problemset.serializers import SubmissionListSerializer
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as drf_serializers
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+from django.middleware.csrf import get_token
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 
 
 def register(request):
@@ -201,55 +205,71 @@ class UserDetailAPIView(generics.RetrieveUpdateAPIView):
 
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
 
     def get_object(self):
         return self.request.user
 
 
-class LogoutAPIView(APIView):
-    """Blacklist (revoke) a refresh token.
+@method_decorator(ensure_csrf_cookie, name="dispatch")
+class CsrfAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
-    Expected payload: {"refresh": "<refresh_token>"}
-    """
+    def get(self, request):
+        return Response({"csrfToken": get_token(request)})
 
-    permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
-    @extend_schema(
-        request=inline_serializer(
-            name="LogoutRequest",
-            fields={
-                "refresh": drf_serializers.CharField(),
-            },
-        ),
-        responses={
-            205: None,
-            400: inline_serializer(
-                name="LogoutError",
-                fields={"detail": drf_serializers.CharField()},
-            ),
-        },
-    )
+@method_decorator(csrf_protect, name="dispatch")
+class SessionLoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    parser_classes = [JSONParser, FormParser]
+
     def post(self, request):
-        refresh = request.data.get("refresh")
-        if not refresh:
-            return Response(
-                {"detail": "Missing refresh token."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        username = (request.data.get("username") or "").strip()
+        password = request.data.get("password") or ""
 
-        try:
-            token = RefreshToken(refresh)
-            token.blacklist()
-        except Exception:
-            return Response(
-                {"detail": "Invalid refresh token."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if not username or not password:
+            return Response({"detail": "Missing credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(status=status.HTTP_205_RESET_CONTENT)
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response({"detail": "Invalid username or password."}, status=status.HTTP_400_BAD_REQUEST)
 
+        login(request, user)
+        get_token(request)
+        return Response(UserDetailSerializer(user).data)
+
+
+class SessionLogoutAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+
+    def get(self, request):
+        logout(request)
+        get_token(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request):
+        logout(request)
+        get_token(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class SessionRegisterAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        login(request, user)
+        get_token(request)
+        return Response(UserDetailSerializer(user).data, status=status.HTTP_201_CREATED)
 
 class PublicUserProfileAPIView(APIView):
     """Public profile data for a given user.
@@ -264,7 +284,7 @@ class PublicUserProfileAPIView(APIView):
         responses=inline_serializer(
             name="PublicUserProfileResponse",
             fields={
-                "user": PublicUserSerializer(),
+                "user": PublicUserProfileSerializer(),
                 "stats": inline_serializer(
                     name="PublicUserProfileStats",
                     fields={
@@ -297,11 +317,71 @@ class PublicUserProfileAPIView(APIView):
 
         return Response(
             {
-                "user": PublicUserSerializer(user).data,
+                "user": PublicUserProfileSerializer(user).data,
                 "stats": {"verdict_counts": cnt},
                 "recent_submissions": SubmissionListSerializer(recent, many=True).data,
             }
         )
+
+
+class ProfileIconAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+
+    def post(self, request):
+        icon = request.FILES.get("icon")
+        if not icon:
+            return Response({"detail": "Missing icon file."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        if not user.icon_id:
+            user.icon_id = random.randint(10000000, 99999999)
+
+        user.icon_id = abs(user.icon_id)
+
+        icon64_dir = os.path.join(settings.BASE_DIR, "media", "users_icons", "icon64")
+        icon170_dir = os.path.join(settings.BASE_DIR, "media", "users_icons", "icon170")
+        os.makedirs(icon64_dir, exist_ok=True)
+        os.makedirs(icon170_dir, exist_ok=True)
+
+        icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
+        icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
+
+        img = Image.open(icon)
+        img = img.resize((64, 64))
+        img.save(icon64_path)
+        icon.seek(0)
+        img170 = Image.open(icon)
+        img170 = img170.resize((170, 170))
+        img170.save(icon170_path)
+
+        user.save()
+        return Response(UserDetailSerializer(user).data)
+
+
+class ProfilePasswordAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication]
+
+    def post(self, request):
+        old_password = request.data.get("old_password") or ""
+        new_password1 = request.data.get("new_password1") or ""
+        new_password2 = request.data.get("new_password2") or ""
+
+        if not old_password or not new_password1 or not new_password2:
+            return Response({"detail": "Missing fields."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+        if not user.check_password(old_password):
+            return Response({"detail": "Invalid old password."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if new_password1 != new_password2:
+            return Response({"detail": "Passwords must match."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password1)
+        user.save()
+        update_session_auth_hash(request, user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PublicUserSubmissionsAPIView(generics.ListAPIView):

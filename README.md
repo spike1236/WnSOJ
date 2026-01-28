@@ -5,28 +5,63 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 
 ![Main Page](https://github.com/spike1236/WnSOJ/blob/main/readme_screenshots/screenshot_1.png)
 
+## Architecture (Current)
+- **Backend**: Django + Django REST Framework (DRF) + Celery (judge workers)
+- **Frontend**: Next.js (App Router) in `frontend/` (Tailwind UI)
+- **Auth (browser)**: Django **session cookies** (`sessionid`) + **CSRF** (`csrftoken`) — no JWT, no localStorage
+- **Internal API**: Django `/api/*` is **not public** and is protected by a shared secret header (`X-Internal-API-Key`)
+  - Next.js server-side requests include the internal key automatically
+  - Browser-side mutations go through Next.js route handlers under `/backend/*`, which proxy to Django and attach the internal key
+
 ## Getting Started
-1. Download the project:
+### Backend (Django)
+1. Clone:
 ```shell
 git clone https://github.com/spike1236/WnSOJ.git
 cd WnSOJ
 ```
-2. Download required Python modules:
+2. Create a virtualenv (recommended) and install Python deps:
 ```shell
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
-3. Install g++ compiler, [isolate](https://github.com/ioi/isolate); Work and Solve Online Judge uses cgroups v2-based isolate, check [this](https://askubuntu.com/questions/1469526/how-can-i-turn-on-cgroup-v2-cpu-controller-on-modern-ubuntu) for installation.
-<!-- 4. Watch the [video](https://youtu.be/WXRyMGD6RH8) to learn more about project; -->
-4. Fill out `./.pgpass`, `./.env` and `~/.pg_service.conf` according to provided templates.
-5. Launch server and testing system (celery worker):
+3. Install runtime requirements:
+   - `g++`
+   - [`isolate`](https://github.com/ioi/isolate) (cgroups v2-based)
+4. Create `.env` from `.env.template` and fill in values:
+   - `SECRET_KEY`, `DEBUG`, DB settings
+   - `INTERNAL_API_KEY` (shared with Next.js)
+   - `CSRF_TRUSTED_ORIGINS` (include your local/prod frontend origin, e.g. `http://127.0.0.1:8081` if you proxy through nginx)
+5. Apply migrations (and optionally create an admin user):
+```shell
+python3 manage.py migrate
+python3 manage.py createsuperuser
+```
+6. Run:
 ```shell
 python3 manage.py runserver
 celery -A app worker -B -l info
 ```
-> You can also wrap launches as systemd services (which is recommended).
+Open `http://127.0.0.1:8000` (Django-rendered pages) or start the Next.js frontend (below).
 
-6. Open [Main page](http://127.0.0.1:8000)
-7. Enjoy the project! :sunglasses:
+### Frontend (Next.js)
+In a separate terminal:
+
+```shell
+cd frontend
+npm install
+BACKEND_ORIGIN=http://localhost:8000 INTERNAL_API_KEY=dev-secret npm run dev
+```
+
+Open `http://localhost:3000`.
+
+Notes:
+- `INTERNAL_API_KEY` must match the Django `INTERNAL_API_KEY` in `.env`.
+- In dev, Next.js will proxy `/admin/`, `/static/`, `/media/` to Django. Browser API calls use `/backend/*` route handlers.
+
+## Deployment
+See `DEPLOY.md`.
 
 ## About Project
 ### Problems and submissions
@@ -44,34 +79,29 @@ There are 2 types of accounts:
 ### Profile
 In the profile, you can see user's username, email, phone number and statistics about problems: submissions statistics and last 10 attempts.\
 Also you can change your icon or password in 'Edit profile' page.
-### API
-The platform provides a comprehensive REST API with the following features:
-- JWT Authentication
-- User registration and profile management
-- Access to problems, categories, and submissions
-- Job board integration
+### Internal API (Not Public)
+The Django REST endpoints under `/api/*` are intended for **internal use** (Next.js server + nginx private connectivity) and are protected by `INTERNAL_API_KEY`. Requests without the correct `X-Internal-API-Key` receive `404`.
 
-API documentation is available through:
-- Swagger UI: `/api/schema/swagger-ui/`
-- ReDoc: `/api/schema/redoc/`
+The browser should talk only to the Next.js app. Client-side mutations use Next.js `/backend/*` route handlers which proxy to Django and attach the internal key.
 
-Main API endpoints:
-- Authentication: `/api/token/` and `/api/token/refresh/`
-- User Registration: `/api/register/`
-- User Profile: `/api/profile/`
-- Problems: `/api/problems/`
-- Categories: `/api/categories/`
-- Submissions: `/api/submissions/`
-- Jobs: `/api/jobs/`
+## Deployment (Nginx)
+Recommended approach:
+- Public: Next.js on `/`
+- Public: Django on `/admin/`, `/static/`, `/media/`
+- Do **not** expose Django `/api/` publicly (it is protected, but should still be treated as internal-only)
+
+Set env vars:
+- Django: `INTERNAL_API_KEY`
+- Next.js: `BACKEND_ORIGIN` (internal Django origin) and `INTERNAL_API_KEY` (same value)
 
 ## Technologies
 Following technologies and libraries were used to create this project:
 * [Django](https://www.djangoproject.com)
 * [Django REST Framework](https://www.django-rest-framework.org)
-* [drf-spectacular](https://drf-spectacular.readthedocs.io/) (OpenAPI Schema)
+* [Celery](https://docs.celeryq.dev/en/stable)
+* [Next.js](https://nextjs.org)
 * [PostgreSQL](https://www.postgresql.org)
 * [isolate](https://github.com/ioi/isolate)
-* [Celery](https://docs.celeryq.dev/en/stable)
 * [Redis](https://redis.io)
 * [Pillow](https://pillow.readthedocs.io/en/stable)
 * [ZipFile](https://docs.python.org/3/library/zipfile.html)
@@ -83,8 +113,7 @@ Following components were used to create this project:
 * [marked](https://marked.js.org)
 * [katex](https://katex.org)
 * [FontAwesome](https://fontawesome.com)
-* [Swagger UI](https://swagger.io/tools/swagger-ui/)
-* [ReDoc](https://redocly.github.io/redoc/)
+* [Tailwind CSS](https://tailwindcss.com)
 
 ## Author
 * **Rakhmetulla Akram** - [spike1236](https://github.com/spike1236)

@@ -4,8 +4,8 @@ from .models import Job
 from .forms import AddJobForm
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.authentication import SessionAuthentication
 from .serializers import JobListSerializer, JobSerializer
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 def format_number(value):
@@ -203,7 +203,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
 
     queryset = Job.objects.all().select_related("user").order_by("-created_at")
     serializer_class = JobSerializer
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [SessionAuthentication]
 
     def get_serializer_class(self):
         if self.action == "list" and self.request.query_params.get("compact") == "1":
