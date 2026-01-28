@@ -139,7 +139,7 @@ sudo systemctl status wnsoj-gunicorn
 
 ## 4) Celery workers (judge + background tasks)
 
-In production, it's usually nicer to run worker and beat separately.
+Submissions enqueue judge jobs directly on creation, so Celery beat is not required by default. If you add your own periodic tasks later, it's usually nicer to run worker and beat separately.
 
 ### `wnsoj-celery-worker.service`
 
@@ -163,6 +163,8 @@ WantedBy=multi-user.target
 ```
 
 ### `wnsoj-celery-beat.service`
+
+Optional (only needed if you add periodic tasks).
 
 ```ini
 [Unit]
@@ -188,7 +190,7 @@ Enable:
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable --now wnsoj-celery-worker
-sudo systemctl enable --now wnsoj-celery-beat
+sudo systemctl enable --now wnsoj-celery-beat  # optional
 ```
 
 ## 5) Next.js (systemd)
@@ -353,4 +355,3 @@ sudo journalctl -u wnsoj-next -f
 sudo journalctl -u wnsoj-celery-worker -f
 sudo journalctl -u wnsoj-celery-beat -f
 ```
-

@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-from celery.schedules import crontab
 
 load_dotenv()
 
@@ -71,12 +70,6 @@ SPECTACULAR_SETTINGS = {
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
-CELERY_BEAT_SCHEDULE = {
-    'process-submission-queue-every-minute': {
-        'task': 'problemset.tasks.process_submission_queue',
-        'schedule': crontab(minute='*/1')
-    },
-}
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 10 * 60
