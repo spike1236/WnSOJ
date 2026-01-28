@@ -22,10 +22,6 @@ from jobboard import views as job_views
 from . import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 router = DefaultRouter()
@@ -57,11 +53,14 @@ urlpatterns = [
     path('job/<int:job_id>/', job_views.job, name='job'),
     path('job/<int:job_id>/edit/', job_views.edit_job, name='edit_job'),
     path('job/<int:job_id>/delete/', job_views.delete_job, name='delete_job'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Get JWT
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT
-    path('api/logout/', accounts_views.LogoutAPIView.as_view(), name='logout_api'),
+    path('api/csrf/', accounts_views.CsrfAPIView.as_view(), name='csrf_api'),
+    path('api/session/login/', accounts_views.SessionLoginAPIView.as_view(), name='session_login_api'),
+    path('api/session/logout/', accounts_views.SessionLogoutAPIView.as_view(), name='session_logout_api'),
+    path('api/session/register/', accounts_views.SessionRegisterAPIView.as_view(), name='session_register_api'),
     path('api/register/', accounts_views.RegisterAPIView.as_view(), name='register_api'),
     path('api/profile/', accounts_views.UserDetailAPIView.as_view(), name='profile_api'),
+    path('api/profile/icon/', accounts_views.ProfileIconAPIView.as_view(), name='profile_icon_api'),
+    path('api/profile/password/', accounts_views.ProfilePasswordAPIView.as_view(), name='profile_password_api'),
     path('api/users/<str:username>/', accounts_views.PublicUserProfileAPIView.as_view(), name='public_user_profile_api'),
     path('api/users/<str:username>/submissions/', accounts_views.PublicUserSubmissionsAPIView.as_view(), name='public_user_submissions_api'),
     path('api/', include(router.urls)),

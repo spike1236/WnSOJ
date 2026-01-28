@@ -11,11 +11,14 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from django.db.models import Count, Exists, OuterRef, Prefetch
 from .serializers import (
     CategorySerializer,
     ProblemListSerializer,
     ProblemPublicSerializer,
     ProblemAdminSerializer,
+    ProblemCreateSerializer,
     SubmissionListSerializer,
     SubmissionSerializer,
 )
@@ -207,7 +210,7 @@ def faq(request):
 
 
 class CategoryAPIViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by("id")
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
@@ -219,15 +222,36 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
     - Create, Update, Destroy: restricted to admin users.
     """
 
-    queryset = Problem.objects.all()
+    queryset = Problem.objects.all().order_by("id")
     serializer_class = ProblemPublicSerializer
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
 
     def get_queryset(self):
-        qs = super().get_queryset().prefetch_related(
-            "categories",
-            "users_solved",
-            "users_unsolved",
+        categories_qs = Category.objects.all().order_by("id")
+        qs = (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("categories", queryset=categories_qs))
+            .order_by("id")
         )
+
+        qs = qs.annotate(solved_count=Count("users_solved", distinct=True))
+
+        user = getattr(self.request, "user", None)
+        if user and getattr(user, "is_authenticated", False):
+            solved_through = Problem.users_solved.through
+            unsolved_through = Problem.users_unsolved.through
+            qs = qs.annotate(
+                is_solved=Exists(
+                    solved_through.objects.filter(user_id=user.id, problem_id=OuterRef("pk"))
+                ),
+                is_attempted=Exists(
+                    unsolved_through.objects.filter(user_id=user.id, problem_id=OuterRef("pk"))
+                ),
+            )
+
+        if user and getattr(user, "is_staff", False) and self.action == "retrieve":
+            qs = qs.prefetch_related("users_solved", "users_unsolved")
 
         category_param = self.request.query_params.get("category")
         if category_param:
@@ -240,7 +264,10 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
         if self.action == "list" and self.request.query_params.get("compact") == "1":
             return ProblemListSerializer
 
-        if self.action in ["create", "update", "partial_update", "destroy"]:
+        if self.action == "create":
+            return ProblemCreateSerializer
+
+        if self.action in ["update", "partial_update", "destroy"]:
             return ProblemAdminSerializer
 
         user = getattr(self.request, "user", None)
@@ -270,20 +297,25 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
     serializer_class = SubmissionSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            if user.is_staff:
-                return (
-                    Submission.objects.all()
-                    .select_related("user", "problem")
-                    .order_by("-id")
-                )
-            return (
-                Submission.objects.filter(user=user)
-                .select_related("user", "problem")
-                .order_by("-id")
-            )
-        return Submission.objects.none()
+        qs = Submission.objects.all().select_related("user", "problem").order_by("-id")
+
+        if self.action == "list":
+            username = self.request.query_params.get("username") or self.request.query_params.get("user")
+            if username:
+                qs = qs.filter(user__username=username)
+
+            problem_id = self.request.query_params.get("problem_id")
+            if problem_id:
+                try:
+                    qs = qs.filter(problem_id=int(problem_id))
+                except (TypeError, ValueError):
+                    pass
+
+            verdict = self.request.query_params.get("verdict")
+            if verdict:
+                qs = qs.filter(verdict__startswith=verdict)
+
+        return qs
 
     def get_serializer_class(self):
         if self.action == "list" and self.request.query_params.get("compact") == "1":
@@ -294,10 +326,12 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user, verdict="IQ")
 
     def get_permissions(self):
-        if self.action in ["update", "partial_update", "destroy"]:
+        if self.action in ["create"]:
+            self.permission_classes = [permissions.IsAuthenticated]
+        elif self.action in ["update", "partial_update", "destroy"]:
             self.permission_classes = [permissions.IsAdminUser]
         else:
-            self.permission_classes = [permissions.IsAuthenticated]
+            self.permission_classes = [permissions.AllowAny]
         return super().get_permissions()
 
     @extend_schema(operation_id="submissions_status_retrieve")

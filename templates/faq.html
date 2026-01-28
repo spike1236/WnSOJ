@@ -97,7 +97,7 @@
         <h3>API</h3><br>
         <p>Our platform provides a comprehensive REST API. You can request:</p>
         <ul>
-            <li>authentication (get JWT tokens)</li>
+            <li>authentication (session cookies + CSRF)</li>
             <li>user registration and profile information</li>
             <li>problems list and problem details</li>
             <li>categories list and category details</li>
@@ -105,21 +105,9 @@
             <li>jobs list and job details</li>
         </ul>
         <p>API documentation is available at:</p>
-        <ul>
-            <li>Swagger UI: <a href="/api/schema/swagger-ui/">/api/schema/swagger-ui/</a></li>
-            <li>ReDoc: <a href="/api/schema/redoc/">/api/schema/redoc/</a></li>
-        </ul>
+        <p>API is for internal use by the web app and is not public.</p>
         <p>Examples of API endpoints:</p>
-        <ul>
-            <li>JWT Authentication: <code>/api/token/</code> and <code>/api/token/refresh/</code></li>
-            <li>Registration: <code>/api/register/</code></li>
-            <li>User Profile: <code>/api/profile/</code></li>
-            <li>Categories: <code>/api/categories/</code></li>
-            <li>Problems: <code>/api/problems/</code></li>
-            <li>Submissions: <code>/api/submissions/</code></li>
-            <li>Jobs: <code>/api/jobs/</code></li>
-        </ul>
-        <p>For detailed API usage, please refer to the Swagger UI or ReDoc documentation.</p>
+        <p>Endpoints are not exposed publicly.</p>
     </div>
 </div>
 {% endblock %}
