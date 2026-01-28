@@ -3,7 +3,7 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 
 ### Check it out at [wnsoj.xyz](https://wnsoj.xyz)!
 
-![Main Page](https://github.com/spike1236/WnSOJ/blob/main/readme_screenshots/screenshot_1.png)
+![Main Page](./readme_screenshots/screenshot_1.png)
 
 ## Architecture (Current)
 - **Backend**: Django + Django REST Framework (DRF) + Celery (judge workers)
@@ -61,7 +61,7 @@ Notes:
 - In dev, Next.js will proxy `/admin/`, `/static/`, `/media/` to Django. Browser API calls use `/backend/*` route handlers.
 
 ## Deployment
-See `DEPLOY.md`.
+See [DEPLOY.md](./DEPLOY.md).
 
 ## About Project
 ### Problems and submissions
@@ -119,4 +119,4 @@ Following components were used to create this project:
 * **Rakhmetulla Akram** - [spike1236](https://github.com/spike1236)
 ## License
 This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0).\
-See [LICENSE](https://github.com/spike1236/WnSOJ/blob/main/LICENSE.md) file for details.
+See [LICENSE](./LICENSE.md) file for details.

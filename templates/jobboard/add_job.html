@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+    <link rel="stylesheet" href="/static/css/jobs.css">
+    <div class="container" style="margin-top: 10px">
+        <h2 class="mb-4">{% if is_edit %}Edit{% else %}Add{% endif %} Job</h2>
+        <form class="job-form" action="" method="post">{{ csrf_input }}
+            <div class="mb-3">
+                {{ form.title.label }}
+                {{ form.title }}
+                {% for error in form.title.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mb-3">
+                {{ form.location.label }}
+                {{ form.location }}
+                {% for error in form.location.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mb-3">
+                <label>Salary Range (Optional)</label>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="id_min_salary" class="form-label">Minimum</label>
+                        <input type="number" name="min_salary" id="id_min_salary" class="form-control" 
+                               placeholder="0" min="0" value="{{ min_salary }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_max_salary" class="form-label">Maximum</label>
+                        <input type="number" name="max_salary" id="id_max_salary" class="form-control" 
+                               placeholder="Leave empty for no upper limit" min="0" value="{{ max_salary }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="id_currency" class="form-label">Currency</label>
+                        <select name="currency" id="id_currency" class="form-select">
+                            <option value="$" {% if currency == '$' %}selected{% endif %}>USD ($)</option>
+                            <!-- <option value="₸" {% if currency == '₸' %}selected{% endif %}>KZT (₸)</option>
+                            <option value="€" {% if currency == '€' %}selected{% endif %}>EUR (€)</option>
+                            <option value="£" {% if currency == '£' %}selected{% endif %}>GBP (£)</option>
+                            <option value="₩" {% if currency == '₩' %}selected{% endif %}>WON (₩)</option>
+                            <option value="¥" {% if currency == '¥' %}selected{% endif %}>JPY (¥)</option> -->
+                        </select>
+                    </div>
+                </div>
+                <small class="form-text text-muted">All salary fields are optional.</small>
+                {% if salary_error %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                        {{ salary_error }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                {{ form.info.label }}
+                {{ form.info }}
+                <small class="form-text text-muted">Markdown formatting is supported.</small>
+                {% for error in form.info.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+                <i class="fa fa-save me-2"></i>{% if is_edit %}Save Changes{% else %}Submit{% endif %}
+            </button>
+            {% if is_edit %}
+            <a href="/job/{{ job.id }}" class="btn btn-outline-secondary btn-lg px-5 ms-2">
+                <i class="fa fa-times me-2"></i>Cancel
+            </a>
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

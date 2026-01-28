@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+    <link rel="stylesheet" href="/static/css/code_display.css">
+
+    <!-- CodeMirror -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js" integrity="sha512-8RnEqURPUc5aqFEN04aQEiPlSAdE0jlFS/9iGgUyNtwFnSKCXhmB6ZTNl7LnDtDWKabJIASzXrzD0K+LYexU9g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" integrity="sha512-uf06llspW44/LZpHzHT6qBOIVODjWtv4MxCricRxkzvopAlSWnTf6hpZTFxuuZcuNE9CBQhqE0Seu1CoRk84nQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/darcula.min.css" integrity="sha512-kqCOYFDdyQF4JM8RddA6rMBi9oaLdR0aEACdB95Xl1EgaBhaXMIe8T4uxmPitfq4qRmHqo+nBU2d1l+M4zUx1g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/eclipse.min.css" integrity="sha512-Gv0sGKOVrQcQjUHL+xd9Bpq5AvLKbcQMb8s4J1//caCLxqvj00CLJMzJlqnTHTCQbKFRpPHqzXteq6dSMs7PEw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/clike/clike.min.js" integrity="sha512-l8ZIWnQ3XHPRG3MQ8+hT1OffRSTrFwrph1j1oc1Fzc9UKVGef5XN9fdO0vm3nW0PRgQ9LJgck6ciG59m69rvfg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js" integrity="sha512-2M0GdbU5OxkGYMhakED69bw0c1pW3Nb0PeF3+9d+SnwN1ryPx3wiDdNqK3gSM7KAU/pEV+2tFJFbMKjKAahOkQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js" integrity="sha512-GSYCbN/le5gNmfAWVEjg1tKnOH7ilK6xCLgA7c48IReoIR2g2vldxTM6kZlN6o3VtWIe6fHu/qhwxIt11J8EBA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/display/autorefresh.min.js" integrity="sha512-vAsKB7xXQAWMn5kcwda0HkFVKUxSYwrmrGprVhmbGFNAG1Ij+2epT3zzdwjHTJyDsKXsiEdrUdhIxh7loHyX+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <div class="container mt-4">
+        <h2 class="section-title mb-3">Submission #{{ item.id }}</h2>
+        
+        <table class="table table-bordered table-striped text-center mb-4">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 5%">ID</th>
+                    <th scope="col" style="width: 18%">Time</th>
+                    <th scope="col" style="width: 15%">User</th>
+                    <th scope="col" style="width: 22%">Problem</th>
+                    <th scope="col" style="width: 10%">Language</th>
+                    <th scope="col" style="width: 10%">Verdict</th>
+                    <th scope="col" style="width: 10%">Time</th>
+                    <th scope="col" style="width: 10%">Memory</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">{{ item.id }}</th>
+                    <td>{{ item.send_time.strftime("%b/%d/%Y %H:%M") }}</td>
+                    <td><a href="/profile/{{ item.user.username }}">{{ item.user.username }}</a></td>
+                    <td><a href="/problem/{{ item.problem.id }}">{{ item.problem.title }}</a></td>
+                    <td>{{ item.language }}</td>
+                    {% if item.verdict == 'AC' %}
+                        <td class="submission-status status-accepted">{{ item.verdict }}</td>
+                    {% elif item.verdict == 'CE' %}
+                        <td class="submission-status status-warning">{{ item.verdict }}</td>
+                    {% elif item.verdict == 'IQ' %}
+                        <td class="submission-status status-pending">{{ item.verdict }}</td>
+                    {% else %}
+                        <td class="submission-status status-error">{{ item.verdict }}</td>
+                    {% endif %}
+                    <td>{{ item.time }} ms</td>
+                    <td>{{ item.memory }} KB</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fs-5">Source Code</h3>
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="d-flex align-items-center">
+                        <label for="theme_select" class="me-2 mb-0">Theme:</label>
+                        <select id="theme_select" class="form-select form-select-sm" style="width: auto" onchange="selectTheme()">
+                            <option selected value="default">default</option>
+                            <option value="darcula">darcula</option>
+                            <option value="eclipse">eclipse</option>
+                        </select>
+                    </div>
+                    <button id="copy_button" class="btn btn-outline-dark btn-sm" onclick="copyCode(editor)">
+                        <i class="bi bi-clipboard"></i> Copy Code
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="submission-code-wrapper">
+                    <textarea id="code_area" name="code_area">{{ item.code }}</textarea>
+                    <select style="display: none;" id="code_language" name="language" class="form-select">
+                        <option selected value="{{ item.language }}">{{ item.language }}</option>
+                    </select>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="/static/js/submission.js"></script>
+{% endblock %}
