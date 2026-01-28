@@ -32,7 +32,7 @@ pip install -r requirements.txt
 4. Create `.env` from `.env.template` and fill in values:
    - `SECRET_KEY`, `DEBUG`, DB settings
    - `INTERNAL_API_KEY` (shared with Next.js)
-   - `CSRF_TRUSTED_ORIGINS` (include your local/prod frontend origin)
+   - `CSRF_TRUSTED_ORIGINS` (include your local/prod frontend origin, e.g. `http://127.0.0.1:8081` if you proxy through nginx)
 5. Apply migrations (and optionally create an admin user):
 ```shell
 python3 manage.py migrate

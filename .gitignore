@@ -11,9 +11,6 @@ staticfiles/
 __pycache__/
 local_settings.py
 
-### PostgreSQL ###
-.pgpass
-
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
 *.py[cod]
