@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { updateJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Job, UserDetail } from "@/lib/types";
@@ -126,16 +127,10 @@ export default async function Page({
           </div>
 
           <div className="grid gap-1.5">
-            <label className="text-sm font-medium text-slate-700" htmlFor="info">
-              Description
-            </label>
-            <textarea
-              className="min-h-40 rounded-lg border px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
-              defaultValue={job.info}
-              id="info"
-              name="info"
-              required
-            />
+            <label className="text-sm font-medium text-slate-700">Description</label>
+            <div>
+              <MarkdownEditor defaultValue={job.info} height="360px" name="info" />
+            </div>
           </div>
 
           <div className="flex justify-end gap-2">

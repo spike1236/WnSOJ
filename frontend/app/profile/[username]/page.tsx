@@ -1,9 +1,10 @@
 import Container from "@/components/Container";
 import StatusPill from "@/components/StatusPill";
-import { backendFetchJson } from "@/lib/backend.server";
+import { BackendFetchError, backendFetchJson } from "@/lib/backend.server";
 import { formatDateTime } from "@/lib/format";
 import type { SubmissionListItem, UserDetail, UserPublic } from "@/lib/types";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 type PublicProfileResponse = {
   user: UserPublic;
@@ -23,7 +24,15 @@ function verdictLabel(code: string) {
 
 export default async function Page({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
-  const profile = await backendFetchJson<PublicProfileResponse>(`/api/users/${encodeURIComponent(username)}/`);
+  let profile: PublicProfileResponse;
+  try {
+    profile = await backendFetchJson<PublicProfileResponse>(`/api/users/${encodeURIComponent(username)}/`);
+  } catch (e) {
+    if (e instanceof BackendFetchError && e.status === 404) {
+      notFound();
+    }
+    throw e;
+  }
   let me: UserDetail | null = null;
   try {
     me = await backendFetchJson<UserDetail>("/api/profile/");

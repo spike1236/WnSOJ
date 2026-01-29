@@ -1,17 +1,21 @@
 "use client";
 
 import { cn } from "@/lib/cn";
-import Editor from "@monaco-editor/react";
+import CodeMirror from "@uiw/react-codemirror";
+import { cpp } from "@codemirror/lang-cpp";
+import { python } from "@codemirror/lang-python";
+import { EditorView } from "@codemirror/view";
+import { oneDark } from "@codemirror/theme-one-dark";
 import { useMemo, useState } from "react";
 
 const languageOptions = [
-  { value: "cpp", label: "GNU C++17", monaco: "cpp" },
-  { value: "py", label: "Python 3", monaco: "python" }
+  { value: "cpp", label: "GNU C++17" },
+  { value: "py", label: "Python 3" }
 ];
 
 const themeOptions = [
-  { value: "light", label: "Light", monaco: "light" },
-  { value: "dark", label: "Dark", monaco: "vs-dark" }
+  { value: "light", label: "Light" },
+  { value: "dark", label: "Dark" }
 ];
 
 export default function CodeEditor({
@@ -29,12 +33,13 @@ export default function CodeEditor({
   const [theme, setTheme] = useState(defaultTheme);
   const [value, setValue] = useState(defaultValue);
 
-  const monacoLanguage = useMemo(() => {
-    return languageOptions.find((l) => l.value === language)?.monaco ?? "cpp";
+  const extensions = useMemo(() => {
+    const lang = language === "py" ? python() : cpp();
+    return [lang, EditorView.lineWrapping];
   }, [language]);
 
-  const monacoTheme = useMemo(() => {
-    return themeOptions.find((t) => t.value === theme)?.monaco ?? "vs-dark";
+  const cmTheme = useMemo(() => {
+    return theme === "dark" ? oneDark : undefined;
   }, [theme]);
 
   return (
@@ -73,22 +78,21 @@ export default function CodeEditor({
         </div>
         <div className="text-xs text-slate-500">Source code is submitted to the judge for testing.</div>
       </div>
-      <div className="h-[420px]">
-        <Editor
-          language={monacoLanguage}
-          onChange={(v) => setValue(v ?? "")}
-          options={{
-            fontSize: 14,
-            minimap: { enabled: false },
-            wordWrap: "on",
-            scrollBeyondLastLine: false
-          }}
-          theme={monacoTheme}
-          value={value}
-        />
-      </div>
+      <CodeMirror
+        basicSetup={{
+          lineNumbers: true,
+          highlightActiveLine: true,
+          highlightActiveLineGutter: true,
+          foldGutter: true
+        }}
+        className="overflow-hidden rounded-b-2xl"
+        extensions={extensions}
+        height="420px"
+        onChange={(v) => setValue(v)}
+        theme={cmTheme}
+        value={value}
+      />
       <textarea className={cn("hidden")} name={name} readOnly value={value} />
     </div>
   );
 }
-
