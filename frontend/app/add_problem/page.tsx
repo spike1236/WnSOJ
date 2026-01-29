@@ -1,4 +1,6 @@
 import Container from "@/components/Container";
+import CodeMirrorField from "@/components/CodeMirrorField";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { createProblemAction } from "@/app/actions/problems";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { ApiList, Category, UserDetail } from "@/lib/types";
@@ -120,38 +122,24 @@ export default async function Page({
           </div>
 
           <div className="grid gap-1.5">
-            <label className="text-sm font-medium text-slate-700" htmlFor="statement">
-              Statement (Markdown)
-            </label>
-            <textarea
-              className="min-h-40 rounded-lg border px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
-              id="statement"
-              name="statement"
-              required
-            />
+            <label className="text-sm font-medium text-slate-700">Statement</label>
+            <div>
+              <MarkdownEditor height="360px" name="statement" />
+            </div>
           </div>
 
           <div className="grid gap-1.5">
-            <label className="text-sm font-medium text-slate-700" htmlFor="editorial">
-              Editorial (Markdown)
-            </label>
-            <textarea
-              className="min-h-40 rounded-lg border px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
-              id="editorial"
-              name="editorial"
-              required
-            />
+            <label className="text-sm font-medium text-slate-700">Editorial</label>
+            <div>
+              <MarkdownEditor height="360px" name="editorial" />
+            </div>
           </div>
 
           <div className="grid gap-1.5">
-            <label className="text-sm font-medium text-slate-700" htmlFor="code">
-              Official solution code
-            </label>
-            <textarea
-              className="min-h-40 rounded-lg border px-3 py-2 font-mono text-sm outline-none ring-blue-600 focus:ring-2"
-              id="code"
-              name="code"
-            />
+            <label className="text-sm font-medium text-slate-700">Official solution code</label>
+            <div>
+              <CodeMirrorField height="280px" language="cpp" name="code" />
+            </div>
           </div>
 
           <div className="grid gap-1.5">
