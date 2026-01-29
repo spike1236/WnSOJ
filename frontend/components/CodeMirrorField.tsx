@@ -2,11 +2,13 @@
 
 import CodeMirror from "@uiw/react-codemirror";
 import { cpp } from "@codemirror/lang-cpp";
+import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { markdown as markdownLanguage } from "@codemirror/lang-markdown";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { useMemo, useState } from "react";
+import { githubLight } from "@uiw/codemirror-theme-github";
+import { useEffect, useMemo, useState } from "react";
 
 type FieldLanguage = "cpp" | "py" | "markdown" | "text";
 
@@ -25,6 +27,10 @@ export default function CodeMirrorField({
 }) {
   const [value, setValue] = useState(defaultValue);
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
   const extensions = useMemo(() => {
     const lang =
       language === "cpp"
@@ -34,11 +40,11 @@ export default function CodeMirrorField({
           : language === "markdown"
             ? markdownLanguage()
             : [];
-    return [lang, EditorView.lineWrapping];
+    return [lang, EditorView.lineWrapping, syntaxHighlighting(defaultHighlightStyle, { fallback: true })];
   }, [language]);
 
   const cmTheme = useMemo(() => {
-    return theme === "dark" ? oneDark : undefined;
+    return theme === "dark" ? oneDark : githubLight;
   }, [theme]);
 
   return (
@@ -61,4 +67,3 @@ export default function CodeMirrorField({
     </div>
   );
 }
-

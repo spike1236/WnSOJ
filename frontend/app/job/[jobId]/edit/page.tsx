@@ -129,7 +129,7 @@ export default async function Page({
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700">Description</label>
             <div>
-              <MarkdownEditor defaultValue={job.info} height="360px" name="info" />
+              <MarkdownEditor defaultValue={job.info} height="360px" name="info" required />
             </div>
           </div>
 

@@ -63,12 +63,37 @@ export default function CodePanel({
     return () => clearTimeout(t);
   }, [copied]);
 
+  function legacyCopy(text: string) {
+    const el = document.createElement("textarea");
+    el.value = text;
+    el.setAttribute("readonly", "");
+    el.style.position = "fixed";
+    el.style.top = "0";
+    el.style.left = "0";
+    el.style.opacity = "0";
+    el.style.pointerEvents = "none";
+    document.body.appendChild(el);
+    el.select();
+    el.setSelectionRange(0, el.value.length);
+    const ok = document.execCommand("copy");
+    document.body.removeChild(el);
+    return ok;
+  }
+
   async function onCopy() {
     try {
-      await navigator.clipboard.writeText(cleaned);
-      setCopied(true);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(cleaned);
+        setCopied(true);
+        return;
+      }
+      setCopied(legacyCopy(cleaned));
     } catch {
-      setCopied(false);
+      try {
+        setCopied(legacyCopy(cleaned));
+      } catch {
+        setCopied(false);
+      }
     }
   }
 
@@ -111,8 +136,13 @@ export default function CodePanel({
           ) : null}
         </div>
       </div>
-      {collapsed ? null : (
-        <pre className={cn("overflow-auto p-4 text-sm", wrap ? "whitespace-pre-wrap" : "whitespace-pre")}>
+          {collapsed ? null : (
+        <pre
+          className={cn(
+            "overflow-auto p-4 text-sm",
+            wrap ? "whitespace-pre-wrap break-words" : "whitespace-pre"
+          )}
+        >
           <code>{cleaned}</code>
         </pre>
       )}
