@@ -160,20 +160,9 @@ class SubmissionSerializer(serializers.ModelSerializer):
     )
     user = UserSerializer(read_only=True)
     problem = ProblemPublicSerializer(read_only=True)
-    verdict_code = serializers.SerializerMethodField(read_only=True)
-    verdict_testcase = serializers.SerializerMethodField(read_only=True)
-
-    def get_verdict_code(self, obj: Submission) -> str | None:
-        return (obj.verdict or "").split()[0] if obj.verdict else None
-
-    def get_verdict_testcase(self, obj: Submission) -> int | None:
-        parts = (obj.verdict or "").split()
-        if len(parts) < 2:
-            return None
-        try:
-            return int(parts[1])
-        except (TypeError, ValueError):
-            return None
+    verdict_code = serializers.CharField(read_only=True, allow_null=True)
+    verdict_testcase = serializers.IntegerField(read_only=True, allow_null=True)
+    verdict_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Submission
@@ -185,6 +174,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
             "verdict",
             "verdict_code",
             "verdict_testcase",
+            "verdict_display",
             "time",
             "memory",
             "language",
@@ -200,20 +190,9 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     problem_title = serializers.CharField(source="problem.title", read_only=True)
     user_id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
-    verdict_code = serializers.SerializerMethodField(read_only=True)
-    verdict_testcase = serializers.SerializerMethodField(read_only=True)
-
-    def get_verdict_code(self, obj: Submission) -> str | None:
-        return (obj.verdict or "").split()[0] if obj.verdict else None
-
-    def get_verdict_testcase(self, obj: Submission) -> int | None:
-        parts = (obj.verdict or "").split()
-        if len(parts) < 2:
-            return None
-        try:
-            return int(parts[1])
-        except (TypeError, ValueError):
-            return None
+    verdict_code = serializers.CharField(read_only=True, allow_null=True)
+    verdict_testcase = serializers.IntegerField(read_only=True, allow_null=True)
+    verdict_display = serializers.CharField(read_only=True)
 
     class Meta:
         model = Submission
@@ -226,6 +205,7 @@ class SubmissionListSerializer(serializers.ModelSerializer):
             "verdict",
             "verdict_code",
             "verdict_testcase",
+            "verdict_display",
             "time",
             "memory",
             "language",

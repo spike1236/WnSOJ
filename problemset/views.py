@@ -351,22 +351,14 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="status")
     def status(self, request, pk=None):
         submission = self.get_object()
-        verdict = submission.verdict or ""
-        parts = verdict.split()
-        verdict_code = parts[0] if parts else None
-        verdict_testcase = None
-        if len(parts) >= 2:
-            try:
-                verdict_testcase = int(parts[1])
-            except (TypeError, ValueError):
-                verdict_testcase = None
 
         return Response(
             {
                 "id": submission.id,
                 "verdict": submission.verdict,
-                "verdict_code": verdict_code,
-                "verdict_testcase": verdict_testcase,
+                "verdict_code": submission.verdict_code,
+                "verdict_testcase": submission.verdict_testcase,
+                "verdict_display": submission.verdict_display,
                 "time": submission.time,
                 "memory": submission.memory,
                 "send_time": submission.send_time,
@@ -394,22 +386,13 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
 
         items = []
         for submission in queryset.order_by("-id")[:200]:
-            verdict = submission.verdict or ""
-            parts = verdict.split()
-            verdict_code = parts[0] if parts else None
-            verdict_testcase = None
-            if len(parts) >= 2:
-                try:
-                    verdict_testcase = int(parts[1])
-                except (TypeError, ValueError):
-                    verdict_testcase = None
-
             items.append(
                 {
                     "id": submission.id,
                     "verdict": submission.verdict,
-                    "verdict_code": verdict_code,
-                    "verdict_testcase": verdict_testcase,
+                    "verdict_code": submission.verdict_code,
+                    "verdict_testcase": submission.verdict_testcase,
+                    "verdict_display": submission.verdict_display,
                     "time": submission.time,
                     "memory": submission.memory,
                     "send_time": submission.send_time,

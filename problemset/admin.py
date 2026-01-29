@@ -20,8 +20,33 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ("id", "problem", "user", "language", "verdict", "send_time", "updated_at")
-    list_filter = ("verdict", "language", "problem")
+    class VerdictCodeFilter(admin.SimpleListFilter):
+        title = "verdict"
+        parameter_name = "verdict_code"
+
+        def lookups(self, request, model_admin):
+            return [
+                ("IQ", "In queue"),
+                ("AC", "Accepted"),
+                ("CE", "Compilation Error"),
+                ("WA", "Wrong Answer"),
+                ("RE", "Runtime Error"),
+                ("TLE", "Time Limit Exceeded"),
+                ("MLE", "Memory Limit Exceeded"),
+            ]
+
+        def queryset(self, request, queryset):
+            value = self.value()
+            if value:
+                return queryset.filter(verdict__startswith=value)
+            return queryset
+
+    @admin.display(description="Verdict", ordering="verdict")
+    def verdict_pretty(self, obj: Submission):
+        return obj.verdict_display
+
+    list_display = ("id", "problem", "user", "language", "verdict_pretty", "send_time", "updated_at")
+    list_filter = (VerdictCodeFilter, "language", "problem")
     search_fields = ("user__username", "problem__title", "id")
     ordering = ("-id",)
     actions = ("retest_selected_submissions",)
