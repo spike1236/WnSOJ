@@ -3,9 +3,11 @@
 import { cn } from "@/lib/cn";
 import CodeMirror from "@uiw/react-codemirror";
 import { cpp } from "@codemirror/lang-cpp";
+import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight } from "@uiw/codemirror-theme-github";
 import { useMemo, useState } from "react";
 
 const languageOptions = [
@@ -35,11 +37,11 @@ export default function CodeEditor({
 
   const extensions = useMemo(() => {
     const lang = language === "py" ? python() : cpp();
-    return [lang, EditorView.lineWrapping];
+    return [lang, EditorView.lineWrapping, syntaxHighlighting(defaultHighlightStyle, { fallback: true })];
   }, [language]);
 
   const cmTheme = useMemo(() => {
-    return theme === "dark" ? oneDark : undefined;
+    return theme === "dark" ? oneDark : githubLight;
   }, [theme]);
 
   return (

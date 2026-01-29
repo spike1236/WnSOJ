@@ -1,12 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown as markdownLanguage } from "@codemirror/lang-markdown";
+import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorView } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight } from "@uiw/codemirror-theme-github";
 import MarkdownPreview from "@/components/MarkdownPreview";
-import ProseMirrorMarkdownEditor from "@/components/ProseMirrorMarkdownEditor";
+import TiptapMarkdownEditor from "@/components/TiptapMarkdownEditor";
 
 type ViewMode = "write" | "preview" | "split";
 type EditorMode = "markdown" | "rich";
@@ -14,23 +16,29 @@ type EditorMode = "markdown" | "rich";
 export default function MarkdownEditor({
   name,
   defaultValue = "",
-  height = "320px"
+  height = "320px",
+  required = false
 }: {
   name: string;
   defaultValue?: string;
   height?: string;
+  required?: boolean;
 }) {
   const [value, setValue] = useState(defaultValue);
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mode, setMode] = useState<EditorMode>("markdown");
   const [view, setView] = useState<ViewMode>("split");
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
   const extensions = useMemo(() => {
-    return [markdownLanguage(), EditorView.lineWrapping];
+    return [markdownLanguage(), EditorView.lineWrapping, syntaxHighlighting(defaultHighlightStyle, { fallback: true })];
   }, []);
 
   const cmTheme = useMemo(() => {
-    return theme === "dark" ? oneDark : undefined;
+    return theme === "dark" ? oneDark : githubLight;
   }, [theme]);
 
   return (
@@ -78,9 +86,7 @@ export default function MarkdownEditor({
       <div className={view === "split" ? "grid gap-4 p-4 md:grid-cols-2" : "p-4"}>
         {view !== "preview" ? (
           mode === "rich" ? (
-            <div className="overflow-auto rounded-xl border bg-white p-3" style={{ height }}>
-              <ProseMirrorMarkdownEditor onChange={setValue} value={value} />
-            </div>
+            <TiptapMarkdownEditor height={height} onChange={setValue} theme={theme} value={value} />
           ) : (
             <div className="rounded-xl border">
               <CodeMirror
@@ -108,7 +114,7 @@ export default function MarkdownEditor({
         ) : null}
       </div>
 
-      <textarea className="hidden" name={name} readOnly value={value} />
+      <textarea className="hidden" name={name} readOnly required={required} value={value} />
     </div>
   );
 }
