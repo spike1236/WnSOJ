@@ -14,6 +14,7 @@ function errorToMessage(error: unknown) {
 
 async function parseErrorResponse(res: Response) {
   const contentType = res.headers.get("content-type") || "";
+  if (contentType.includes("text/html")) return `Request failed (${res.status}).`;
   if (contentType.includes("application/json")) {
     const body = (await res.json()) as unknown;
     if (body && typeof body === "object") {
@@ -22,7 +23,9 @@ async function parseErrorResponse(res: Response) {
     }
     return JSON.stringify(body);
   }
-  return await res.text();
+  const text = await res.text();
+  if (/^\s*<!doctype html/i.test(text) || /<html[\s>]/i.test(text)) return `Request failed (${res.status}).`;
+  return text;
 }
 
 export default function EditProfileClient({ user }: { user: UserDetail }) {

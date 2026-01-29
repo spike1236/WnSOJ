@@ -2,6 +2,18 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
+export class BackendFetchError extends Error {
+  status: number;
+  url: string;
+
+  constructor(message: string, { status, url }: { status: number; url: string }) {
+    super(message);
+    this.name = "BackendFetchError";
+    this.status = status;
+    this.url = url;
+  }
+}
+
 function backendOrigin() {
   return process.env.BACKEND_ORIGIN?.replace(/\/+$/, "") || "http://localhost:8000";
 }
@@ -18,6 +30,23 @@ type BackendFetchOptions = Omit<RequestInit, "headers"> & {
 
 function methodNeedsCsrf(method: string) {
   return ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase());
+}
+
+function defaultMessageForStatus(status: number) {
+  if (status === 400) return "Bad request.";
+  if (status === 401) return "Not authenticated.";
+  if (status === 403) return "Forbidden.";
+  if (status === 404) return "Not found.";
+  if (status === 429) return "Too many requests.";
+  if (status >= 500) return "Server error.";
+  return `Request failed (${status}).`;
+}
+
+function detailFromJson(body: unknown): string | null {
+  if (!body || typeof body !== "object") return null;
+  const detail = (body as { detail?: unknown }).detail;
+  if (typeof detail === "string" && detail.trim()) return detail.trim();
+  return null;
 }
 
 async function buildForwardHeaders({
@@ -81,11 +110,22 @@ export async function backendFetchJson<T>(
   if (!res.ok) {
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
-      const body = (await res.json()) as unknown;
-      throw new Error(JSON.stringify({ status: res.status, body }));
+      const body = (await res.json().catch(() => null)) as unknown;
+      const detail = detailFromJson(body);
+      if (!detail) {
+        console.error("backendFetchJson non-OK JSON response", { url, status: res.status, body });
+      }
+      throw new BackendFetchError(detail || defaultMessageForStatus(res.status), { status: res.status, url });
     }
-    const text = await res.text();
-    throw new Error(JSON.stringify({ status: res.status, body: text }));
+    const text = await res.text().catch(() => "");
+    const preview = text.length > 500 ? `${text.slice(0, 500)}…` : text;
+    console.error("backendFetchJson non-OK non-JSON response", {
+      url,
+      status: res.status,
+      contentType,
+      bodyPreview: preview
+    });
+    throw new BackendFetchError(defaultMessageForStatus(res.status), { status: res.status, url });
   }
 
   if (res.status === 204) return undefined as T;
@@ -123,11 +163,22 @@ export async function backendFetchForm<T>(
   if (!res.ok) {
     const contentType = res.headers.get("content-type") || "";
     if (contentType.includes("application/json")) {
-      const body = (await res.json()) as unknown;
-      throw new Error(JSON.stringify({ status: res.status, body }));
+      const body = (await res.json().catch(() => null)) as unknown;
+      const detail = detailFromJson(body);
+      if (!detail) {
+        console.error("backendFetchForm non-OK JSON response", { url, status: res.status, body });
+      }
+      throw new BackendFetchError(detail || defaultMessageForStatus(res.status), { status: res.status, url });
     }
-    const text = await res.text();
-    throw new Error(JSON.stringify({ status: res.status, body: text }));
+    const text = await res.text().catch(() => "");
+    const preview = text.length > 500 ? `${text.slice(0, 500)}…` : text;
+    console.error("backendFetchForm non-OK non-JSON response", {
+      url,
+      status: res.status,
+      contentType,
+      bodyPreview: preview
+    });
+    throw new BackendFetchError(defaultMessageForStatus(res.status), { status: res.status, url });
   }
 
   if (res.status === 204) return undefined as T;
