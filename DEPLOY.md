@@ -40,7 +40,7 @@ Create one shared secret and use it in both Django and Next.js.
 sudo tee /etc/wnsoj/wnsoj.env >/dev/null <<'EOF'
 DEBUG=False
 SECRET_KEY=replace_me_with_a_long_random_string
-ALLOWED_HOSTS=wnsoj.example.com
+ALLOWED_HOSTS=127.0.0.1,localhost
 CSRF_TRUSTED_ORIGINS=https://wnsoj.example.com
 INTERNAL_API_KEY=replace_me_with_a_long_random_string
 

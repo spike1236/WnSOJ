@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  {% if perms.problemset.change_submission %}
+    <li>
+      <a href="{% url 'admin:problemset_submission_retest_all' %}" class="button">Retest all submissions</a>
+    </li>
+  {% endif %}
+{% endblock %}
+

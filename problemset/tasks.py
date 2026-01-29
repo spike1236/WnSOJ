@@ -8,6 +8,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from .utils import run_isolate, run_tests
 from app import settings
+from django.utils import timezone
 
 
 def configure_logger():
@@ -158,3 +159,41 @@ def test_submission_task(submission_id):
             f"Cleaned up isolate box with box_id={box_id} for submission"
             + f"{submission_id}"
         )
+
+
+def _chunks(items: list[int], size: int):
+    for i in range(0, len(items), size):
+        yield items[i : i + size]
+
+
+@shared_task
+def retest_submissions_task(submission_ids: list[int]):
+    if not submission_ids:
+        return {"queued": 0}
+
+    ids = [int(i) for i in submission_ids if isinstance(i, int) or (isinstance(i, str) and i.isdigit())]
+    if not ids:
+        return {"queued": 0}
+
+    now = timezone.now()
+    queued = 0
+    for batch in _chunks(ids, 500):
+        to_queue = list(
+            Submission.objects.filter(id__in=batch).exclude(verdict="IQ").values_list("id", flat=True)
+        )
+        if not to_queue:
+            continue
+        Submission.objects.filter(id__in=to_queue).update(
+            verdict="IQ", time=0, memory=0, updated_at=now
+        )
+        for submission_id in to_queue:
+            test_submission_task.delay(submission_id)
+            queued += 1
+
+    return {"queued": queued}
+
+
+@shared_task
+def retest_all_submissions_task():
+    ids = list(Submission.objects.exclude(verdict="IQ").values_list("id", flat=True))
+    return retest_submissions_task(ids)

@@ -10,6 +10,16 @@ function internalApiKey() {
   return process.env.INTERNAL_API_KEY?.trim() || "";
 }
 
+function defaultMessageForStatus(status: number) {
+  if (status === 400) return "Bad request.";
+  if (status === 401) return "Not authenticated.";
+  if (status === 403) return "Forbidden.";
+  if (status === 404) return "Not found.";
+  if (status === 429) return "Too many requests.";
+  if (status >= 500) return "Server error.";
+  return `Request failed (${status}).`;
+}
+
 function copyResponseHeaders(from: Response, to: NextResponse) {
   for (const [key, value] of from.headers.entries()) {
     const k = key.toLowerCase();
@@ -48,6 +58,23 @@ export async function proxyToBackend(request: Request, backendPath: string, init
     ...init,
     headers
   });
+
+  const contentType = res.headers.get("content-type") || "";
+  if (res.status >= 400) {
+    const shouldSanitize =
+      contentType.includes("text/html") || contentType.includes("text/plain") || contentType === "";
+    if (shouldSanitize) {
+      const text = await res.text().catch(() => "");
+      const preview = text.length > 500 ? `${text.slice(0, 500)}…` : text;
+      console.error("proxyToBackend sanitized error response", {
+        url,
+        status: res.status,
+        contentType,
+        bodyPreview: preview
+      });
+      return NextResponse.json({ detail: defaultMessageForStatus(res.status) }, { status: res.status });
+    }
+  }
 
   const body = await res.arrayBuffer();
   const out = new NextResponse(body, { status: res.status });

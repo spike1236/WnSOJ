@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block content %}
+  <div id="content-main">
+    <h1>Retest all submissions</h1>
+    <p>This will queue retesting for every submission that is <strong>not</strong> currently in queue (<code>verdict=IQ</code>).</p>
+    <p>This can take a long time and will put load on your worker(s).</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="submit-row">
+        <input type="submit" value="Queue retest" class="default" />
+        <a class="button cancel-link" href="{% url 'admin:problemset_submission_changelist' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+
