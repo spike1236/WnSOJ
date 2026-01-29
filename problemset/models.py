@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from typing import Optional, Tuple
 
 
 class Category(models.Model):
@@ -42,3 +43,38 @@ class Submission(models.Model):
     code = models.TextField(max_length=65536, default="")
     send_time = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def parse_verdict(value: Optional[str]) -> Tuple[Optional[str], Optional[int]]:
+        v = (value or "").strip()
+        if not v:
+            return (None, None)
+        if v.lower() == "in queue":
+            return ("IQ", None)
+        parts = v.split()
+        code = (parts[0] or "").upper() if parts else ""
+        testcase: Optional[int] = None
+        if len(parts) >= 2:
+            try:
+                n = int(parts[1])
+                testcase = n if n > 0 else None
+            except (TypeError, ValueError):
+                testcase = None
+        return (code or None, testcase)
+
+    @property
+    def verdict_code(self) -> Optional[str]:
+        return self.parse_verdict(self.verdict)[0]
+
+    @property
+    def verdict_testcase(self) -> Optional[int]:
+        return self.parse_verdict(self.verdict)[1]
+
+    @property
+    def verdict_display(self) -> str:
+        code, testcase = self.parse_verdict(self.verdict)
+        if not code:
+            return "—"
+        if testcase:
+            return f"{code} #{testcase}"
+        return code
