@@ -27,7 +27,8 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 3. Install runtime requirements:
-   - `g++`
+   - `g++` (with `-std=c++23` support; GCC 13+ recommended)
+   - `python3.12`
    - [`isolate`](https://github.com/ioi/isolate) (cgroups v2-based)
 4. Create `.env` from `.env.template` and fill in values:
    - `SECRET_KEY`, `DEBUG`, DB settings

@@ -11,8 +11,8 @@ import { githubLight } from "@uiw/codemirror-theme-github";
 import { useMemo, useState } from "react";
 
 const languageOptions = [
-  { value: "cpp", label: "GNU C++17" },
-  { value: "py", label: "Python 3" }
+  { value: "cpp", label: "GNU C++23" },
+  { value: "py", label: "Python 3.12" }
 ];
 
 const themeOptions = [

@@ -38,11 +38,19 @@ logger = configure_logger()
 
 LANGUAGE_CONFIGS = {
     "cpp": {
-        "compile": ["/usr/bin/g++", "-std=c++17", "source.cpp", "-o", "program"],
+        "compile": [
+            "/usr/bin/g++",
+            "-O2",
+            "-std=c++23",
+            "-DONLINE_JUDGE",
+            "source.cpp",
+            "-o",
+            "program",
+        ],
         "run": ["./program"],
         "source_file": "source.cpp",
     },
-    "py": {"run": ["/usr/bin/python3", "source.py"], "source_file": "source.py"},
+    "py": {"run": ["/usr/bin/python3.12", "source.py"], "source_file": "source.py"},
 }
 
 
