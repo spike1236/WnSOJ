@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { backendFetchJson } from "@/lib/backend.server";
 import { cookies } from "next/headers";
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   try {
     await backendFetchJson("/api/session/logout/");
   } catch {}
@@ -10,5 +10,5 @@ export async function GET(request: Request) {
   const cookieStore = await cookies();
   cookieStore.set("sessionid", "", { path: "/", expires: new Date(0) });
   cookieStore.set("csrftoken", "", { path: "/", expires: new Date(0) });
-  return NextResponse.redirect(new URL("/home", request.url));
+  return new NextResponse(null, { status: 302, headers: { Location: "/home" } });
 }
