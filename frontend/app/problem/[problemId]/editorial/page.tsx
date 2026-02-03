@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: Promise<{ problemId: st
           code={problem.code || ""}
           collapsible
           defaultCollapsed
-          languageLabel="GNU C++17"
+          languageLabel="GNU C++23"
           title="Author's Solution"
         />
       </div>

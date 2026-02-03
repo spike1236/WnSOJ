@@ -27,15 +27,15 @@ export default function Page() {
         <p className="mt-3 text-slate-700">Testing system uses the following commands:</p>
         <div className="mt-3 grid gap-3 md:grid-cols-2">
           <div className="rounded-xl border bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">GNU C++17</div>
+            <div className="text-sm font-semibold text-slate-900">GNU C++23</div>
             <div className="mt-2 rounded-lg border bg-white px-3 py-2 font-mono text-xs text-slate-700">
-              g++ source.cpp -std=c++17 -o source
+              g++ -O2 -std=c++23 -DONLINE_JUDGE source.cpp -o source
             </div>
           </div>
           <div className="rounded-xl border bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">Python 3</div>
+            <div className="text-sm font-semibold text-slate-900">Python 3.12</div>
             <div className="mt-2 rounded-lg border bg-white px-3 py-2 font-mono text-xs text-slate-700">
-              python3 source.py
+              python3.12 source.py
             </div>
           </div>
         </div>

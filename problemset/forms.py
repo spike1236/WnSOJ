@@ -42,8 +42,8 @@ class AddProblemForm(forms.Form):
 
 class SubmitForm(forms.Form):
     LANGUAGE_CHOICES = [
-        ("cpp", "GNU C++17"),
-        ("py", "Python 3"),
+        ("cpp", "GNU C++23"),
+        ("py", "Python 3.12"),
     ]
     language = forms.ChoiceField(choices=LANGUAGE_CHOICES)
     code = forms.CharField(widget=forms.Textarea, max_length=65536)
