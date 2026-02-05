@@ -17,7 +17,6 @@ export type UserPublic = {
   username: string;
   first_name: string;
   last_name: string;
-  phone_number?: string | null;
   account_type?: number;
   is_staff?: boolean;
   icon_id?: number;

@@ -78,7 +78,7 @@ There are 2 types of accounts:
 2. Business account - these users or companies can publish, edit or delete jobs, also find and communicate by email or phone with other users.\
    Publish job, edit it if it is need, and just wait until some qualified specialist will communicate with you by email or phone number.
 ### Profile
-In the profile, you can see user's username, phone number and statistics about problems: submissions statistics and last 10 attempts. Email is shown only on your own profile.\
+In the profile, you can see user's username and statistics about problems: submissions statistics and last 10 attempts. Email and phone number are shown only on your own profile.\
 Also you can change your icon or password in 'Edit profile' page.
 ### Internal API (Not Public)
 The Django REST endpoints under `/api/*` are intended for **internal use** (Next.js server + nginx private connectivity) and are protected by `INTERNAL_API_KEY`. Requests without the correct `X-Internal-API-Key` receive `404`.

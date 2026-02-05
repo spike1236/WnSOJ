@@ -104,7 +104,6 @@ class PublicUserProfileSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            "phone_number",
             "account_type",
             "icon_id",
             "icon64_url",
