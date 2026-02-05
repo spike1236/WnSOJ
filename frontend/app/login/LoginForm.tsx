@@ -5,14 +5,35 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 async function parseErrorResponse(res: Response) {
+  function pickErrorMessage(value: unknown): string | null {
+    if (typeof value === "string") return value.trim() ? value : null;
+    if (Array.isArray(value)) {
+      for (const v of value) {
+        const msg = pickErrorMessage(v);
+        if (msg) return msg;
+      }
+      return null;
+    }
+    if (value && typeof value === "object") {
+      const record = value as Record<string, unknown>;
+      const detail = record.detail;
+      if (typeof detail === "string" && detail.trim()) return detail;
+      const message = record.message;
+      if (typeof message === "string" && message.trim()) return message;
+      for (const v of Object.values(record)) {
+        const msg = pickErrorMessage(v);
+        if (msg) return msg;
+      }
+    }
+    return null;
+  }
+
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("text/html")) return `Request failed (${res.status}).`;
   if (contentType.includes("application/json")) {
     const body = (await res.json()) as unknown;
-    if (body && typeof body === "object") {
-      const detail = (body as { detail?: unknown }).detail;
-      if (typeof detail === "string" && detail.trim()) return detail;
-    }
+    const msg = pickErrorMessage(body);
+    if (msg) return msg;
     return JSON.stringify(body);
   }
   const text = await res.text();

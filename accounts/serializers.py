@@ -5,6 +5,9 @@ from app import settings
 from PIL import Image
 import random
 
+USERNAME_MIN_LENGTH = 3
+USERNAME_MAX_LENGTH = 16
+
 
 class UserSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
@@ -86,6 +89,46 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ret["is_business"] = instance.account_type == 2
         return ret
 
+    def validate_username(self, value: str) -> str:
+        username = (value or "").strip()
+        if not username:
+            raise serializers.ValidationError("Username is required.")
+        if (
+            len(username) < USERNAME_MIN_LENGTH
+            or len(username) > USERNAME_MAX_LENGTH
+            or not username.isalnum()
+        ):
+            raise serializers.ValidationError(
+                "Username must be 3-16 alphanumeric characters."
+            )
+        return username
+
+    def validate_email(self, value: str) -> str:
+        email = (value or "").strip().lower()
+        if not email:
+            return ""
+
+        qs = User.objects.filter(email__iexact=email)
+        if self.instance is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+
+    def validate_phone_number(self, value: str | None) -> str | None:
+        phone = (value or "").strip()
+        if not phone:
+            return None
+
+        qs = User.objects.filter(phone_number=phone)
+        if self.instance is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError(
+                "A user with this phone number already exists."
+            )
+        return phone
+
 
 class PublicUserProfileSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
@@ -119,6 +162,9 @@ class PublicUserProfileSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        min_length=USERNAME_MIN_LENGTH, max_length=USERNAME_MAX_LENGTH
+    )
     password = serializers.CharField(
         write_only=True, required=True, style={"input_type": "password"}
     )
@@ -147,6 +193,34 @@ class RegisterSerializer(serializers.ModelSerializer):
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"password": "Passwords must match."})
         return attrs
+
+    def validate_username(self, value: str) -> str:
+        username = (value or "").strip()
+        if not username:
+            raise serializers.ValidationError("Username is required.")
+        if not username.isalnum():
+            raise serializers.ValidationError(
+                "Username must be 3-16 alphanumeric characters."
+            )
+        return username
+
+    def validate_email(self, value: str) -> str:
+        email = (value or "").strip().lower()
+        if not email:
+            raise serializers.ValidationError("Email is required.")
+        if User.objects.filter(email__iexact=email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return email
+
+    def validate_phone_number(self, value: str | None) -> str | None:
+        phone = (value or "").strip()
+        if not phone:
+            return None
+        if User.objects.filter(phone_number=phone).exists():
+            raise serializers.ValidationError(
+                "A user with this phone number already exists."
+            )
+        return phone
 
     def create(self, validated_data):
         validated_data.pop("password2")
