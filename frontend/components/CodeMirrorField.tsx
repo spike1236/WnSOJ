@@ -9,6 +9,7 @@ import { EditorView } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useEffect, useMemo, useState } from "react";
+import { useResolvedTheme, type ThemeMode } from "@/lib/useResolvedTheme";
 
 type FieldLanguage = "cpp" | "py" | "markdown" | "text";
 
@@ -17,15 +18,16 @@ export default function CodeMirrorField({
   defaultValue = "",
   language = "text",
   height = "240px",
-  theme = "light"
+  theme = "system"
 }: {
   name: string;
   defaultValue?: string;
   language?: FieldLanguage;
   height?: string;
-  theme?: "light" | "dark";
+  theme?: ThemeMode;
 }) {
   const [value, setValue] = useState(defaultValue);
+  const resolvedTheme = useResolvedTheme(theme);
 
   useEffect(() => {
     setValue(defaultValue);
@@ -44,8 +46,8 @@ export default function CodeMirrorField({
   }, [language]);
 
   const cmTheme = useMemo(() => {
-    return theme === "dark" ? oneDark : githubLight;
-  }, [theme]);
+    return resolvedTheme === "dark" ? oneDark : githubLight;
+  }, [resolvedTheme]);
 
   return (
     <div className="rounded-2xl border bg-white shadow-sm">

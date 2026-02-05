@@ -9,6 +9,7 @@ import { EditorView } from "@codemirror/view";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { githubLight } from "@uiw/codemirror-theme-github";
 import { useMemo, useState } from "react";
+import { useResolvedTheme, type ThemeMode } from "@/lib/useResolvedTheme";
 
 const languageOptions = [
   { value: "cpp", label: "GNU C++23" },
@@ -16,6 +17,7 @@ const languageOptions = [
 ];
 
 const themeOptions = [
+  { value: "system", label: "System" },
   { value: "light", label: "Light" },
   { value: "dark", label: "Dark" }
 ];
@@ -23,17 +25,18 @@ const themeOptions = [
 export default function CodeEditor({
   name,
   defaultLanguage = "cpp",
-  defaultTheme = "dark",
+  defaultTheme = "system",
   defaultValue = ""
 }: {
   name: string;
   defaultLanguage?: "cpp" | "py";
-  defaultTheme?: "light" | "dark";
+  defaultTheme?: ThemeMode;
   defaultValue?: string;
 }) {
   const [language, setLanguage] = useState(defaultLanguage);
   const [theme, setTheme] = useState(defaultTheme);
   const [value, setValue] = useState(defaultValue);
+  const resolvedTheme = useResolvedTheme(theme);
 
   const extensions = useMemo(() => {
     const lang = language === "py" ? python() : cpp();
@@ -41,8 +44,8 @@ export default function CodeEditor({
   }, [language]);
 
   const cmTheme = useMemo(() => {
-    return theme === "dark" ? oneDark : githubLight;
-  }, [theme]);
+    return resolvedTheme === "dark" ? oneDark : githubLight;
+  }, [resolvedTheme]);
 
   return (
     <div className="rounded-2xl border bg-white shadow-sm">
@@ -67,7 +70,7 @@ export default function CodeEditor({
             <span className="text-xs font-semibold text-slate-600">Theme</span>
             <select
               className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
-              onChange={(e) => setTheme(e.target.value as "light" | "dark")}
+              onChange={(e) => setTheme(e.target.value as ThemeMode)}
               value={theme}
             >
               {themeOptions.map((opt) => (
