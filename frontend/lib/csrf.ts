@@ -14,8 +14,24 @@ function getCookie(name: string) {
   return null;
 }
 
-export async function ensureCsrf() {
-  await fetch("/backend/csrf/", { credentials: "include", cache: "no-store" });
+let csrfBootstrapPromise: Promise<string> | null = null;
+
+export async function ensureCsrf(): Promise<string> {
+  const existing = getCookie("csrftoken");
+  if (existing) return existing;
+
+  if (!csrfBootstrapPromise) {
+    csrfBootstrapPromise = (async () => {
+      await fetch("/backend/csrf/", { credentials: "include", cache: "no-store" });
+      const token = getCookie("csrftoken");
+      if (!token) throw new Error("CSRF cookie was not set.");
+      return token;
+    })().finally(() => {
+      csrfBootstrapPromise = null;
+    });
+  }
+
+  return csrfBootstrapPromise;
 }
 
 export async function csrfFetch(input: RequestInfo | URL, init: RequestInit = {}) {
@@ -23,11 +39,7 @@ export async function csrfFetch(input: RequestInfo | URL, init: RequestInit = {}
   const headers = new Headers(init.headers);
 
   if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
-    let token = getCookie("csrftoken");
-    if (!token) {
-      await ensureCsrf();
-      token = getCookie("csrftoken");
-    }
+    const token = await ensureCsrf();
     if (token && !headers.has("X-CSRFToken")) headers.set("X-CSRFToken", token);
     if (!headers.has("Accept")) headers.set("Accept", "application/json");
   }
