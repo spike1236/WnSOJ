@@ -215,6 +215,7 @@ class UserDetailAPIView(generics.RetrieveUpdateAPIView):
 class CsrfAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
+    throttle_classes = []
 
     def get(self, request):
         return Response({"csrfToken": get_token(request)})
