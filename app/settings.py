@@ -50,8 +50,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
+        'app.throttling.InternalBypassUserRateThrottle',
+        'app.throttling.InternalBypassAnonRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': '1000/day',
