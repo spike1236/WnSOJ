@@ -41,6 +41,7 @@ export default async function Page({ params }: { params: Promise<{ username: str
   }
   const isMe = me?.username === profile.user.username;
   const myEmail = isMe && me ? me.email : "";
+  const myPhone = isMe && me ? me.phone_number : "";
   const verdictCounts = profile.stats?.verdict_counts ?? {};
   const codes = ["AC", "CE", "RE", "WA", "TLE", "MLE"];
 
@@ -92,10 +93,12 @@ export default async function Page({ params }: { params: Promise<{ username: str
                   <div className="font-medium text-slate-900">{myEmail || "—"}</div>
                 </div>
               ) : null}
-              <div className="flex justify-between gap-3">
-                <div className="text-slate-600">Phone</div>
-                <div className="font-medium text-slate-900">{profile.user.phone_number || "—"}</div>
-              </div>
+              {isMe ? (
+                <div className="flex justify-between gap-3">
+                  <div className="text-slate-600">Phone</div>
+                  <div className="font-medium text-slate-900">{myPhone || "—"}</div>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-3">
                 <div className="text-slate-600">Account Type</div>
                 <div className="font-medium text-slate-900">
