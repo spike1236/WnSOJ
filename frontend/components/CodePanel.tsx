@@ -2,6 +2,23 @@
 
 import { cn } from "@/lib/cn";
 import { useEffect, useMemo, useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { cpp } from "@codemirror/lang-cpp";
+import { python } from "@codemirror/lang-python";
+import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
+import { EditorView } from "@codemirror/view";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { githubLight } from "@uiw/codemirror-theme-github";
+import { useResolvedTheme, type ThemeMode } from "@/lib/useResolvedTheme";
+
+type CodeLanguage = "cpp" | "py" | "text";
+
+function inferLanguage(value?: string): CodeLanguage {
+  const v = (value || "").toLowerCase();
+  if (v.includes("python") || v === "py" || v.includes(" py")) return "py";
+  if (v.includes("c++") || v.includes("cpp") || v.includes("g++") || v.includes("gnu c")) return "cpp";
+  return "text";
+}
 
 function IconCopy({ className }: { className?: string }) {
   return (
@@ -42,6 +59,7 @@ export default function CodePanel({
   code,
   collapsible = false,
   defaultCollapsed = false,
+  defaultTheme = "system",
   className
 }: {
   title: string;
@@ -49,13 +67,26 @@ export default function CodePanel({
   code: string;
   collapsible?: boolean;
   defaultCollapsed?: boolean;
+  defaultTheme?: ThemeMode;
   className?: string;
 }) {
   const [collapsed, setCollapsed] = useState(collapsible ? defaultCollapsed : false);
   const [wrap, setWrap] = useState(false);
   const [copied, setCopied] = useState(false);
+  const resolvedTheme = useResolvedTheme(defaultTheme);
 
   const cleaned = useMemo(() => (code ?? "").replace(/\r\n/g, "\n"), [code]);
+  const language = useMemo(() => inferLanguage(languageLabel), [languageLabel]);
+
+  const extensions = useMemo(() => {
+    const lang = language === "cpp" ? cpp() : language === "py" ? python() : [];
+    const wrapExt = wrap ? EditorView.lineWrapping : [];
+    return [lang, wrapExt, syntaxHighlighting(defaultHighlightStyle, { fallback: true })];
+  }, [language, wrap]);
+
+  const cmTheme = useMemo(() => {
+    return resolvedTheme === "dark" ? oneDark : githubLight;
+  }, [resolvedTheme]);
 
   useEffect(() => {
     if (!copied) return;
@@ -136,15 +167,22 @@ export default function CodePanel({
           ) : null}
         </div>
       </div>
-          {collapsed ? null : (
-        <pre
-          className={cn(
-            "overflow-auto p-4 text-sm",
-            wrap ? "whitespace-pre-wrap break-words" : "whitespace-pre"
-          )}
-        >
-          <code>{cleaned}</code>
-        </pre>
+      {collapsed ? null : (
+        <div className="p-4">
+          <CodeMirror
+            basicSetup={{
+              lineNumbers: true,
+              highlightActiveLine: false,
+              highlightActiveLineGutter: false,
+              foldGutter: true
+            }}
+            extensions={extensions}
+            editable={false}
+            readOnly
+            theme={cmTheme}
+            value={cleaned}
+          />
+        </div>
       )}
     </div>
   );
