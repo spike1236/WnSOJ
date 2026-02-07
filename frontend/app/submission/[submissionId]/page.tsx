@@ -1,8 +1,7 @@
 import CodePanel from "@/components/CodePanel";
 import Container from "@/components/Container";
-import StatusPill from "@/components/StatusPill";
+import SubmissionDetailRowClient from "@/components/SubmissionDetailRowClient";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime } from "@/lib/format";
 import type { Submission } from "@/lib/types";
 import Link from "next/link";
 
@@ -51,30 +50,17 @@ export default async function Page({ params }: { params: Promise<{ submissionId:
                 </tr>
               </thead>
               <tbody className="divide-y">
-                <tr className="bg-white">
-                  <td className="px-4 py-3 font-mono text-slate-700">{submission.id}</td>
-                  <td className="px-4 py-3 text-slate-700">{formatDateTime(submission.send_time)}</td>
-                  <td className="px-4 py-3">
-                    <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(submission.user.username)}`}>
-                      {submission.user.username}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link className="text-blue-600 hover:underline" href={`/problem/${submission.problem.id}`}>
-                      {submission.problem.title}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3 text-slate-700">{submission.language}</td>
-                  <td className="px-4 py-3">
-                    <StatusPill verdict={submission.verdict} />
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                    {submission.time === null || submission.time === undefined ? "—" : `${submission.time} ms`}
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                    {submission.memory === null || submission.memory === undefined ? "—" : `${submission.memory} KB`}
-                  </td>
-                </tr>
+                <SubmissionDetailRowClient
+                  id={submission.id}
+                  sendTime={submission.send_time}
+                  username={submission.user.username}
+                  problemId={submission.problem.id}
+                  problemTitle={submission.problem.title}
+                  language={submission.language}
+                  verdict={submission.verdict}
+                  time={submission.time}
+                  memory={submission.memory}
+                />
               </tbody>
             </table>
           </div>

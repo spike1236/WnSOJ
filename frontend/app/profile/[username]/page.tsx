@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
-import StatusPill from "@/components/StatusPill";
+import StatusPill, { statusPillMetaForCode } from "@/components/StatusPill";
 import { BackendFetchError, backendFetchJson } from "@/lib/backend.server";
+import { cn } from "@/lib/cn";
 import { formatDateTime } from "@/lib/format";
 import type { SubmissionListItem, UserDetail, UserPublic } from "@/lib/types";
 import Link from "next/link";
@@ -115,8 +116,16 @@ export default async function Page({ params }: { params: Promise<{ username: str
             <div className="mt-4 grid gap-2">
               {codes.map((code) => (
                 <div className="flex items-center justify-between gap-3 text-sm" key={code}>
-                  <div className="text-slate-700">{verdictLabel(code)}</div>
-                  <div className="rounded-full border bg-slate-50 px-3 py-1 font-mono text-slate-700">
+                  <div className="flex items-center gap-2">
+                    <StatusPill verdict={code} />
+                    <div className="text-slate-700">{verdictLabel(code)}</div>
+                  </div>
+                  <div
+                    className={cn(
+                      "rounded-full border px-3 py-1 font-mono",
+                      statusPillMetaForCode(code).className
+                    )}
+                  >
                     {verdictCounts[code] ?? 0}
                   </div>
                 </div>

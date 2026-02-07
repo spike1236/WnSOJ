@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, StreamingHttpResponse
 from django.db import transaction
 from .models import Category, Problem, Submission
 from .forms import AddProblemForm, SubmitForm
 import os
+import json
+import time
+import contextlib
 from zipfile import ZipFile
 from io import BytesIO
 from rest_framework import viewsets, permissions
@@ -401,3 +404,134 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
             )
 
         return Response({"results": items})
+
+    @extend_schema(operation_id="submissions_stream_retrieve", exclude=True)
+    @action(detail=True, methods=["get"], url_path="stream")
+    def stream(self, request, pk=None):
+        from .realtime import get_submission_progress, open_submission_pubsub
+
+        submission = self.get_object()
+
+        def sse(data: dict, *, event: str | None = None) -> str:
+            payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False)
+            lines: list[str] = []
+            if event:
+                lines.append(f"event: {event}")
+            for line in payload.splitlines() or ["{}"]:
+                lines.append(f"data: {line}")
+            return "\n".join(lines) + "\n\n"
+
+        def snapshot_payload() -> dict:
+            progress = get_submission_progress(submission.id) or {}
+            verdict = progress.get("verdict") if isinstance(progress, dict) else None
+            payload = {
+                "kind": "snapshot",
+                "id": submission.id,
+                "verdict": verdict or submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            }
+            if isinstance(progress, dict):
+                for k, v in progress.items():
+                    if k in {"kind", "id"}:
+                        continue
+                    payload[k] = v
+            return payload
+
+        def poll_until_done():
+            last_ping = time.monotonic()
+            while True:
+                try:
+                    current = Submission.objects.only("id", "verdict", "time", "memory", "updated_at").get(
+                        id=submission.id
+                    )
+                except Submission.DoesNotExist:
+                    yield sse({"kind": "final", "id": submission.id, "verdict": "RE 1"}, event="final")
+                    return
+                if current.verdict != "IQ":
+                    yield sse(
+                        {
+                            "kind": "final",
+                            "id": current.id,
+                            "verdict": current.verdict,
+                            "time": current.time,
+                            "memory": current.memory,
+                            "updated_at": current.updated_at.isoformat(),
+                        },
+                        event="final",
+                    )
+                    return
+                now = time.monotonic()
+                if now - last_ping >= 15:
+                    last_ping = now
+                    yield ": ping\n\n"
+                time.sleep(1.0)
+
+        def gen():
+            yield sse(snapshot_payload(), event="snapshot")
+
+            if submission.verdict != "IQ":
+                yield sse(
+                    {
+                        "kind": "final",
+                        "id": submission.id,
+                        "verdict": submission.verdict,
+                        "time": submission.time,
+                        "memory": submission.memory,
+                        "updated_at": submission.updated_at.isoformat(),
+                    },
+                    event="final",
+                )
+                return
+
+            try:
+                pubsub = open_submission_pubsub(submission.id)
+            except Exception:
+                yield from poll_until_done()
+                return
+
+            with contextlib.closing(pubsub):
+                last_db_check = time.monotonic()
+                while True:
+                    message = pubsub.get_message(timeout=15.0)
+                    if message and message.get("type") == "message":
+                        data = message.get("data")
+                        if isinstance(data, str) and data:
+                            yield f"data: {data}\n\n"
+                            try:
+                                obj = json.loads(data)
+                                if isinstance(obj, dict) and obj.get("kind") == "final":
+                                    return
+                            except Exception:
+                                pass
+                    else:
+                        yield ": ping\n\n"
+
+                    now = time.monotonic()
+                    if now - last_db_check >= 5.0:
+                        last_db_check = now
+                        try:
+                            current = Submission.objects.only("id", "verdict", "time", "memory", "updated_at").get(
+                                id=submission.id
+                            )
+                        except Submission.DoesNotExist:
+                            return
+                        if current.verdict != "IQ":
+                            yield sse(
+                                {
+                                    "kind": "final",
+                                    "id": current.id,
+                                    "verdict": current.verdict,
+                                    "time": current.time,
+                                    "memory": current.memory,
+                                    "updated_at": current.updated_at.isoformat(),
+                                },
+                                event="final",
+                            )
+                            return
+
+        res = StreamingHttpResponse(gen(), content_type="text/event-stream")
+        res["Cache-Control"] = "no-cache"
+        res["X-Accel-Buffering"] = "no"
+        return res

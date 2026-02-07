@@ -1,6 +1,7 @@
 import subprocess
 import os
 from app.settings import ISOLATE_PATH
+from .realtime import publish_submission_event
 
 
 def parse_meta_file(meta_file_path):
@@ -67,10 +68,35 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
         submission.time = 0
         submission.memory = 0
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         return
 
-    for filename in sorted(os.listdir(input_dir)):
+    filenames = sorted(os.listdir(input_dir))
+    total_tests = len(filenames)
+
+    for filename in filenames:
         test_case += 1
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "progress",
+                "id": submission.id,
+                "verdict": f"T {test_case}",
+                "stage": "test",
+                "current_test": test_case,
+                "total_tests": total_tests,
+            },
+        )
         input_path = os.path.join(input_dir, filename)
         output_path = os.path.join(output_dir, filename)
 
@@ -121,3 +147,14 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
         ):
             submission.user.problems_unsolved.add(submission.problem)
     submission.save()
+    publish_submission_event(
+        submission.id,
+        {
+            "kind": "final",
+            "id": submission.id,
+            "verdict": submission.verdict,
+            "time": submission.time,
+            "memory": submission.memory,
+            "updated_at": submission.updated_at.isoformat(),
+        },
+    )
