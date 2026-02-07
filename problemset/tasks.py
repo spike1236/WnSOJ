@@ -9,6 +9,7 @@ from logging.handlers import RotatingFileHandler
 from .utils import run_isolate, run_tests
 from app import settings
 from django.utils import timezone
+from .realtime import clear_submission_progress, publish_submission_event
 
 
 def configure_logger():
@@ -20,7 +21,7 @@ def configure_logger():
 
         handler = RotatingFileHandler(
             filename=log_file,
-            maxBytes=50 * 1024 * 1024,  # 50MB
+            maxBytes=50 * 1024 * 1024,
             backupCount=10,
         )
 
@@ -68,6 +69,8 @@ def test_submission_task(submission_id):
         )
         return
 
+    clear_submission_progress(submission_id)
+
     if settings.NO_ISOLATE:
         submission.verdict = "RE 1"
         submission.time = random.randint(0, int(submission.problem.time_limit * 1000))
@@ -75,6 +78,17 @@ def test_submission_task(submission_id):
             0, int(submission.problem.memory_limit * 1024)
         )
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         logger.warning(
             "NO_ISOLATE is set to True. Skipping isolate execution for "
             f"submission {submission_id}."
@@ -89,6 +103,17 @@ def test_submission_task(submission_id):
         submission.time = 0
         submission.memory = 0
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         logger.error(
             f"Unknown language '{language}' for submission {submission_id}."
         )
@@ -112,6 +137,17 @@ def test_submission_task(submission_id):
     except subprocess.CalledProcessError:
         submission.verdict = "RE 1"
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         logger.error(f"Failed to initialize isolate box for submission {submission_id}")
         return
 
@@ -125,6 +161,17 @@ def test_submission_task(submission_id):
     except (FileNotFoundError, shutil.Error) as e:
         submission.verdict = "RE 1"
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         logger.error(f"Failed to copy source file for submission {submission_id}: {e}")
         subprocess.run(["isolate", "--cg", "--box-id", str(box_id), "--cleanup"])
         return
@@ -147,6 +194,17 @@ def test_submission_task(submission_id):
                 submission.time = 0
                 submission.memory = 0
                 submission.save()
+                publish_submission_event(
+                    submission.id,
+                    {
+                        "kind": "final",
+                        "id": submission.id,
+                        "verdict": submission.verdict,
+                        "time": submission.time,
+                        "memory": submission.memory,
+                        "updated_at": submission.updated_at.isoformat(),
+                    },
+                )
                 return
 
         run_tests(
@@ -160,6 +218,17 @@ def test_submission_task(submission_id):
     except Exception as e:
         submission.verdict = "RE 1"
         submission.save()
+        publish_submission_event(
+            submission.id,
+            {
+                "kind": "final",
+                "id": submission.id,
+                "verdict": submission.verdict,
+                "time": submission.time,
+                "memory": submission.memory,
+                "updated_at": submission.updated_at.isoformat(),
+            },
+        )
         logger.error(f"Error while testing submission {submission_id}: {e}")
     finally:
         subprocess.run(["isolate", "--cg", "--box-id", str(box_id), "--cleanup"])
@@ -195,6 +264,7 @@ def retest_submissions_task(submission_ids: list[int]):
             verdict="IQ", time=0, memory=0, updated_at=now
         )
         for submission_id in to_queue:
+            clear_submission_progress(submission_id)
             test_submission_task.delay(submission_id)
             queued += 1
 

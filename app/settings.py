@@ -74,6 +74,10 @@ CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 10 * 60
 
+# Optional: separate Redis URL for realtime verdict streaming (SSE).
+# Defaults to CELERY_BROKER_URL.
+REALTIME_REDIS_URL = os.getenv("REALTIME_REDIS_URL", "").strip()
+
 NO_ISOLATE = os.getenv('NO_ISOLATE', 'False') == 'True'
 ISOLATE_PATH = os.getenv('ISOLATE_PATH', '/var/lib/isolate')
 
