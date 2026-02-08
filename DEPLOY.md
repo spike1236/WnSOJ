@@ -137,7 +137,40 @@ sudo systemctl enable --now wnsoj-gunicorn
 sudo systemctl status wnsoj-gunicorn
 ```
 
-## 4) Celery workers (judge + background tasks)
+## 4) Realtime (FastAPI SSE)
+
+This service streams submission verdict/progress updates over SSE and subscribes to Redis pub/sub.
+
+### systemd unit: `wnsoj-realtime.service`
+
+```ini
+[Unit]
+Description=WnSOJ Realtime (FastAPI SSE)
+After=network.target
+
+[Service]
+Type=simple
+User=wnsoj
+Group=wnsoj
+WorkingDirectory=/srv/wnsoj
+EnvironmentFile=/etc/wnsoj/wnsoj.env
+ExecStart=/srv/wnsoj/.venv/bin/uvicorn realtime_service.main:app --host 127.0.0.1 --port 9000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable it:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now wnsoj-realtime
+sudo systemctl status wnsoj-realtime
+```
+
+## 5) Celery workers (judge + background tasks)
 
 Submissions enqueue judge jobs directly on creation, so Celery beat is not required by default. If you add your own periodic tasks later, it's usually nicer to run worker and beat separately.
 
@@ -193,7 +226,7 @@ sudo systemctl enable --now wnsoj-celery-worker
 sudo systemctl enable --now wnsoj-celery-beat  # optional
 ```
 
-## 5) Next.js (systemd)
+## 6) Next.js (systemd)
 
 Build the frontend once (as user `wnsoj`):
 
@@ -236,7 +269,7 @@ sudo systemctl enable --now wnsoj-next
 sudo systemctl status wnsoj-next
 ```
 
-## 6) Nginx config (single domain)
+## 7) Nginx config (single domain)
 
 The idea is straightforward:
 
@@ -303,7 +336,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-## 7) How the "internal-only API" behaves
+## 8) How the "internal-only API" behaves
 
 If someone tries to call Django `/api/*` directly without the internal key, they'll get `404`.
 
@@ -315,7 +348,7 @@ If the web app suddenly looks like it "can't load data" after you deploy, the fi
 - Do they match exactly?
 - Did you restart `wnsoj-gunicorn` and `wnsoj-next` after changing env files?
 
-## 8) Day-2 operations (what you'll actually do in real life)
+## 9) Day-2 operations (what you'll actually do in real life)
 
 ### Deploy a new version
 
