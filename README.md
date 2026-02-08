@@ -5,13 +5,15 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 
 ![Main Page](./readme_screenshots/screenshot_1.png)
 
-## Architecture (Current)
+## Architecture
 - **Backend**: Django + Django REST Framework (DRF) + Celery (judge workers)
+- **Realtime**: FastAPI (ASGI) SSE service in `realtime_service/` (streams verdict/progress from Redis pub/sub)
 - **Frontend**: Next.js (App Router) in `frontend/` (Tailwind UI)
 - **Auth (browser)**: Django **session cookies** (`sessionid`) + **CSRF** (`csrftoken`) — no JWT, no localStorage
 - **Internal API**: Django `/api/*` is **not public** and is protected by a shared secret header (`X-Internal-API-Key`)
   - Next.js server-side requests include the internal key automatically
   - Browser-side mutations go through Next.js route handlers under `/backend/*`, which proxy to Django and attach the internal key
+- **Streaming (verdicts)**: Browser connects to Next.js `/backend/submissions/*/stream` (SSE), Next proxies to the FastAPI realtime service
 
 ## Getting Started
 ### Backend (Django)
@@ -33,6 +35,7 @@ pip install -r requirements.txt
 4. Create `.env` from `.env.template` and fill in values:
    - `SECRET_KEY`, `DEBUG`, DB settings
    - `INTERNAL_API_KEY` (shared with Next.js)
+   - `REALTIME_ORIGIN` (Next.js -> FastAPI realtime service, default `http://localhost:9000`)
    - `CSRF_TRUSTED_ORIGINS` (include your local/prod frontend origin, e.g. `http://127.0.0.1:8081` if you proxy through nginx)
 5. Apply migrations (and optionally create an admin user):
 ```shell
@@ -43,6 +46,7 @@ python3 manage.py createsuperuser
 ```shell
 python3 manage.py runserver
 celery -A app worker -l info
+uvicorn realtime_service.main:app --host 127.0.0.1 --port 9000
 ```
 Open `http://127.0.0.1:8000` (Django-rendered pages) or start the Next.js frontend (below).
 
@@ -52,13 +56,14 @@ In a separate terminal:
 ```shell
 cd frontend
 npm install
-BACKEND_ORIGIN=http://localhost:8000 INTERNAL_API_KEY=dev-secret npm run dev
+BACKEND_ORIGIN=http://localhost:8000 REALTIME_ORIGIN=http://localhost:9000 INTERNAL_API_KEY=dev-secret npm run dev
 ```
 
 Open `http://localhost:3000`.
 
 Notes:
 - `INTERNAL_API_KEY` must match the Django `INTERNAL_API_KEY` in `.env`.
+- `REALTIME_ORIGIN` should point to the FastAPI realtime service.
 - In dev, Next.js will proxy `/admin/`, `/static/`, `/media/` to Django. Browser API calls use `/backend/*` route handlers.
 
 ## Deployment
@@ -85,20 +90,26 @@ The Django REST endpoints under `/api/*` are intended for **internal use** (Next
 
 The browser should talk only to the Next.js app. Client-side mutations use Next.js `/backend/*` route handlers which proxy to Django and attach the internal key.
 
+The realtime SSE service is also internal-only and expects the same `X-Internal-API-Key` header (Next.js proxies SSE streams to it).
+
 ## Deployment (Nginx)
 Recommended approach:
 - Public: Next.js on `/`
 - Public: Django on `/admin/`, `/static/`, `/media/`
 - Do **not** expose Django `/api/` publicly (it is protected, but should still be treated as internal-only)
+- Keep the realtime SSE service internal-only (Next.js proxies to it)
 
 Set env vars:
 - Django: `INTERNAL_API_KEY`
-- Next.js: `BACKEND_ORIGIN` (internal Django origin) and `INTERNAL_API_KEY` (same value)
+- Realtime: `INTERNAL_API_KEY` and `REALTIME_REDIS_URL` (optional; defaults to `CELERY_BROKER_URL`)
+- Next.js: `BACKEND_ORIGIN` (internal Django origin), `INTERNAL_API_KEY` (same value), `REALTIME_ORIGIN` (realtime service origin)
 
 ## Technologies
 Following technologies and libraries were used to create this project:
 * [Django](https://www.djangoproject.com)
 * [Django REST Framework](https://www.django-rest-framework.org)
+* [FastAPI](https://fastapi.tiangolo.com)
+* [Uvicorn](https://www.uvicorn.org)
 * [Celery](https://docs.celeryq.dev/en/stable)
 * [Next.js](https://nextjs.org)
 * [PostgreSQL](https://www.postgresql.org)

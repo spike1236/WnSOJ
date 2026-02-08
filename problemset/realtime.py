@@ -68,3 +68,15 @@ def open_submission_pubsub(submission_id: int) -> redis.client.PubSub:
     pubsub = _redis_client().pubsub(ignore_subscribe_messages=True)
     pubsub.subscribe(submission_events_channel(submission_id))
     return pubsub
+
+
+def open_pubsub_channels(channels: list[str]) -> redis.client.PubSub:
+    pubsub = _redis_client().pubsub(ignore_subscribe_messages=True)
+    if channels:
+        pubsub.subscribe(*channels)
+    return pubsub
+
+
+def open_submission_pubsub_many(submission_ids: list[int]) -> redis.client.PubSub:
+    channels = [submission_events_channel(int(sid)) for sid in submission_ids]
+    return open_pubsub_channels(channels)

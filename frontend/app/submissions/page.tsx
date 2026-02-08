@@ -1,7 +1,6 @@
 import Container from "@/components/Container";
-import StatusPill from "@/components/StatusPill";
+import SubmissionsTableClient from "@/components/SubmissionsTableClient";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime } from "@/lib/format";
 import type { ApiList, SubmissionListItem } from "@/lib/types";
 import Link from "next/link";
 
@@ -60,43 +59,7 @@ export default async function Page({
             </tr>
           </thead>
           <tbody className="divide-y">
-            {submissions.slice(0, 50).map((s) => (
-              <tr className="bg-white" key={s.id}>
-                <td className="px-4 py-3 font-mono">
-                  <Link className="text-blue-600 hover:underline" href={`/submission/${s.id}`}>
-                    {s.id}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-slate-700">{formatDateTime(s.send_time)}</td>
-                <td className="px-4 py-3">
-                  <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(s.username)}`}>
-                    {s.username}
-                  </Link>
-                </td>
-                <td className="px-4 py-3">
-                  <Link className="font-medium text-slate-900 hover:underline" href={`/problem/${s.problem_id}`}>
-                    {s.problem_title}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 hidden lg:table-cell text-slate-700">{s.language}</td>
-                <td className="px-4 py-3">
-                  <StatusPill verdict={s.verdict} />
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                  {s.time === null || s.time === undefined ? "—" : `${s.time} ms`}
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                  {s.memory === null || s.memory === undefined ? "—" : `${s.memory} KB`}
-                </td>
-              </tr>
-            ))}
-            {submissions.length === 0 ? (
-              <tr className="bg-white">
-                <td className="px-4 py-10 text-center text-slate-600" colSpan={8}>
-                  No submissions found.
-                </td>
-              </tr>
-            ) : null}
+            <SubmissionsTableClient initial={submissions.slice(0, 50)} />
           </tbody>
         </table>
       </div>
