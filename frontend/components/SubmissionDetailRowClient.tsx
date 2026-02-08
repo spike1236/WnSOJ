@@ -89,7 +89,11 @@ export default function SubmissionDetailRowClient(props: {
   return (
     <tr className="bg-white">
       <td className="px-4 py-3 font-mono text-slate-700">{props.id}</td>
-      <td className="px-4 py-3 text-slate-700">{formatDateTime(props.sendTime)}</td>
+      <td className="px-4 py-3 text-slate-700">
+        <time dateTime={props.sendTime} suppressHydrationWarning>
+          {formatDateTime(props.sendTime)}
+        </time>
+      </td>
       <td className="px-4 py-3">
         <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(props.username)}`}>
           {props.username}
@@ -102,7 +106,7 @@ export default function SubmissionDetailRowClient(props: {
       </td>
       <td className="px-4 py-3 text-slate-700">{props.language}</td>
       <td className="px-4 py-3">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col items-start gap-1">
           <StatusPill verdict={verdict} />
           {progressLabel ? <span className="text-xs text-slate-500">{progressLabel}</span> : null}
         </div>
