@@ -55,7 +55,10 @@ export default function StatusPill({ verdict }: { verdict: string | null | undef
 
   return (
     <span
-      className={cn("inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold", className)}
+      className={cn(
+        "inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-xs font-semibold whitespace-nowrap",
+        className
+      )}
       title={title}
     >
       {display}

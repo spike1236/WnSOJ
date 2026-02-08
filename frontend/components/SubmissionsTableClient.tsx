@@ -104,7 +104,11 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
               {s.id}
             </Link>
           </td>
-          <td className="px-4 py-3 text-slate-700">{formatDateTime(s.send_time)}</td>
+          <td className="px-4 py-3 text-slate-700">
+            <time dateTime={s.send_time} suppressHydrationWarning>
+              {formatDateTime(s.send_time)}
+            </time>
+          </td>
           <td className="px-4 py-3">
             <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(s.username)}`}>
               {s.username}
@@ -117,7 +121,7 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
           </td>
           <td className="px-4 py-3 hidden lg:table-cell text-slate-700">{s.language}</td>
           <td className="px-4 py-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col items-start gap-1">
               <StatusPill verdict={s.verdict} />
               {s.progressLabel ? <span className="text-xs text-slate-500">{s.progressLabel}</span> : null}
             </div>
@@ -140,4 +144,3 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
     </>
   );
 }
-
