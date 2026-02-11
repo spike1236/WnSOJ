@@ -1,8 +1,7 @@
 import Container from "@/components/Container";
 import ProblemNav from "@/components/ProblemNav";
-import StatusPill from "@/components/StatusPill";
+import SubmissionsTableClient from "@/components/SubmissionsTableClient";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime } from "@/lib/format";
 import type { ApiList, Problem, SubmissionListItem } from "@/lib/types";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -39,7 +38,7 @@ export default async function Page({
 
   const qs = new URLSearchParams();
   qs.set("compact", "1");
-  qs.set("limit", "100");
+  qs.set("limit", "50");
   qs.set("problem_id", problemId);
   if (username) qs.set("username", username);
   if (verdict) qs.set("verdict", verdict);
@@ -75,46 +74,16 @@ export default async function Page({
             <tr>
               <th className="px-4 py-3 font-semibold w-24">ID</th>
               <th className="px-4 py-3 font-semibold">Time</th>
-              <th className="px-4 py-3 font-semibold hidden md:table-cell">User</th>
+              <th className="px-4 py-3 font-semibold">User</th>
+              <th className="px-4 py-3 font-semibold">Problem</th>
               <th className="px-4 py-3 font-semibold hidden lg:table-cell">Language</th>
               <th className="px-4 py-3 font-semibold w-28">Verdict</th>
-              <th className="px-4 py-3 font-semibold w-28 hidden md:table-cell">Exec</th>
-              <th className="px-4 py-3 font-semibold w-28 hidden md:table-cell">Memory</th>
+              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Exec</th>
+              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Memory</th>
             </tr>
           </thead>
           <tbody className="divide-y">
-            {submissions.map((s) => (
-              <tr className="bg-white" key={s.id}>
-                <td className="px-4 py-3 font-mono">
-                  <Link className="text-blue-600 hover:underline" href={`/submission/${s.id}`}>
-                    {s.id}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-slate-700">{formatDateTime(s.send_time)}</td>
-                <td className="px-4 py-3 hidden md:table-cell">
-                  <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(s.username)}`}>
-                    {s.username}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 hidden lg:table-cell text-slate-700">{s.language}</td>
-                <td className="px-4 py-3">
-                  <StatusPill verdict={s.verdict} />
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                  {s.time === null || s.time === undefined ? "—" : `${s.time} ms`}
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell text-slate-700">
-                  {s.memory === null || s.memory === undefined ? "—" : `${s.memory} KB`}
-                </td>
-              </tr>
-            ))}
-            {submissions.length === 0 ? (
-              <tr className="bg-white">
-                <td className="px-4 py-10 text-center text-slate-600" colSpan={7}>
-                  No submissions found.
-                </td>
-              </tr>
-            ) : null}
+            <SubmissionsTableClient initial={submissions.slice(0, 50)} />
           </tbody>
         </table>
       </div>
