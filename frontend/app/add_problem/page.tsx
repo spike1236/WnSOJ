@@ -3,6 +3,7 @@ import CodeMirrorField from "@/components/CodeMirrorField";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { createProblemAction } from "@/app/actions/problems";
 import { backendFetchJson } from "@/lib/backend.server";
+import { asArray } from "@/lib/apiList";
 import type { ApiList, Category, UserDetail } from "@/lib/types";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -10,11 +11,6 @@ import { redirect } from "next/navigation";
 export const metadata = {
   title: "Add Problem"
 };
-
-function asArray<T>(data: ApiList<T>): T[] {
-  if (Array.isArray(data)) return data;
-  return data.results ?? [];
-}
 
 export default async function Page({
   searchParams

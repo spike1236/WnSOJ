@@ -1,7 +1,7 @@
 import subprocess
 import os
 from app.settings import ISOLATE_PATH
-from .realtime import publish_submission_event
+from .realtime import publish_submission_event, publish_submission_final
 
 
 def parse_meta_file(meta_file_path):
@@ -68,17 +68,7 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
         submission.time = 0
         submission.memory = 0
         submission.save()
-        publish_submission_event(
-            submission.id,
-            {
-                "kind": "final",
-                "id": submission.id,
-                "verdict": submission.verdict,
-                "time": submission.time,
-                "memory": submission.memory,
-                "updated_at": submission.updated_at.isoformat(),
-            },
-        )
+        publish_submission_final(submission)
         return
 
     filenames = sorted(os.listdir(input_dir))
@@ -147,14 +137,4 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
         ):
             submission.user.problems_unsolved.add(submission.problem)
     submission.save()
-    publish_submission_event(
-        submission.id,
-        {
-            "kind": "final",
-            "id": submission.id,
-            "verdict": submission.verdict,
-            "time": submission.time,
-            "memory": submission.memory,
-            "updated_at": submission.updated_at.isoformat(),
-        },
-    )
+    publish_submission_final(submission)

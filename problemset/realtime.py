@@ -57,6 +57,27 @@ def publish_submission_event(submission_id: int, payload: dict[str, Any], *, ttl
         return
 
 
+def publish_submission_final(submission: Any) -> None:
+    submission_id = getattr(submission, "id", None)
+    if not isinstance(submission_id, int):
+        return
+    verdict = getattr(submission, "verdict", None)
+    time_ms = getattr(submission, "time", None)
+    memory_kb = getattr(submission, "memory", None)
+    updated_at = getattr(submission, "updated_at", None)
+    publish_submission_event(
+        submission_id,
+        {
+            "kind": "final",
+            "id": submission_id,
+            "verdict": verdict,
+            "time": time_ms,
+            "memory": memory_kb,
+            "updated_at": updated_at.isoformat() if updated_at else None,
+        },
+    )
+
+
 def clear_submission_progress(submission_id: int) -> None:
     try:
         _redis_client().delete(submission_progress_key(submission_id))

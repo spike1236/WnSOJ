@@ -1,13 +1,9 @@
 import Container from "@/components/Container";
 import SubmissionsTableClient from "@/components/SubmissionsTableClient";
 import { backendFetchJson } from "@/lib/backend.server";
+import { asArray } from "@/lib/apiList";
 import type { ApiList, SubmissionListItem } from "@/lib/types";
 import Link from "next/link";
-
-function asArray<T>(data: ApiList<T>): T[] {
-  if (Array.isArray(data)) return data;
-  return data.results ?? [];
-}
 
 export const metadata = {
   title: "Submissions"

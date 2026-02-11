@@ -2,39 +2,15 @@ import "server-only";
 
 import { NextResponse } from "next/server";
 
+import { defaultMessageForStatus } from "@/lib/httpStatus";
+import { copyResponseHeadersToHeaders } from "@/lib/proxyHeaders.server";
+
 function realtimeOrigin() {
   return process.env.REALTIME_ORIGIN?.replace(/\/+$/, "") || "http://localhost:9000";
 }
 
 function internalApiKey() {
   return process.env.INTERNAL_API_KEY?.trim() || "";
-}
-
-function defaultMessageForStatus(status: number) {
-  if (status === 400) return "Bad request.";
-  if (status === 401) return "Not authenticated.";
-  if (status === 403) return "Forbidden.";
-  if (status === 404) return "Not found.";
-  if (status === 429) return "Too many requests.";
-  if (status >= 500) return "Server error.";
-  return `Request failed (${status}).`;
-}
-
-function copyResponseHeadersToHeaders(from: Response, to: Headers) {
-  for (const [key, value] of from.headers.entries()) {
-    const k = key.toLowerCase();
-    if (k === "content-encoding" || k === "content-length" || k === "connection" || k === "transfer-encoding") continue;
-    if (k === "set-cookie") continue;
-    to.set(key, value);
-  }
-  const anyHeaders = from.headers as unknown as { getSetCookie?: () => string[] };
-  const setCookies = typeof anyHeaders.getSetCookie === "function" ? anyHeaders.getSetCookie() : [];
-  if (setCookies.length) {
-    for (const c of setCookies) to.append("set-cookie", c);
-  } else {
-    const single = from.headers.get("set-cookie");
-    if (single) to.set("set-cookie", single);
-  }
 }
 
 export async function proxyToRealtimeStream(request: Request, path: string, init?: RequestInit) {
@@ -76,4 +52,3 @@ export async function proxyToRealtimeStream(request: Request, path: string, init
   copyResponseHeadersToHeaders(res, outHeaders);
   return new Response(res.body, { status: res.status, headers: outHeaders });
 }
-

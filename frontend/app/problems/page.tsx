@@ -1,16 +1,12 @@
 import Container from "@/components/Container";
 import { backendFetchJson } from "@/lib/backend.server";
+import { asArray } from "@/lib/apiList";
 import type { ApiList, Category } from "@/lib/types";
 import Link from "next/link";
 
 export const metadata = {
   title: "Problems"
 };
-
-function asArray<T>(data: ApiList<T>): T[] {
-  if (Array.isArray(data)) return data;
-  return data.results ?? [];
-}
 
 export default async function Page() {
   const categories = asArray(

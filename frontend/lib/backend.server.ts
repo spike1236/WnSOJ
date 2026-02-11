@@ -2,6 +2,8 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
+import { defaultMessageForStatus } from "@/lib/httpStatus";
+
 export class BackendFetchError extends Error {
   status: number;
   url: string;
@@ -30,16 +32,6 @@ type BackendFetchOptions = Omit<RequestInit, "headers"> & {
 
 function methodNeedsCsrf(method: string) {
   return ["POST", "PUT", "PATCH", "DELETE"].includes(method.toUpperCase());
-}
-
-function defaultMessageForStatus(status: number) {
-  if (status === 400) return "Bad request.";
-  if (status === 401) return "Not authenticated.";
-  if (status === 403) return "Forbidden.";
-  if (status === 404) return "Not found.";
-  if (status === 429) return "Too many requests.";
-  if (status >= 500) return "Server error.";
-  return `Request failed (${status}).`;
 }
 
 function detailFromJson(body: unknown): string | null {

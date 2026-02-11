@@ -1,14 +1,10 @@
 import Container from "@/components/Container";
 import Markdown from "@/components/Markdown";
 import { backendFetchJson } from "@/lib/backend.server";
+import { asArray } from "@/lib/apiList";
 import { formatDate, formatSalaryRange } from "@/lib/format";
 import type { ApiList, Job, UserDetail } from "@/lib/types";
 import Link from "next/link";
-
-function asArray<T>(data: ApiList<T>): T[] {
-  if (Array.isArray(data)) return data;
-  return data.results ?? [];
-}
 
 async function currentUser() {
   try {

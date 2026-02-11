@@ -2,15 +2,11 @@ import Container from "@/components/Container";
 import ProblemNav from "@/components/ProblemNav";
 import SubmissionsTableClient from "@/components/SubmissionsTableClient";
 import { backendFetchJson } from "@/lib/backend.server";
+import { asArray } from "@/lib/apiList";
 import type { ApiList, Problem, SubmissionListItem } from "@/lib/types";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cache } from "react";
-
-function asArray<T>(data: ApiList<T>): T[] {
-  if (Array.isArray(data)) return data;
-  return data.results ?? [];
-}
 
 const getProblem = cache(async (problemId: string) => {
   return await backendFetchJson<Problem>(`/api/problems/${encodeURIComponent(problemId)}/`);

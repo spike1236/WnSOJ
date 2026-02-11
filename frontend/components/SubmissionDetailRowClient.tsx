@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import StatusPill from "@/components/StatusPill";
 import { formatDateTime } from "@/lib/format";
+import { isFinalVerdictDisplay } from "@/lib/verdict";
 
 type StreamPayload = {
   kind?: string;
@@ -17,18 +18,6 @@ type StreamPayload = {
   total_tests?: number;
   stage?: string;
 };
-
-function verdictCode(raw: string | null | undefined): string | null {
-  const v = (raw ?? "").trim();
-  if (!v) return null;
-  if (v.toLowerCase() === "in queue") return "IQ";
-  const code = (v.split(/\s+/)[0] ?? "").toUpperCase();
-  return code || null;
-}
-
-function isFinalVerdict(code: string | null) {
-  return code === "AC" || code === "WA" || code === "TLE" || code === "MLE" || code === "CE" || code === "RE";
-}
 
 export default function SubmissionDetailRowClient(props: {
   id: number;
@@ -46,7 +35,7 @@ export default function SubmissionDetailRowClient(props: {
   const [memory, setMemory] = useState<number | null>(props.memory);
   const [progressLabel, setProgressLabel] = useState<string | null>(null);
 
-  const shouldConnect = useMemo(() => !isFinalVerdict(verdictCode(verdict)), [verdict]);
+  const shouldConnect = useMemo(() => !isFinalVerdictDisplay(verdict), [verdict]);
 
   useEffect(() => {
     if (!shouldConnect) return;

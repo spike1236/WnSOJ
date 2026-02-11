@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import StatusPill from "@/components/StatusPill";
 import { formatDateTime } from "@/lib/format";
 import type { SubmissionListItem } from "@/lib/types";
+import { isFinalVerdictDisplay } from "@/lib/verdict";
 
 type StreamPayload = {
   kind?: string;
@@ -18,18 +19,6 @@ type StreamPayload = {
   stage?: string;
 };
 
-function verdictCode(raw: string | null | undefined): string | null {
-  const v = (raw ?? "").trim();
-  if (!v) return null;
-  if (v.toLowerCase() === "in queue") return "IQ";
-  const code = (v.split(/\s+/)[0] ?? "").toUpperCase();
-  return code || null;
-}
-
-function isFinalCode(code: string | null) {
-  return code === "AC" || code === "WA" || code === "TLE" || code === "MLE" || code === "CE" || code === "RE";
-}
-
 export default function SubmissionsTableClient({ initial }: { initial: SubmissionListItem[] }) {
   const [rows, setRows] = useState<(SubmissionListItem & { progressLabel?: string | null })[]>(
     initial.map((r) => ({ ...r, progressLabel: null }))
@@ -38,7 +27,7 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
   const idsToWatch = useMemo(() => {
     const ids: number[] = [];
     for (const r of initial) {
-      if (!isFinalCode(verdictCode(r.verdict))) ids.push(r.id);
+      if (!isFinalVerdictDisplay(r.verdict)) ids.push(r.id);
     }
     return ids;
   }, [initial]);
