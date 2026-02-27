@@ -1,6 +1,8 @@
 import Container from "@/components/Container";
+import LocalTime from "@/components/LocalTime";
+import StatusPill from "@/components/StatusPill";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import type { OverviewResponse } from "@/lib/types";
 import Link from "next/link";
 
@@ -133,8 +135,13 @@ export default async function HomePage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs font-semibold text-slate-700">{submission.verdict || "-"}</div>
-                  <div className="text-xs text-slate-500">{formatDateTime(submission.send_time)}</div>
+                  <div className="flex flex-col items-end gap-1">
+                    <StatusPill verdict={submission.verdict} />
+                    {submission.progress_label ? <span className="text-xs text-slate-500">{submission.progress_label}</span> : null}
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    <LocalTime value={submission.send_time} />
+                  </div>
                 </div>
               </div>
             ))}

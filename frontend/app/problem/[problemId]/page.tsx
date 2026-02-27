@@ -2,6 +2,7 @@ import CodeEditor from "@/components/CodeEditor";
 import Container from "@/components/Container";
 import Markdown from "@/components/Markdown";
 import ProblemNav from "@/components/ProblemNav";
+import SubmitSolutionButton from "@/components/SubmitSolutionButton";
 import { submitSolutionAction } from "@/app/actions/submissions";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Problem } from "@/lib/types";
@@ -85,12 +86,7 @@ export default async function Page({
             <input name="problem_id" type="hidden" value={problem.id} />
             <CodeEditor name="code" />
             <div className="flex justify-end">
-              <button
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
-                type="submit"
-              >
-                Submit Solution
-              </button>
+              <SubmitSolutionButton />
             </div>
           </form>
         </div>

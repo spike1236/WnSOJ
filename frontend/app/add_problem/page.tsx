@@ -1,5 +1,6 @@
 import Container from "@/components/Container";
 import CodeMirrorField from "@/components/CodeMirrorField";
+import FormSubmitButton from "@/components/FormSubmitButton";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { createProblemAction } from "@/app/actions/problems";
 import { backendFetchJson } from "@/lib/backend.server";
@@ -152,12 +153,11 @@ export default async function Page({
           </div>
 
           <div className="flex justify-end">
-            <button
+            <FormSubmitButton
               className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
-              type="submit"
-            >
-              Create Problem
-            </button>
+              idleLabel="Create Problem"
+              pendingLabel="Creating..."
+            />
           </div>
         </form>
       </div>

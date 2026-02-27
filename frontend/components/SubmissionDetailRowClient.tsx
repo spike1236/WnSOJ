@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import LocalTime from "@/components/LocalTime";
 import StatusPill from "@/components/StatusPill";
-import { formatDateTime } from "@/lib/format";
 import { isFinalVerdictDisplay } from "@/lib/verdict";
 
 type StreamPayload = {
@@ -18,6 +18,27 @@ type StreamPayload = {
   total_tests?: number;
   stage?: string;
 };
+
+function progressLabelFromPayload(payload: StreamPayload): string | null {
+  if (
+    payload.kind === "progress" &&
+    payload.stage === "test" &&
+    typeof payload.current_test === "number" &&
+    typeof payload.total_tests === "number" &&
+    payload.current_test > 0 &&
+    payload.total_tests > 0
+  ) {
+    return `Testing ${payload.current_test}/${payload.total_tests}`;
+  }
+
+  const raw = (payload.verdict ?? "").trim();
+  const parts = raw.split(/\s+/).filter(Boolean);
+  if ((parts[0] ?? "").toUpperCase() === "T" && parts[1]) {
+    return `Testing #${parts[1]}`;
+  }
+
+  return null;
+}
 
 export default function SubmissionDetailRowClient(props: {
   id: number;
@@ -47,8 +68,9 @@ export default function SubmissionDetailRowClient(props: {
       if (payload.verdict !== undefined) setVerdict(payload.verdict ?? null);
       if (payload.time !== undefined) setTime(payload.time ?? null);
       if (payload.memory !== undefined) setMemory(payload.memory ?? null);
-      if (payload.kind === "progress" && payload.stage === "test" && payload.current_test && payload.total_tests) {
-        setProgressLabel(`Testing ${payload.current_test}/${payload.total_tests}`);
+      const label = progressLabelFromPayload(payload);
+      if (label) {
+        setProgressLabel(label);
       } else {
         setProgressLabel(null);
       }
@@ -67,6 +89,7 @@ export default function SubmissionDetailRowClient(props: {
     };
 
     es.addEventListener("snapshot", onAnyEvent);
+    es.addEventListener("progress", onAnyEvent);
     es.addEventListener("final", onAnyEvent);
     es.onmessage = onAnyEvent;
 
@@ -79,9 +102,7 @@ export default function SubmissionDetailRowClient(props: {
     <tr className="bg-white">
       <td className="px-4 py-3 font-mono text-slate-700">{props.id}</td>
       <td className="px-4 py-3 text-slate-700">
-        <time dateTime={props.sendTime} suppressHydrationWarning>
-          {formatDateTime(props.sendTime)}
-        </time>
+        <LocalTime value={props.sendTime} />
       </td>
       <td className="px-4 py-3">
         <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(props.username)}`}>

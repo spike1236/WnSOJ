@@ -27,6 +27,7 @@ from .serializers import (
     SubmissionListSerializer,
     SubmissionSerializer,
 )
+from .realtime import get_submission_progress
 
 
 def home_page(request):
@@ -224,6 +225,34 @@ def faq(request):
 class SiteOverviewAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
+    @staticmethod
+    def _attach_progress(items: list[dict]) -> list[dict]:
+        for item in items:
+            try:
+                sid = int(item.get("id"))
+            except (TypeError, ValueError):
+                continue
+            progress = get_submission_progress(sid)
+            if not isinstance(progress, dict):
+                continue
+            if progress.get("kind") != "progress":
+                continue
+            current_test = progress.get("current_test")
+            total_tests = progress.get("total_tests")
+            stage = progress.get("stage")
+            verdict = progress.get("verdict")
+            if isinstance(verdict, str) and verdict.strip():
+                item["verdict"] = verdict
+            if (
+                stage == "test"
+                and isinstance(current_test, int)
+                and isinstance(total_tests, int)
+                and current_test > 0
+                and total_tests > 0
+            ):
+                item["progress_label"] = f"Testing {current_test}/{total_tests}"
+        return items
+
     def get(self, request):
         categories_qs = Category.objects.all().order_by("id")
         recent_submissions_qs = (
@@ -241,6 +270,10 @@ class SiteOverviewAPIView(APIView):
             .annotate(problem_count=Count("problems", distinct=True))
             .order_by("-problem_count", "long_name")[:6]
         )
+
+        recent_submissions = SubmissionListSerializer(
+            recent_submissions_qs, many=True
+        ).data
 
         payload = {
             "platform": {
@@ -262,9 +295,7 @@ class SiteOverviewAPIView(APIView):
                 }
                 for cat in trending_categories
             ],
-            "recent_submissions": SubmissionListSerializer(
-                recent_submissions_qs, many=True
-            ).data,
+            "recent_submissions": self._attach_progress(recent_submissions),
             "recent_jobs": JobListSerializer(recent_jobs_qs, many=True).data,
             "viewer": None,
         }
@@ -294,6 +325,9 @@ class SiteOverviewAPIView(APIView):
                 .order_by("-solved_count", "id")[:5]
             )
             user_submissions = Submission.objects.filter(user=user)
+            viewer_recent = SubmissionListSerializer(
+                user_submissions.select_related("problem").order_by("-id")[:6], many=True
+            ).data
             payload["viewer"] = {
                 "username": user.username,
                 "is_staff": bool(user.is_staff),
@@ -302,9 +336,7 @@ class SiteOverviewAPIView(APIView):
                 "attempted_count": user.problems_unsolved.count(),
                 "submission_count": user_submissions.count(),
                 "queued_count": user_submissions.filter(verdict="IQ").count(),
-                "recent_submissions": SubmissionListSerializer(
-                    user_submissions.select_related("problem").order_by("-id")[:6], many=True
-                ).data,
+                "recent_submissions": self._attach_progress(viewer_recent),
                 "recommended_problems": ProblemListSerializer(
                     recommended_qs, many=True
                 ).data,

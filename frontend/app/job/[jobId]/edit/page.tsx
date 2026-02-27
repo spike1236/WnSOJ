@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import FormSubmitButton from "@/components/FormSubmitButton";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { updateJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
@@ -134,12 +135,11 @@ export default async function Page({
           </div>
 
           <div className="flex justify-end gap-2">
-            <button
+            <FormSubmitButton
               className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
-              type="submit"
-            >
-              Save Changes
-            </button>
+              idleLabel="Save Changes"
+              pendingLabel="Saving..."
+            />
             <Link
               className="inline-flex h-11 items-center justify-center rounded-lg border px-5 text-sm font-medium hover:bg-slate-50"
               href={`/job/${job.id}`}

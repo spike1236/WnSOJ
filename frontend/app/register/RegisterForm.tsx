@@ -2,7 +2,7 @@
 
 import { csrfFetch } from "@/lib/csrf";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 async function parseErrorResponse(res: Response) {
   function pickErrorMessage(value: unknown): string | null {
@@ -45,9 +45,12 @@ export default function RegisterForm({ initialError }: { initialError?: string |
   const router = useRouter();
   const [error, setError] = useState<string | null>(initialError ?? null);
   const [busy, setBusy] = useState(false);
+  const lockRef = useRef(false);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (lockRef.current || busy) return;
+    lockRef.current = true;
     setError(null);
     setBusy(true);
     try {
@@ -64,6 +67,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
       setError("Request failed");
     } finally {
       setBusy(false);
+      lockRef.current = false;
     }
   }
 

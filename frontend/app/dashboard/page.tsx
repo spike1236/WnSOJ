@@ -1,7 +1,8 @@
 import Container from "@/components/Container";
+import LocalTime from "@/components/LocalTime";
 import StatusPill from "@/components/StatusPill";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import type { OverviewResponse } from "@/lib/types";
 import Link from "next/link";
 
@@ -93,9 +94,16 @@ export default async function Page() {
                   <Link className="text-sm font-semibold text-slate-900 hover:text-[#304765]" href={`/problem/${submission.problem_id}`}>
                     {submission.problem_title}
                   </Link>
-                  <div className="text-xs text-slate-500">#{submission.id} · {formatDateTime(submission.send_time)}</div>
+                  <div className="text-xs text-slate-500">
+                    #{submission.id} · <LocalTime value={submission.send_time} />
+                  </div>
                 </div>
-                <StatusPill verdict={submission.verdict} />
+                <div className="flex flex-col items-end gap-1">
+                  <StatusPill verdict={submission.verdict} />
+                  {submission.progress_label ? (
+                    <span className="text-xs text-slate-500">{submission.progress_label}</span>
+                  ) : null}
+                </div>
               </div>
             ))}
             {(viewer ? viewer.recent_submissions : overview.recent_submissions).length === 0 ? (

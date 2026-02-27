@@ -3,7 +3,7 @@
 import type { UserDetail } from "@/lib/types";
 import { csrfFetch } from "@/lib/csrf";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 type Notice = { tone: "success" | "error"; message: string } | null;
 
@@ -53,11 +53,16 @@ export default function EditProfileClient({ user }: { user: UserDetail }) {
   const router = useRouter();
   const [notice, setNotice] = useState<Notice>(null);
   const [busy, setBusy] = useState<null | "profile" | "icon" | "password">(null);
+  const iconLockRef = useRef(false);
+  const profileLockRef = useRef(false);
+  const passwordLockRef = useRef(false);
 
   const profileHref = useMemo(() => `/profile/${encodeURIComponent(user.username)}`, [user.username]);
 
   async function handleUpdateIcon(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (iconLockRef.current || busy === "icon") return;
+    iconLockRef.current = true;
     setNotice(null);
     setBusy("icon");
     try {
@@ -82,11 +87,14 @@ export default function EditProfileClient({ user }: { user: UserDetail }) {
       setNotice({ tone: "error", message: errorToMessage(e) });
     } finally {
       setBusy(null);
+      iconLockRef.current = false;
     }
   }
 
   async function handleUpdateProfile(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (profileLockRef.current || busy === "profile") return;
+    profileLockRef.current = true;
     setNotice(null);
     setBusy("profile");
     try {
@@ -114,11 +122,14 @@ export default function EditProfileClient({ user }: { user: UserDetail }) {
       setNotice({ tone: "error", message: errorToMessage(e) });
     } finally {
       setBusy(null);
+      profileLockRef.current = false;
     }
   }
 
   async function handleChangePassword(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (passwordLockRef.current || busy === "password") return;
+    passwordLockRef.current = true;
     setNotice(null);
     setBusy("password");
     try {
@@ -145,6 +156,7 @@ export default function EditProfileClient({ user }: { user: UserDetail }) {
       setNotice({ tone: "error", message: errorToMessage(e) });
     } finally {
       setBusy(null);
+      passwordLockRef.current = false;
     }
   }
 

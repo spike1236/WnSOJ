@@ -1,8 +1,10 @@
 import Container from "@/components/Container";
+import FormSubmitButton from "@/components/FormSubmitButton";
+import LocalTime from "@/components/LocalTime";
 import Markdown from "@/components/Markdown";
 import { deleteJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime, formatSalaryRange } from "@/lib/format";
+import { formatSalaryRange } from "@/lib/format";
 import type { Job, UserDetail } from "@/lib/types";
 import Link from "next/link";
 
@@ -56,12 +58,11 @@ export default async function Page({
           </Link>
           <form action={deleteJobAction}>
             <input name="job_id" type="hidden" value={job.id} />
-            <button
+            <FormSubmitButton
               className="inline-flex items-center justify-center rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700"
-              type="submit"
-            >
-              Delete
-            </button>
+              idleLabel="Delete"
+              pendingLabel="Deleting..."
+            />
           </form>
         </div>
       ) : null}
@@ -86,7 +87,9 @@ export default async function Page({
           </div>
           <div>
             <div className="text-xs font-semibold text-slate-600">Posted On</div>
-            <div className="mt-1 text-slate-900">{formatDateTime(job.created_at)}</div>
+            <div className="mt-1 text-slate-900">
+              <LocalTime value={job.created_at} />
+            </div>
           </div>
         </div>
       </div>

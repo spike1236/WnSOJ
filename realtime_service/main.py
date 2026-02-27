@@ -125,11 +125,12 @@ async def stream_submission(request: Request, submission_id: int):
                                 yield _sse(obj, "final")
                                 return
                             if isinstance(obj, dict):
-                                yield _sse(obj)
+                                event_name = "progress" if obj.get("kind") == "progress" else None
+                                yield _sse(obj, event_name)
                             else:
-                                yield _sse({"kind": "progress", "id": submission_id, "verdict": data})
+                                yield _sse({"kind": "progress", "id": submission_id, "verdict": data}, "progress")
                         except Exception:
-                            yield _sse({"kind": "progress", "id": submission_id, "verdict": data})
+                            yield _sse({"kind": "progress", "id": submission_id, "verdict": data}, "progress")
                 else:
                     now = time.monotonic()
                     if now - last_ping >= 15:
@@ -206,13 +207,14 @@ async def stream_submissions(request: Request, ids: str):
                                     pending.discard(sid)
                                 yield _sse(obj, "final")
                             elif isinstance(obj, dict):
-                                yield _sse(obj)
+                                event_name = "progress" if obj.get("kind") == "progress" else None
+                                yield _sse(obj, event_name)
                             else:
                                 sid = _submission_id_from_channel(message.get("channel"))
-                                yield _sse({"kind": "progress", "id": sid, "verdict": data})
+                                yield _sse({"kind": "progress", "id": sid, "verdict": data}, "progress")
                         except Exception:
                             sid = _submission_id_from_channel(message.get("channel"))
-                            yield _sse({"kind": "progress", "id": sid, "verdict": data})
+                            yield _sse({"kind": "progress", "id": sid, "verdict": data}, "progress")
                 else:
                     now = time.monotonic()
                     if now - last_ping >= 15:

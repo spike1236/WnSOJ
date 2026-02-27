@@ -92,6 +92,7 @@ export type SubmissionListItem = {
   language: string;
   send_time: string;
   updated_at: string;
+  progress_label?: string;
 };
 
 export type SalaryRange = {

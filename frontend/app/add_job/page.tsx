@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import FormSubmitButton from "@/components/FormSubmitButton";
 import MarkdownEditor from "@/components/MarkdownEditor";
 import { createJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
@@ -139,12 +140,11 @@ export default async function Page({
           </div>
 
           <div className="flex justify-end">
-            <button
+            <FormSubmitButton
               className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
-              type="submit"
-            >
-              Submit
-            </button>
+              idleLabel="Submit"
+              pendingLabel="Submitting..."
+            />
           </div>
         </form>
       </div>
