@@ -1,14 +1,20 @@
-# problemset/serializers.py
-
 from rest_framework import serializers
 from .models import Category, Problem, Submission
 from accounts.serializers import UserSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    problem_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_problem_count(self, obj: Category) -> int:
+        value = getattr(obj, "problem_count", None)
+        if isinstance(value, int):
+            return value
+        return obj.problems.count()
+
     class Meta:
         model = Category
-        fields = ["id", "short_name", "long_name", "img_url"]
+        fields = ["id", "short_name", "long_name", "img_url", "problem_count"]
 
 
 class ProblemPublicSerializer(serializers.ModelSerializer):

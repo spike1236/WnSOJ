@@ -5,6 +5,7 @@ from .forms import AddJobForm
 from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.authentication import SessionAuthentication
+from django.db.models import Q
 from .serializers import JobListSerializer, JobSerializer
 
 
@@ -225,6 +226,24 @@ class JobAPIViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Only business accounts can create jobs.")
 
         serializer.save(user=user)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        params = self.request.query_params
+
+        query = (params.get("q") or "").strip()
+        if query:
+            qs = qs.filter(Q(title__icontains=query) | Q(info__icontains=query))
+
+        location = (params.get("location") or "").strip()
+        if location:
+            qs = qs.filter(location__icontains=location)
+
+        author = (params.get("author") or "").strip()
+        if author:
+            qs = qs.filter(user__username=author)
+
+        return qs
 
     def perform_update(self, serializer):
         job = self.get_object()

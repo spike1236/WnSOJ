@@ -14,6 +14,10 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.db.models import Count, Exists, OuterRef, Prefetch
+from rest_framework.views import APIView
+from accounts.models import User
+from jobboard.models import Job
+from jobboard.serializers import JobListSerializer
 from .serializers import (
     CategorySerializer,
     ProblemListSerializer,
@@ -217,8 +221,100 @@ def faq(request):
     return render(request, "faq.html", {"title": "FAQ | WnSOJ", "navbar_item_id": 4})
 
 
+class SiteOverviewAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        categories_qs = Category.objects.all().order_by("id")
+        recent_submissions_qs = (
+            Submission.objects.select_related("user", "problem").order_by("-id")[:8]
+        )
+        recent_jobs_qs = Job.objects.select_related("user").order_by("-created_at")[:6]
+
+        finalized_qs = Submission.objects.exclude(verdict="IQ")
+        finalized_count = finalized_qs.count()
+        accepted_count = finalized_qs.filter(verdict__startswith="AC").count()
+        acceptance_rate = round(accepted_count * 100 / finalized_count, 1) if finalized_count else 0.0
+
+        trending_categories = (
+            Category.objects.exclude(short_name="problemset")
+            .annotate(problem_count=Count("problems", distinct=True))
+            .order_by("-problem_count", "long_name")[:6]
+        )
+
+        payload = {
+            "platform": {
+                "users": User.objects.count(),
+                "problems": Problem.objects.count(),
+                "jobs": Job.objects.count(),
+                "submissions": Submission.objects.count(),
+                "pending_submissions": Submission.objects.filter(verdict="IQ").count(),
+                "accepted_submissions": accepted_count,
+                "acceptance_rate": acceptance_rate,
+            },
+            "trending_categories": [
+                {
+                    "id": cat.id,
+                    "short_name": cat.short_name,
+                    "long_name": cat.long_name,
+                    "img_url": cat.img_url,
+                    "problem_count": cat.problem_count,
+                }
+                for cat in trending_categories
+            ],
+            "recent_submissions": SubmissionListSerializer(
+                recent_submissions_qs, many=True
+            ).data,
+            "recent_jobs": JobListSerializer(recent_jobs_qs, many=True).data,
+            "viewer": None,
+        }
+
+        user = getattr(request, "user", None)
+        if user and getattr(user, "is_authenticated", False):
+            solved_through = Problem.users_solved.through
+            unsolved_through = Problem.users_unsolved.through
+            recommended_qs = (
+                Problem.objects.prefetch_related(
+                    Prefetch("categories", queryset=categories_qs)
+                )
+                .annotate(solved_count=Count("users_solved", distinct=True))
+                .annotate(
+                    is_solved=Exists(
+                        solved_through.objects.filter(
+                            user_id=user.id, problem_id=OuterRef("pk")
+                        )
+                    ),
+                    is_attempted=Exists(
+                        unsolved_through.objects.filter(
+                            user_id=user.id, problem_id=OuterRef("pk")
+                        )
+                    ),
+                )
+                .filter(is_solved=False)
+                .order_by("-solved_count", "id")[:5]
+            )
+            user_submissions = Submission.objects.filter(user=user)
+            payload["viewer"] = {
+                "username": user.username,
+                "is_staff": bool(user.is_staff),
+                "is_business": bool(getattr(user, "account_type", 1) == 2),
+                "solved_count": user.problems_solved.count(),
+                "attempted_count": user.problems_unsolved.count(),
+                "submission_count": user_submissions.count(),
+                "queued_count": user_submissions.filter(verdict="IQ").count(),
+                "recent_submissions": SubmissionListSerializer(
+                    user_submissions.select_related("problem").order_by("-id")[:6], many=True
+                ).data,
+                "recommended_problems": ProblemListSerializer(
+                    recommended_qs, many=True
+                ).data,
+            }
+
+        return Response(payload)
+
+
 class CategoryAPIViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Category.objects.all().order_by("id")
+    queryset = Category.objects.annotate(problem_count=Count("problems", distinct=True)).order_by("id")
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
@@ -266,6 +362,17 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
             parts = [p.strip() for p in category_param.split(",") if p.strip()]
             if parts:
                 qs = qs.filter(categories__short_name__in=parts).distinct()
+
+        query = (self.request.query_params.get("q") or "").strip()
+        if query:
+            qs = qs.filter(title__icontains=query)
+
+        sort = (self.request.query_params.get("sort") or "").strip().lower()
+        if sort == "solved":
+            qs = qs.order_by("-solved_count", "id")
+        elif sort == "new":
+            qs = qs.order_by("-id")
+
         return qs
 
     def get_serializer_class(self):

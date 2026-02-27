@@ -80,10 +80,10 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
       <form className="grid gap-4" onSubmit={onSubmit}>
         <div className="grid gap-1.5">
           <label className="text-sm font-medium text-slate-700" htmlFor="username">
-            Username
+            Username <span className="text-red-500">*</span>
           </label>
           <input
-            className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+            className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
             disabled={busy}
             id="username"
             name="username"
@@ -93,10 +93,10 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
         </div>
         <div className="grid gap-1.5">
           <label className="text-sm font-medium text-slate-700" htmlFor="password">
-            Password
+            Password <span className="text-red-500">*</span>
           </label>
           <input
-            className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+            className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
             disabled={busy}
             id="password"
             name="password"
@@ -105,7 +105,7 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
           />
         </div>
         <button
-          className="mt-2 inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+          className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-[#304765] text-sm font-semibold text-white hover:bg-[#25374e] disabled:opacity-60"
           disabled={busy}
           type="submit"
         >

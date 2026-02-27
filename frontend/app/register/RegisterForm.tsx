@@ -76,10 +76,10 @@ export default function RegisterForm({ initialError }: { initialError?: string |
         <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="username">
-              Username
+              Username <span className="text-red-500">*</span>
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="username"
               maxLength={16}
@@ -96,11 +96,10 @@ export default function RegisterForm({ initialError }: { initialError?: string |
               Email
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="email"
               name="email"
-              required
               type="email"
             />
           </div>
@@ -109,7 +108,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
               First name
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="first_name"
               name="first_name"
@@ -121,7 +120,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
               Last name
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="last_name"
               name="last_name"
@@ -133,7 +132,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
               Phone number
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="phone_number"
               name="phone_number"
@@ -145,7 +144,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
               Profile picture
             </label>
             <input
-              className="h-11 rounded-lg border bg-white px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="icon"
               name="icon"
@@ -157,10 +156,10 @@ export default function RegisterForm({ initialError }: { initialError?: string |
         <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="password">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="password"
               name="password"
@@ -170,10 +169,10 @@ export default function RegisterForm({ initialError }: { initialError?: string |
           </div>
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="password2">
-              Confirm password
+              Confirm password <span className="text-red-500">*</span>
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none ring-[#304765] focus:ring-2"
               disabled={busy}
               id="password2"
               name="password2"
@@ -189,7 +188,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
         </label>
 
         <button
-          className="mt-2 inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+          className="mt-2 inline-flex h-11 items-center justify-center rounded-full bg-[#304765] text-sm font-semibold text-white hover:bg-[#25374e] disabled:opacity-60"
           disabled={busy}
           type="submit"
         >

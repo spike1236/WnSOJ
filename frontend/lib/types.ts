@@ -10,6 +10,11 @@ export type Category = {
   short_name: string;
   long_name: string;
   img_url: string;
+  problem_count?: number;
+};
+
+export type CategoryTrend = Category & {
+  problem_count: number;
 };
 
 export type UserPublic = {
@@ -113,4 +118,34 @@ export type JobListItem = {
   username: string;
   salary_range: SalaryRange | null;
   created_at: string;
+};
+
+export type OverviewPlatform = {
+  users: number;
+  problems: number;
+  jobs: number;
+  submissions: number;
+  pending_submissions: number;
+  accepted_submissions: number;
+  acceptance_rate: number;
+};
+
+export type OverviewViewer = {
+  username: string;
+  is_staff: boolean;
+  is_business: boolean;
+  solved_count: number;
+  attempted_count: number;
+  submission_count: number;
+  queued_count: number;
+  recent_submissions: SubmissionListItem[];
+  recommended_problems: ProblemListItem[];
+};
+
+export type OverviewResponse = {
+  platform: OverviewPlatform;
+  trending_categories: CategoryTrend[];
+  recent_submissions: SubmissionListItem[];
+  recent_jobs: JobListItem[];
+  viewer: OverviewViewer | null;
 };

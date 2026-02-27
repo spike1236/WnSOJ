@@ -4,98 +4,76 @@ export const metadata = {
   title: "FAQ"
 };
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="card-surface rounded-3xl p-6 md:p-7">
+      <h2 className="text-xl font-semibold tracking-tight text-slate-900">{title}</h2>
+      <div className="mt-4 text-sm leading-7 text-slate-700">{children}</div>
+    </section>
+  );
+}
+
 export default function Page() {
   return (
     <Container className="py-10">
-      <div className="rounded-2xl border bg-white p-8 shadow-sm">
-        <p className="text-slate-700">
-          This site contains an archive of Olympiad programming tasks with a built-in testing system and a work search
-          platform.
+      <section className="card-surface lift-in rounded-3xl p-6 md:p-8">
+        <h1 className="text-3xl font-semibold tracking-tight text-slate-900">FAQ</h1>
+        <p className="mt-3 text-sm text-slate-600">
+          WnSOJ combines competitive programming practice with a built-in job board for engineering roles.
         </p>
-        <ul className="mt-3 list-disc pl-6 text-slate-700">
-          <li>To open problems list go to the Problems section.</li>
-          <li>To open the work search platform go to the Jobs section.</li>
-        </ul>
+      </section>
 
-        <hr className="my-8" />
-
-        <h2 className="text-xl font-semibold tracking-tight">Problems</h2>
-        <p className="mt-3 text-slate-700">
-          In Problems you can solve various programming and math tasks. Open a problem, paste your code into the editor
-          and submit. The system tests your solution and reports a verdict.
-        </p>
-        <p className="mt-3 text-slate-700">Testing system uses the following commands:</p>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <div className="rounded-xl border bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">GNU C++23</div>
-            <div className="mt-2 rounded-lg border bg-white px-3 py-2 font-mono text-xs text-slate-700">
-              g++ -O2 -std=c++23 -DONLINE_JUDGE source.cpp -o source
+      <div className="stagger-in mt-6 grid gap-6">
+        <Section title="How problem solving works">
+          <p>Open any task from the Problems section, submit C++ or Python code, and wait for the verdict pipeline.</p>
+          <p className="mt-3">Current runner commands:</p>
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-white/80 p-4">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">GNU C++23</div>
+              <pre className="mt-2 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                g++ -O2 -std=c++23 -DONLINE_JUDGE source.cpp -o source
+              </pre>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-white/80 p-4">
+              <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Python 3.12</div>
+              <pre className="mt-2 overflow-x-auto rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                python3.12 source.py
+              </pre>
             </div>
           </div>
-          <div className="rounded-xl border bg-slate-50 p-4">
-            <div className="text-sm font-semibold text-slate-900">Python 3.12</div>
-            <div className="mt-2 rounded-lg border bg-white px-3 py-2 font-mono text-xs text-slate-700">
-              python3.12 source.py
-            </div>
+        </Section>
+
+        <Section title="Verdict glossary">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/80">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-100/70 text-slate-700">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Code</th>
+                  <th className="px-4 py-3 font-semibold">Meaning</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                <tr><td className="px-4 py-3 font-mono">IQ</td><td className="px-4 py-3">In queue, waiting to run.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">T</td><td className="px-4 py-3">Testing is in progress (live feed may show current test as x/y).</td></tr>
+                <tr><td className="px-4 py-3 font-mono">AC</td><td className="px-4 py-3">Accepted, all tests passed.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">WA</td><td className="px-4 py-3">Wrong answer on at least one testcase.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">CE</td><td className="px-4 py-3">Compilation error.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">RE</td><td className="px-4 py-3">Runtime error.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">TLE</td><td className="px-4 py-3">Execution exceeded time limit.</td></tr>
+                <tr><td className="px-4 py-3 font-mono">MLE</td><td className="px-4 py-3">Execution exceeded memory limit.</td></tr>
+              </tbody>
+            </table>
           </div>
-        </div>
+          <p className="mt-3 text-xs text-slate-500">
+            Current test progress (for example, &quot;Testing 3/20&quot;) is streamed in submissions feed tables.
+          </p>
+        </Section>
 
-        <div className="mt-6 overflow-hidden rounded-xl border">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-slate-700">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Verdict</th>
-                <th className="px-4 py-3 font-semibold">Description</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-emerald-700">AC</td>
-                <td className="px-4 py-3 text-slate-700">Accepted. Program passed all tests.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-slate-700">IQ</td>
-                <td className="px-4 py-3 text-slate-700">In queue. Solution is waiting for testing.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-amber-700">CE</td>
-                <td className="px-4 py-3 text-slate-700">Compilation error.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-rose-700">WA</td>
-                <td className="px-4 py-3 text-slate-700">Wrong answer.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-rose-700">RE</td>
-                <td className="px-4 py-3 text-slate-700">Runtime error.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-rose-700">TLE</td>
-                <td className="px-4 py-3 text-slate-700">Time limit exceeded.</td>
-              </tr>
-              <tr className="bg-white">
-                <td className="px-4 py-3 font-mono text-rose-700">MLE</td>
-                <td className="px-4 py-3 text-slate-700">Memory limit exceeded.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <hr className="my-8" />
-
-        <h2 className="text-xl font-semibold tracking-tight">Jobs</h2>
-        <p className="mt-3 text-slate-700">In Jobs you can find work and post listings if you have a business account.</p>
-        <ol className="mt-3 list-decimal pl-6 text-slate-700">
-          <li>Common account: browse jobs and contact employers by email or phone.</li>
-          <li className="mt-2">
-            Business account: publish, edit or delete jobs, and communicate with candidates.
-          </li>
-        </ol>
-
-        <hr className="my-8" />
-
-        <h2 className="text-xl font-semibold tracking-tight">API</h2>
-        <p className="mt-3 text-slate-700">The web app uses internal APIs behind the frontend; they are not public.</p>
+        <Section title="Jobs and account types">
+          <p>Common accounts can browse and apply to job opportunities.</p>
+          <p>Business accounts can create, edit, and remove job posts.</p>
+          <p className="mt-3">You can manage account details and avatar from the profile settings page.</p>
+        </Section>
       </div>
     </Container>
   );

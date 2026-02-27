@@ -15,8 +15,8 @@ export default async function Page({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const sp = await searchParams;
-  const username = typeof sp.username === "string" ? sp.username : null;
-  const verdict = typeof sp.verdict === "string" ? sp.verdict : null;
+  const username = typeof sp.username === "string" ? sp.username.trim() : "";
+  const verdict = typeof sp.verdict === "string" ? sp.verdict.trim().toUpperCase() : "";
 
   const qs = new URLSearchParams();
   qs.set("compact", "1");
@@ -28,37 +28,64 @@ export default async function Page({
 
   return (
     <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Submissions</h1>
-          <p className="mt-1 text-slate-600">
-            {username ? `User: ${username}` : "All users"} {verdict ? `· Verdict: ${verdict}` : ""}
-          </p>
+      <section className="card-surface lift-in rounded-3xl p-6 md:p-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-900">Submission Feed</h1>
+            <p className="mt-2 text-sm text-slate-600">Monitor verdicts in real time and drill down by user or result.</p>
+          </div>
+          <Link className="text-sm font-semibold text-[#304765] hover:underline" href="/problems">
+            Browse Problems
+          </Link>
         </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href="/problems">
-          Browse problems
-        </Link>
-      </div>
 
-      <div className="mt-6 overflow-hidden rounded-2xl border bg-white shadow-sm">
+        <form action="/submissions" className="mt-4 grid gap-3 md:grid-cols-[1fr_180px_auto]" method="GET">
+          <input
+            className="h-11 rounded-full border border-slate-300 bg-white px-4 text-sm outline-none ring-[#304765] focus:ring-2"
+            defaultValue={username}
+            name="username"
+            placeholder="Filter by username"
+            type="text"
+          />
+          <select
+            className="h-11 rounded-full border border-slate-300 bg-white px-4 text-sm outline-none ring-[#304765] focus:ring-2"
+            defaultValue={verdict}
+            name="verdict"
+          >
+            <option value="">All verdicts</option>
+            <option value="IQ">IQ</option>
+            <option value="AC">AC</option>
+            <option value="WA">WA</option>
+            <option value="CE">CE</option>
+            <option value="RE">RE</option>
+            <option value="TLE">TLE</option>
+            <option value="MLE">MLE</option>
+          </select>
+          <button className="h-11 rounded-full bg-[#304765] px-5 text-sm font-semibold text-white hover:bg-[#25374e]" type="submit">
+            Apply
+          </button>
+        </form>
+      </section>
+
+      <section className="card-surface mt-6 overflow-hidden rounded-3xl">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-700">
+          <thead className="bg-slate-100/70 text-slate-700">
             <tr>
-              <th className="px-4 py-3 font-semibold w-24">ID</th>
+              <th className="w-24 px-4 py-3 font-semibold">ID</th>
               <th className="px-4 py-3 font-semibold">Time</th>
               <th className="px-4 py-3 font-semibold">User</th>
               <th className="px-4 py-3 font-semibold">Problem</th>
-              <th className="px-4 py-3 font-semibold hidden lg:table-cell">Language</th>
-              <th className="px-4 py-3 font-semibold w-28">Verdict</th>
-              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Exec</th>
-              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Memory</th>
+              <th className="hidden px-4 py-3 font-semibold lg:table-cell">Language</th>
+              <th className="w-28 px-4 py-3 font-semibold">Verdict</th>
+              <th className="hidden w-28 px-4 py-3 font-semibold md:table-cell">Exec</th>
+              <th className="hidden w-28 px-4 py-3 font-semibold md:table-cell">Memory</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             <SubmissionsTableClient initial={submissions.slice(0, 50)} />
           </tbody>
         </table>
-      </div>
+      </section>
     </Container>
   );
 }

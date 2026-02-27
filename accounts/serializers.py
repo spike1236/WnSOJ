@@ -207,7 +207,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate_email(self, value: str) -> str:
         email = (value or "").strip().lower()
         if not email:
-            raise serializers.ValidationError("Email is required.")
+            return ""
         if User.objects.filter(email__iexact=email).exists():
             raise serializers.ValidationError("A user with this email already exists.")
         return email

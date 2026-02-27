@@ -61,6 +61,7 @@ urlpatterns = [
     path('api/profile/', accounts_views.UserDetailAPIView.as_view(), name='profile_api'),
     path('api/profile/icon/', accounts_views.ProfileIconAPIView.as_view(), name='profile_icon_api'),
     path('api/profile/password/', accounts_views.ProfilePasswordAPIView.as_view(), name='profile_password_api'),
+    path('api/overview/', problem_views.SiteOverviewAPIView.as_view(), name='overview_api'),
     path('api/users/<str:username>/', accounts_views.PublicUserProfileAPIView.as_view(), name='public_user_profile_api'),
     path('api/users/<str:username>/submissions/', accounts_views.PublicUserSubmissionsAPIView.as_view(), name='public_user_submissions_api'),
     path('api/', include(router.urls)),

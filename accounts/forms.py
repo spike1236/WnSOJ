@@ -6,7 +6,7 @@ from .models import User
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(min_length=3, max_length=16, required=True)
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(required=False)
     first_name = forms.CharField(max_length=30, required=False)
     last_name = forms.CharField(max_length=30, required=False)
     phone_number = forms.CharField(max_length=20, required=False)
@@ -43,6 +43,8 @@ class RegisterForm(UserCreationForm):
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
+        if not email:
+            return ""
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("A user with this email already exists.")
         return email
