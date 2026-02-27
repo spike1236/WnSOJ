@@ -143,8 +143,9 @@ export default async function Page() {
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {overview.trending_categories.map((category) => (
-              <div
-                className="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 p-3"
+              <Link
+                className="group flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white/80 p-3 hover:border-[#9eb0c5] hover:bg-[#eef3f8]/50"
+                href={`/problems/${encodeURIComponent(category.short_name)}`}
                 key={category.id}
               >
                 <div className="flex items-center gap-3">
@@ -154,8 +155,8 @@ export default async function Page() {
                     <div className="text-xs text-slate-500">{formatNumber(category.problem_count)} tasks</div>
                   </div>
                 </div>
-                <span className="text-xs font-semibold text-slate-500">Category</span>
-              </div>
+                <span className="text-xs font-semibold text-[#304765] opacity-0 transition group-hover:opacity-100">Open</span>
+              </Link>
             ))}
           </div>
         </div>

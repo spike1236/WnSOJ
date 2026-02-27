@@ -65,7 +65,6 @@ export default async function Page({
             </div>
             <div className="p-5">
               <div className="text-base font-semibold tracking-tight text-slate-900">{cat.long_name}</div>
-              <div className="mt-1 text-xs uppercase tracking-wide text-slate-500">/{cat.short_name}</div>
               <div className="mt-3 flex items-center justify-between">
                 <span className="text-xs text-slate-600">{formatNumber(cat.problem_count ?? 0)} problems</span>
                 <span className="rounded-full bg-[#eef3f8] px-3 py-1 text-xs font-semibold text-[#304765]">Open</span>
