@@ -8,9 +8,10 @@ from jobboard.models import Job
 from jobboard.serializers import JobListSerializer
 from .models import Category, Problem, Submission
 from .forms import AddProblemForm, SubmitForm
-import os
 from zipfile import ZipFile
 from io import BytesIO
+from pathlib import Path
+import shutil
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -88,9 +89,35 @@ def add_problem(request):
             )
             problem.save()
 
-            os.makedirs(f"data/problems/{problem.id}", exist_ok=True)
-            with ZipFile(BytesIO(request.FILES["test_data"].read()), "r") as file:
-                file.extractall(f"data/problems/{problem.id}")
+            dest = Path("data") / "problems" / str(problem.id)
+            dest.mkdir(parents=True, exist_ok=True)
+            try:
+                with ZipFile(BytesIO(request.FILES["test_data"].read()), "r") as file:
+                    total_size = 0
+                    for info in file.infolist():
+                        name = info.filename
+                        if not name or name.endswith("/"):
+                            continue
+                        total_size += int(getattr(info, "file_size", 0) or 0)
+                        if total_size > 250 * 1024 * 1024:
+                            raise ValueError("Zip is too large.")
+                        normalized = name.replace("\\", "/")
+                        relative_path = Path(normalized)
+                        if relative_path.is_absolute() or ".." in relative_path.parts:
+                            raise ValueError("Invalid zip contents.")
+                        out_path = dest / relative_path
+                        out_path.parent.mkdir(parents=True, exist_ok=True)
+                        with file.open(info) as src, open(out_path, "wb") as dst:
+                            shutil.copyfileobj(src, dst)
+            except Exception:
+                shutil.rmtree(dest, ignore_errors=True)
+                problem.delete()
+                form.add_error("test_data", "Invalid zip contents.")
+                return render(
+                    request,
+                    "problemset/add_problem.html",
+                    {"title": "Add Problem | WnSOJ", "navbar_item_id": 2, "form": form},
+                )
 
             selected_categories = form.cleaned_data["categories"]
             for category in selected_categories:

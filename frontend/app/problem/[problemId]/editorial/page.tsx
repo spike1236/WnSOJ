@@ -1,6 +1,7 @@
 import CodePanel from "@/components/CodePanel";
 import Container from "@/components/Container";
 import Markdown from "@/components/Markdown";
+import { PageHeader, SectionPanel } from "@/components/PageShell";
 import ProblemNav from "@/components/ProblemNav";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Problem } from "@/lib/types";
@@ -23,26 +24,27 @@ export default async function Page({ params }: { params: Promise<{ problemId: st
   const problem = await getProblem(problemId);
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Editorial</h1>
-          <p className="mt-1 text-slate-600">{problem.title}</p>
-        </div>
-        <div className="flex gap-2">
-          <Link className="text-sm font-medium text-blue-600 hover:underline" href={`/problem/${problem.id}`}>
-            Back to problem
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href={`/problem/${problem.id}`}>
+            Statement
           </Link>
-        </div>
-      </div>
+        }
+        description={problem.title}
+        kicker="Editorial"
+        title="Solution Walkthrough"
+      />
 
       <ProblemNav active="editorial" problemId={problem.id} />
 
-      <div className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
-        <Markdown content={problem.editorial || "Editorial is not available."} />
-      </div>
+      <div className="mt-6 grid gap-6">
+        <SectionPanel title="Editorial">
+          <div className="p-5 sm:p-6">
+            <Markdown content={problem.editorial || "Editorial is not available."} />
+          </div>
+        </SectionPanel>
 
-      <div className="mt-6">
         <CodePanel
           code={problem.code || ""}
           collapsible

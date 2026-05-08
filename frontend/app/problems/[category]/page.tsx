@@ -1,8 +1,8 @@
 import Container from "@/components/Container";
+import { Badge, EmptyState, PageHeader } from "@/components/PageShell";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
 import type { ApiList, Category, ProblemListItem } from "@/lib/types";
-import { cn } from "@/lib/cn";
 import Link from "next/link";
 
 export default async function Page({ params }: { params: Promise<{ category: string }> }) {
@@ -21,65 +21,82 @@ export default async function Page({ params }: { params: Promise<{ category: str
   );
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Problem List</h1>
-          <p className="mt-1 text-slate-600">Category: {categoryName}</p>
-        </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href="/problems">
-          All categories
-        </Link>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href="/problems">
+            All categories
+          </Link>
+        }
+        description="A focused queue of problems for this track."
+        kicker="Problems"
+        title={categoryName}
+      />
 
-      <div className="mt-6 overflow-hidden rounded-2xl border bg-white shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-700">
-            <tr>
-              <th className="px-4 py-3 font-semibold w-24">ID</th>
-              <th className="px-4 py-3 font-semibold">Title</th>
-              <th className="hidden px-4 py-3 font-semibold md:table-cell">Categories</th>
-              <th className="px-4 py-3 font-semibold w-28">Solved</th>
-              <th className="hidden px-4 py-3 font-semibold md:table-cell w-32">Limits</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {problems.map((p) => {
-              const cats = (p.categories ?? [])
-                .map((c) => c.long_name)
-                .filter((name) => name.toLowerCase() !== "problemset");
-              const statusClass =
-                p.user_status === "solved"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : p.user_status === "attempted"
-                    ? "bg-amber-50 text-amber-800"
-                    : "bg-slate-50 text-slate-700";
-              return (
-                <tr className="bg-white" key={p.id}>
-                  <td className="px-4 py-3 font-mono text-slate-700">{p.id}</td>
-                  <td className="px-4 py-3">
-                    <Link className="font-medium text-slate-900 hover:underline" href={`/problem/${p.id}`}>
-                      {p.title}
-                    </Link>
-                  </td>
-                  <td className="hidden px-4 py-3 text-slate-600 md:table-cell">{cats.join(", ") || "—"}</td>
-                  <td className="px-4 py-3">
-                    <Link
-                      className={cn("inline-flex rounded-full border px-3 py-1 text-xs font-semibold", statusClass)}
-                      href={`/problem/${p.id}/submissions?verdict=AC`}
-                    >
-                      {p.solved_count ?? 0}
-                    </Link>
-                  </td>
-                  <td className="hidden px-4 py-3 text-slate-600 md:table-cell">
-                    {p.time_limit}s / {p.memory_limit}MB
-                  </td>
+      {problems.length ? (
+        <div className="surface mt-6 overflow-hidden">
+          <div className="overflow-x-auto subtle-scrollbar">
+            <table className="data-table min-w-[780px]">
+              <thead>
+                <tr>
+                  <th className="w-24">ID</th>
+                  <th>Title</th>
+                  <th className="hidden md:table-cell">Categories</th>
+                  <th className="w-32">Solved</th>
+                  <th className="hidden w-36 md:table-cell">Limits</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {problems.map((p) => {
+                  const cats = (p.categories ?? [])
+                    .map((c) => c.long_name)
+                    .filter((name) => name.toLowerCase() !== "problemset");
+                  const statusTone =
+                    p.user_status === "solved" ? "emerald" : p.user_status === "attempted" ? "amber" : "slate";
+                  const statusLabel =
+                    p.user_status === "solved" ? "Solved" : p.user_status === "attempted" ? "Tried" : "Open";
+                  return (
+                    <tr key={p.id}>
+                      <td className="font-mono font-bold text-slate-700">{p.id}</td>
+                      <td>
+                        <div className="flex flex-col gap-1">
+                          <Link className="font-bold text-slate-950 hover:text-blue-700" href={`/problem/${p.id}`}>
+                            {p.title}
+                          </Link>
+                          <div className="md:hidden">
+                            <Badge tone={statusTone}>{statusLabel}</Badge>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden text-slate-600 md:table-cell">{cats.join(", ") || "—"}</td>
+                      <td>
+                        <Link href={`/problem/${p.id}/submissions?verdict=AC`}>
+                          <Badge tone={statusTone}>
+                            {p.solved_count ?? 0} AC
+                          </Badge>
+                        </Link>
+                      </td>
+                      <td className="hidden text-slate-600 md:table-cell">
+                        {p.time_limit}s / {p.memory_limit}MB
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <EmptyState
+          action={
+            <Link className="action-link" href="/problems">
+              Browse categories
+            </Link>
+          }
+          description="This category does not have public problems yet."
+          title="No problems found"
+        />
+      )}
     </Container>
   );
 }

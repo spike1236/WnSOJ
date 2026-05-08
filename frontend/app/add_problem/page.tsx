@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
 import CodeMirrorField from "@/components/CodeMirrorField";
 import MarkdownEditor from "@/components/MarkdownEditor";
+import { PageHeader, SectionPanel } from "@/components/PageShell";
 import { createProblemAction } from "@/app/actions/problems";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
@@ -28,13 +29,13 @@ export default async function Page({
 
   if (!user.is_staff) {
     return (
-      <Container className="py-10">
-        <div className="rounded-2xl border bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-semibold tracking-tight">Add Problem</h1>
+      <Container className="py-8 sm:py-10">
+        <div className="surface p-8">
+          <h1 className="text-2xl font-bold tracking-normal text-slate-950">Add Problem</h1>
           <p className="mt-2 text-slate-600">Admin access required.</p>
           <div className="mt-6">
-            <Link className="text-sm font-medium text-blue-600 hover:underline" href="/problems">
-              Back to Problems
+            <Link className="action-link" href="/problems">
+              Problems
             </Link>
           </div>
         </div>
@@ -45,30 +46,32 @@ export default async function Page({
   const categories = asArray(await backendFetchJson<ApiList<Category>>("/api/categories/?limit=1000"));
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Add Problem</h1>
-          <p className="mt-1 text-slate-600">Create a new problem with test data (zip).</p>
-        </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href="/problems">
-          Back to Problems
-        </Link>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href="/problems">
+            Problems
+          </Link>
+        }
+        description="Create a public challenge, editorial, reference solution, and test archive."
+        kicker="Admin"
+        title="Add Problem"
+      />
 
       {error ? (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>
+        <div className="mt-6 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</div>
       ) : null}
 
-      <div className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
-        <form action={createProblemAction} className="grid gap-4">
+      <SectionPanel className="mt-6" title="Problem Details">
+        <form action={createProblemAction} className="grid gap-5 p-5 sm:p-6">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="title">
               Title
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="input-modern"
               id="title"
+              maxLength={200}
               name="title"
               required
               type="text"
@@ -81,8 +84,9 @@ export default async function Page({
                 Time limit (sec)
               </label>
               <input
-                className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                className="input-modern"
                 id="time_limit"
+                min="0.1"
                 name="time_limit"
                 required
                 step="0.1"
@@ -94,8 +98,9 @@ export default async function Page({
                 Memory limit (MB)
               </label>
               <input
-                className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                className="input-modern"
                 id="memory_limit"
+                min="1"
                 name="memory_limit"
                 required
                 type="number"
@@ -109,9 +114,9 @@ export default async function Page({
               {categories
                 .filter((c) => c.short_name !== "problemset")
                 .map((c) => (
-                  <label className="flex items-center gap-2 rounded-xl border bg-slate-50 px-3 py-2 text-sm" key={c.id}>
+                  <label className="flex items-center gap-2 rounded-[8px] border bg-slate-50 px-3 py-2 text-sm font-medium text-slate-800" key={c.id}>
                     <input className="h-4 w-4 rounded border" name="categories" type="checkbox" value={c.id} />
-                    <span className="text-slate-800">{c.long_name}</span>
+                    <span>{c.long_name}</span>
                   </label>
                 ))}
             </div>
@@ -143,7 +148,8 @@ export default async function Page({
               Test data (zip)
             </label>
             <input
-              className="h-11 rounded-lg border bg-white px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              accept=".zip,application/zip,application/x-zip-compressed"
+              className="h-11 rounded-[8px] border bg-white px-3 py-2 text-sm outline-none ring-blue-600 focus:ring-2"
               id="test_data"
               name="test_data"
               required
@@ -153,14 +159,14 @@ export default async function Page({
 
           <div className="flex justify-end">
             <button
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
+              className="action-primary"
               type="submit"
             >
               Create Problem
             </button>
           </div>
         </form>
-      </div>
+      </SectionPanel>
     </Container>
   );
 }

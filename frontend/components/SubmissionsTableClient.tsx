@@ -87,43 +87,43 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
   return (
     <>
       {rows.slice(0, 50).map((s) => (
-        <tr className="bg-white" key={s.id}>
-          <td className="px-4 py-3 font-mono">
-            <Link className="text-blue-600 hover:underline" href={`/submission/${s.id}`}>
+        <tr key={s.id}>
+          <td className="font-mono">
+            <Link className="font-bold text-blue-600 hover:text-blue-700" href={`/submission/${s.id}`}>
               {s.id}
             </Link>
           </td>
-          <td className="px-4 py-3 text-slate-700">
+          <td className="text-slate-700">
             <LocalTime value={s.send_time} />
           </td>
-          <td className="px-4 py-3">
-            <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(s.username)}`}>
+          <td>
+            <Link className="font-semibold text-slate-800 hover:text-blue-700" href={`/profile/${encodeURIComponent(s.username)}`}>
               {s.username}
             </Link>
           </td>
-          <td className="px-4 py-3">
-            <Link className="font-medium text-slate-900 hover:underline" href={`/problem/${s.problem_id}`}>
+          <td>
+            <Link className="font-bold text-slate-950 hover:text-blue-700" href={`/problem/${s.problem_id}`}>
               {s.problem_title}
             </Link>
           </td>
-          <td className="px-4 py-3 hidden lg:table-cell text-slate-700">{s.language}</td>
-          <td className="px-4 py-3">
+          <td className="hidden text-slate-700 lg:table-cell">{s.language}</td>
+          <td>
             <div className="flex flex-col items-start gap-1">
               <StatusPill verdict={s.verdict} />
               {s.progressLabel ? <span className="text-xs text-slate-500">{s.progressLabel}</span> : null}
             </div>
           </td>
-          <td className="px-4 py-3 hidden md:table-cell text-slate-700">
+          <td className="hidden text-slate-700 md:table-cell">
             {s.time === null || s.time === undefined ? "—" : `${s.time} ms`}
           </td>
-          <td className="px-4 py-3 hidden md:table-cell text-slate-700">
+          <td className="hidden text-slate-700 md:table-cell">
             {s.memory === null || s.memory === undefined ? "—" : `${s.memory} KB`}
           </td>
         </tr>
       ))}
       {rows.length === 0 ? (
-        <tr className="bg-white">
-          <td className="px-4 py-10 text-center text-slate-600" colSpan={8}>
+        <tr>
+          <td className="py-10 text-center text-slate-600" colSpan={8}>
             No submissions found.
           </td>
         </tr>

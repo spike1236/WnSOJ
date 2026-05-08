@@ -1,6 +1,7 @@
 import Container from "@/components/Container";
 import LocalTime from "@/components/LocalTime";
 import Markdown from "@/components/Markdown";
+import { Badge, EmptyState, PageHeader } from "@/components/PageShell";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
 import { formatSalaryRange } from "@/lib/format";
@@ -26,63 +27,103 @@ export default async function Page({
 }) {
   const sp = await searchParams;
   const author = typeof sp.author === "string" ? sp.author : null;
+  const q = typeof sp.q === "string" ? sp.q.trim() : "";
   const user = await currentUser();
-  const jobs = asArray(await backendFetchJson<ApiList<Job>>("/api/jobs/?limit=50"));
-  const filtered = author ? jobs.filter((j) => j.user.username === author) : jobs;
+
+  const qs = new URLSearchParams();
+  qs.set("limit", "50");
+  if (author) qs.set("author", author);
+  if (q) qs.set("q", q);
+  const jobs = asArray(await backendFetchJson<ApiList<Job>>(`/api/jobs/?${qs.toString()}`));
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Job Listings</h1>
-          <p className="mt-1 text-slate-600">{author ? `Posted by ${author}` : "Find your next opportunity."}</p>
-        </div>
-        {user?.is_business ? (
-          <Link
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            href="/add_job"
-          >
-            Post a New Job
-          </Link>
-        ) : null}
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          user?.is_business ? (
+            <Link className="action-primary" href="/add_job">
+              Post Job
+            </Link>
+          ) : null
+        }
+        description={author ? `Roles posted by ${author}.` : "Programming and engineering opportunities from the community."}
+        kicker="Careers"
+        title="Job Board"
+      />
 
-      <div className="mt-6 grid gap-5">
-        {filtered.map((job) => (
-          <div className="overflow-hidden rounded-2xl border bg-white shadow-sm" key={job.id}>
-            <div className="flex flex-col gap-2 border-b bg-slate-50 p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-lg font-semibold tracking-tight text-slate-900">{job.title}</div>
-              <div className="text-sm text-slate-600">{formatSalaryRange(job.salary_range)}</div>
-            </div>
-            <div className="p-5">
-              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-                <span className="rounded-full border bg-slate-50 px-3 py-1">{job.location}</span>
-                <span>
-                  Posted by{" "}
-                  <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(job.user.username)}`}>
-                    {job.user.username}
-                  </Link>
-                </span>
-                <span>·</span>
-                <LocalTime value={job.created_at} mode="date" />
+      <form action="/jobs" className="surface mt-6 grid gap-3 p-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+        {author ? <input name="author" type="hidden" value={author} /> : null}
+        <label className="sr-only" htmlFor="job-search">
+          Search jobs
+        </label>
+        <input
+          className="input-modern"
+          defaultValue={q}
+          id="job-search"
+          maxLength={100}
+          name="q"
+          placeholder="Search title, location, company, or description"
+          type="search"
+        />
+        <div className="flex gap-2">
+          <button className="action-primary" type="submit">
+            Search
+          </button>
+          {q || author ? (
+            <Link className="action-link" href="/jobs">
+              Clear
+            </Link>
+          ) : null}
+        </div>
+      </form>
+
+      <div className="mt-6 grid gap-4">
+        {jobs.map((job) => (
+          <article className="surface overflow-hidden transition hover:border-blue-200 hover:shadow-lg" key={job.id}>
+            <div className="grid gap-4 p-5 md:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone="blue">{job.location}</Badge>
+                  <Badge tone="emerald">{formatSalaryRange(job.salary_range)}</Badge>
+                </div>
+                <Link className="mt-3 block text-xl font-bold tracking-normal text-slate-950 hover:text-blue-700" href={`/job/${job.id}`}>
+                  {job.title}
+                </Link>
               </div>
-              <div className="relative mt-4 max-h-32 overflow-hidden">
-                <Markdown content={job.info} />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-white" />
-              </div>
-              <div className="mt-4">
-                <Link
-                  className="inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-medium hover:bg-slate-50"
-                  href={`/job/${job.id}`}
-                >
-                  View Details
+              <div className="flex items-start md:justify-end">
+                <Link className="action-link" href={`/job/${job.id}`}>
+                  Details
                 </Link>
               </div>
             </div>
-          </div>
+            <div className="border-t bg-slate-50/60 p-5">
+              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+                <span>
+                  Posted by{" "}
+                  <Link className="font-semibold text-blue-600 hover:text-blue-700" href={`/profile/${encodeURIComponent(job.user.username)}`}>
+                    {job.user.username}
+                  </Link>
+                </span>
+                <span className="text-slate-300">/</span>
+                <LocalTime value={job.created_at} mode="date" />
+              </div>
+              <div className="relative mt-4 max-h-28 overflow-hidden">
+                <Markdown content={job.info} />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-b from-transparent to-slate-50" />
+              </div>
+            </div>
+          </article>
         ))}
-        {filtered.length === 0 ? (
-          <div className="rounded-2xl border bg-slate-50 p-6 text-slate-700">No jobs available.</div>
+        {jobs.length === 0 ? (
+          <EmptyState
+            action={
+              <Link className="action-link" href="/jobs">
+                All jobs
+              </Link>
+            }
+            description={q ? `No listings matched "${q}".` : author ? "This user has not posted any visible listings." : "There are no visible listings right now."}
+            title="No jobs found"
+          />
         ) : null}
       </div>
     </Container>

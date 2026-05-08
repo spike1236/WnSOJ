@@ -131,16 +131,16 @@ export default function CodePanel({
   const hasCode = cleaned.trim().length > 0;
 
   return (
-    <div className={cn("rounded-2xl border bg-white shadow-sm", className)}>
-      <div className="flex flex-col gap-2 border-b bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className={cn("surface overflow-hidden", className)}>
+      <div className="flex flex-col gap-2 border-b bg-slate-50/80 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
-          {languageLabel ? <span className="text-xs text-slate-500">{languageLabel}</span> : null}
+          <h2 className="text-sm font-bold text-slate-950">{title}</h2>
+          {languageLabel ? <span className="rounded-full border bg-white px-2.5 py-1 text-xs font-semibold text-slate-600">{languageLabel}</span> : null}
           {!hasCode ? <span className="text-xs text-slate-500">(empty)</span> : null}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
-            className="inline-flex items-center gap-2 rounded-lg border bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-[8px] border bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
             disabled={!hasCode}
             onClick={onCopy}
             type="button"
@@ -149,7 +149,7 @@ export default function CodePanel({
             {copied ? "Copied" : "Copy"}
           </button>
           <button
-            className="inline-flex items-center rounded-lg border bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center rounded-[8px] border bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
             onClick={() => setWrap((v) => !v)}
             type="button"
           >
@@ -157,7 +157,7 @@ export default function CodePanel({
           </button>
           {collapsible ? (
             <button
-              className="inline-flex items-center gap-2 rounded-lg border bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-[8px] border bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50"
               onClick={() => setCollapsed((v) => !v)}
               type="button"
             >

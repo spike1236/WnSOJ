@@ -76,32 +76,32 @@ export default function SubmissionDetailRowClient(props: {
   }, [props.id, shouldConnect]);
 
   return (
-    <tr className="bg-white">
-      <td className="px-4 py-3 font-mono text-slate-700">{props.id}</td>
-      <td className="px-4 py-3 text-slate-700">
+    <tr>
+      <td className="font-mono font-bold text-slate-700">{props.id}</td>
+      <td className="text-slate-700">
         <LocalTime value={props.sendTime} />
       </td>
-      <td className="px-4 py-3">
-        <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(props.username)}`}>
+      <td>
+        <Link className="font-semibold text-slate-800 hover:text-blue-700" href={`/profile/${encodeURIComponent(props.username)}`}>
           {props.username}
         </Link>
       </td>
-      <td className="px-4 py-3">
-        <Link className="text-blue-600 hover:underline" href={`/problem/${props.problemId}`}>
+      <td>
+        <Link className="font-bold text-slate-950 hover:text-blue-700" href={`/problem/${props.problemId}`}>
           {props.problemTitle}
         </Link>
       </td>
-      <td className="px-4 py-3 text-slate-700">{props.language}</td>
-      <td className="px-4 py-3">
+      <td className="text-slate-700">{props.language}</td>
+      <td>
         <div className="flex flex-col items-start gap-1">
           <StatusPill verdict={verdict} />
           {progressLabel ? <span className="text-xs text-slate-500">{progressLabel}</span> : null}
         </div>
       </td>
-      <td className="px-4 py-3 hidden md:table-cell text-slate-700">
+      <td className="hidden text-slate-700 md:table-cell">
         {time === null || time === undefined ? "—" : `${time} ms`}
       </td>
-      <td className="px-4 py-3 hidden md:table-cell text-slate-700">
+      <td className="hidden text-slate-700 md:table-cell">
         {memory === null || memory === undefined ? "—" : `${memory} KB`}
       </td>
     </tr>

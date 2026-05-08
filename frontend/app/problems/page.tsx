@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import { PageHeader } from "@/components/PageShell";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
 import type { ApiList, Category } from "@/lib/types";
@@ -17,27 +18,29 @@ export default async function Page() {
   );
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Problem Categories</h1>
-          <p className="mt-1 text-slate-600">Pick a topic and start solving.</p>
-        </div>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        description="Choose a topic, scan the limits, and jump straight into solving."
+        kicker="Problemset"
+        title="Practice by Category"
+      />
 
-      <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categories.map((cat) => (
           <Link
-            className="group overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
+            className="surface group overflow-hidden transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg"
             href={`/problems/${encodeURIComponent(cat.short_name)}`}
             key={cat.id}
           >
-            <div className="bg-slate-50 p-6">
-              <img alt={cat.long_name} className="mx-auto h-28 w-auto transition group-hover:scale-[1.02]" src={`/${cat.img_url}`} />
+            <div className="grid h-36 place-items-center border-b bg-slate-50 p-6">
+              <img alt={cat.long_name} className="h-24 w-auto transition duration-200 group-hover:scale-[1.04]" src={`/${cat.img_url}`} />
             </div>
-            <div className="p-5">
-              <div className="text-base font-semibold tracking-tight text-slate-900">{cat.long_name}</div>
-              <div className="mt-1 text-sm text-slate-600">Open problem list</div>
+            <div className="flex items-center justify-between gap-4 p-5">
+              <div>
+                <div className="text-base font-bold tracking-normal text-slate-950">{cat.long_name}</div>
+                <div className="mt-1 text-sm font-medium text-slate-500">{cat.short_name}</div>
+              </div>
+              <div className="rounded-full border bg-white px-3 py-1 text-xs font-bold text-blue-600">Open</div>
             </div>
           </Link>
         ))}

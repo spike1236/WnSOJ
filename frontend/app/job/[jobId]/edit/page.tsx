@@ -1,5 +1,6 @@
 import Container from "@/components/Container";
 import MarkdownEditor from "@/components/MarkdownEditor";
+import { PageHeader, SectionPanel } from "@/components/PageShell";
 import { updateJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Job, UserDetail } from "@/lib/types";
@@ -33,34 +34,36 @@ export default async function Page({
   const currency = job.salary_range?.currency ?? "$";
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Edit Job</h1>
-          <p className="mt-1 text-slate-600">{job.title}</p>
-        </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href={`/job/${job.id}`}>
-          Cancel
-        </Link>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href={`/job/${job.id}`}>
+            Cancel
+          </Link>
+        }
+        description={job.title}
+        kicker="Careers"
+        title="Edit Job"
+      />
 
       {error ? (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mt-6 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
-        <form action={updateJobAction} className="grid gap-4">
+      <SectionPanel className="mt-6" title="Listing Details">
+        <form action={updateJobAction} className="grid gap-5 p-5 sm:p-6">
           <input name="job_id" type="hidden" value={job.id} />
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="title">
               Title
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="input-modern"
               defaultValue={job.title}
               id="title"
+              maxLength={200}
               name="title"
               required
               type="text"
@@ -71,9 +74,10 @@ export default async function Page({
               Location
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="input-modern"
               defaultValue={job.location}
               id="location"
+              maxLength={200}
               name="location"
               required
               type="text"
@@ -88,7 +92,7 @@ export default async function Page({
                   Minimum
                 </label>
                 <input
-                  className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   defaultValue={String(minSalary)}
                   id="min_salary"
                   min={0}
@@ -101,7 +105,7 @@ export default async function Page({
                   Maximum
                 </label>
                 <input
-                  className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   defaultValue={String(maxSalary)}
                   id="max_salary"
                   min={0}
@@ -114,7 +118,7 @@ export default async function Page({
                   Currency
                 </label>
                 <select
-                  className="h-11 rounded-lg border bg-white px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   defaultValue={currency}
                   id="currency"
                   name="currency"
@@ -123,7 +127,6 @@ export default async function Page({
                 </select>
               </div>
             </div>
-            <div className="text-xs text-slate-500">All salary fields are optional.</div>
           </div>
 
           <div className="grid gap-1.5">
@@ -135,20 +138,20 @@ export default async function Page({
 
           <div className="flex justify-end gap-2">
             <button
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
+              className="action-primary"
               type="submit"
             >
               Save Changes
             </button>
             <Link
-              className="inline-flex h-11 items-center justify-center rounded-lg border px-5 text-sm font-medium hover:bg-slate-50"
+              className="action-link"
               href={`/job/${job.id}`}
             >
               Cancel
             </Link>
           </div>
         </form>
-      </div>
+      </SectionPanel>
     </Container>
   );
 }

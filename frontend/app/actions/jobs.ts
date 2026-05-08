@@ -8,6 +8,36 @@ function errorToMessage(error: unknown) {
   return "Request failed";
 }
 
+function validMoney(value: number) {
+  return Number.isFinite(value) && value >= 0;
+}
+
+function validateJobFields({
+  title,
+  location,
+  info,
+  currency,
+  min,
+  max,
+  errorPath
+}: {
+  title: string;
+  location: string;
+  info: string;
+  currency: string;
+  min: number;
+  max: number | undefined;
+  errorPath: string;
+}) {
+  if (!title || !location || !info) redirect(`${errorPath}?error=${encodeURIComponent("Missing required fields")}`);
+  if (title.length > 200) redirect(`${errorPath}?error=${encodeURIComponent("Title is too long")}`);
+  if (location.length > 200) redirect(`${errorPath}?error=${encodeURIComponent("Location is too long")}`);
+  if (currency !== "$") redirect(`${errorPath}?error=${encodeURIComponent("Invalid currency")}`);
+  if (!validMoney(min)) redirect(`${errorPath}?error=${encodeURIComponent("Invalid min salary")}`);
+  if (max !== undefined && !validMoney(max)) redirect(`${errorPath}?error=${encodeURIComponent("Invalid max salary")}`);
+  if (max !== undefined && min > max) redirect(`${errorPath}?error=${encodeURIComponent("Minimum salary cannot be greater than maximum salary")}`);
+}
+
 export async function createJobAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
@@ -18,9 +48,7 @@ export async function createJobAction(formData: FormData) {
 
   const min = minSalaryRaw ? Number(minSalaryRaw) : 0;
   const max = maxSalaryRaw ? Number(maxSalaryRaw) : undefined;
-  if (minSalaryRaw && !Number.isFinite(min)) redirect(`/add_job?error=${encodeURIComponent("Invalid min salary")}`);
-  if (maxSalaryRaw && !Number.isFinite(Number(maxSalaryRaw))) redirect(`/add_job?error=${encodeURIComponent("Invalid max salary")}`);
-  if (max !== undefined && min > max) redirect(`/add_job?error=${encodeURIComponent("Minimum salary cannot be greater than maximum salary")}`);
+  validateJobFields({ title, location, info, currency, min, max, errorPath: "/add_job" });
 
   const salary_range = { min, ...(max !== undefined ? { max } : {}), currency };
 
@@ -51,9 +79,7 @@ export async function updateJobAction(formData: FormData) {
 
   const min = minSalaryRaw ? Number(minSalaryRaw) : 0;
   const max = maxSalaryRaw ? Number(maxSalaryRaw) : undefined;
-  if (minSalaryRaw && !Number.isFinite(min)) redirect(`/job/${jobId}/edit?error=${encodeURIComponent("Invalid min salary")}`);
-  if (maxSalaryRaw && !Number.isFinite(Number(maxSalaryRaw))) redirect(`/job/${jobId}/edit?error=${encodeURIComponent("Invalid max salary")}`);
-  if (max !== undefined && min > max) redirect(`/job/${jobId}/edit?error=${encodeURIComponent("Minimum salary cannot be greater than maximum salary")}`);
+  validateJobFields({ title, location, info, currency, min, max, errorPath: `/job/${jobId}/edit` });
 
   const salary_range = { min, ...(max !== undefined ? { max } : {}), currency };
 

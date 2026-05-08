@@ -8,7 +8,7 @@ export default function SubmitSolutionButton() {
   return (
     <button
       aria-live="polite"
-      className="inline-flex h-11 min-w-36 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-70"
+      className="action-primary min-w-36 gap-2 disabled:cursor-wait disabled:opacity-70"
       disabled={pending}
       type="submit"
     >

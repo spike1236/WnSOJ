@@ -6,6 +6,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.authentication import SessionAuthentication
 from .serializers import JobListSerializer, JobSerializer
+from django.db.models import Q
 
 
 def format_number(value):
@@ -26,6 +27,14 @@ def format_number(value):
 
 def jobs(request):
     jobs = Job.objects.all()
+    query = (request.GET.get("q") or "").strip()
+    if query:
+        jobs = jobs.filter(
+            Q(title__icontains=query)
+            | Q(location__icontains=query)
+            | Q(user__username__icontains=query)
+            | Q(info__icontains=query)
+        )
     return render(
         request,
         "jobboard/jobs.html",
@@ -204,6 +213,21 @@ class JobAPIViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all().select_related("user").order_by("-created_at")
     serializer_class = JobSerializer
     authentication_classes = [SessionAuthentication]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        query = (self.request.query_params.get("q") or "").strip()[:100]
+        author = (self.request.query_params.get("author") or "").strip()[:150]
+        if query:
+            qs = qs.filter(
+                Q(title__icontains=query)
+                | Q(location__icontains=query)
+                | Q(user__username__icontains=query)
+                | Q(info__icontains=query)
+            )
+        if author:
+            qs = qs.filter(user__username=author)
+        return qs
 
     def get_serializer_class(self):
         if self.action == "list" and self.request.query_params.get("compact") == "1":

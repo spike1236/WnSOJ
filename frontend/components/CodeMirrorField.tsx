@@ -50,7 +50,7 @@ export default function CodeMirrorField({
   }, [resolvedTheme]);
 
   return (
-    <div className="rounded-2xl border bg-white shadow-sm">
+    <div className="surface overflow-hidden">
       <CodeMirror
         basicSetup={{
           lineNumbers: true,
@@ -58,7 +58,7 @@ export default function CodeMirrorField({
           highlightActiveLineGutter: true,
           foldGutter: true
         }}
-        className="overflow-hidden rounded-2xl"
+        className="overflow-hidden"
         extensions={extensions}
         height={height}
         onChange={(v) => setValue(v)}

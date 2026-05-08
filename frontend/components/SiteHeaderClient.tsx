@@ -58,18 +58,19 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
   );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b bg-white/80 backdrop-blur">
+    <header className="fixed inset-x-0 top-0 z-40 border-b bg-white/90 backdrop-blur">
       <Container className="flex h-16 items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link className="text-sm font-semibold tracking-tight text-slate-900" href="/">
-            WnSOJ
+          <Link className="inline-flex items-center gap-2 text-sm font-bold tracking-normal text-slate-950" href="/">
+            <span className="grid h-8 w-8 place-items-center rounded-[8px] bg-blue-600 text-white shadow-sm">W</span>
+            <span>WnSOJ</span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <Link
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium hover:bg-slate-100",
-                  isActivePath(pathname, l.href) ? "bg-slate-100 text-slate-900" : "text-slate-700 hover:text-slate-900"
+                  "rounded-[8px] px-3 py-2 text-sm font-bold transition",
+                  isActivePath(pathname, l.href) ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                 )}
                 href={l.href}
                 key={l.href}
@@ -83,7 +84,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
         <div className="flex items-center gap-2">
           <button
             aria-label="Open menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border text-slate-700 hover:bg-slate-50 md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-[8px] border text-slate-700 hover:bg-slate-50 md:hidden"
             onClick={() => setMobileOpen((v) => !v)}
             type="button"
           >
@@ -94,7 +95,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
             <div className="relative">
               <button
                 aria-expanded={userOpen}
-                className="inline-flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center gap-2 rounded-[8px] border bg-white px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
                 onClick={() => setUserOpen((v) => !v)}
                 type="button"
               >
@@ -107,7 +108,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
                 <IconChevronDown className="text-slate-500" />
               </button>
               {userOpen ? (
-                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border bg-white shadow-lg">
+                <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-[8px] border bg-white shadow-lg">
                   <div className="border-b px-4 py-3">
                     <div className="text-sm font-semibold text-slate-900">{user.username}</div>
                     <div className="text-xs text-slate-600">{user.email}</div>
@@ -227,14 +228,14 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
                 ) : (
                   <div className="grid gap-2">
                     <Link
-                      className="rounded-lg border px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    className="rounded-[8px] border px-3 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
                       href="/login"
                       onClick={() => setMobileOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
-                      className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                className="rounded-[8px] bg-blue-600 px-3 py-2 text-sm font-bold text-white hover:bg-blue-700"
                       href="/register"
                       onClick={() => setMobileOpen(false)}
                     >

@@ -1,5 +1,6 @@
 import CodePanel from "@/components/CodePanel";
 import Container from "@/components/Container";
+import { EmptyState, PageHeader } from "@/components/PageShell";
 import SubmissionDetailRowClient from "@/components/SubmissionDetailRowClient";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Submission } from "@/lib/types";
@@ -16,40 +17,50 @@ export default async function Page({ params }: { params: Promise<{ submissionId:
   }
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Submission #{submissionId}</h1>
-          <p className="mt-1 text-slate-600">Details and source code</p>
-        </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href="/submissions">
-          Back to submissions
-        </Link>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href="/submissions">
+            Submissions
+          </Link>
+        }
+        description={submission ? submission.problem.title : "Details and source code"}
+        kicker="Submission"
+        title={`#${submissionId}`}
+      />
 
       {error ? (
-        <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          {error}
+        <div className="mt-6">
+          <EmptyState
+            action={
+              <Link className="action-link" href="/submissions">
+                Back to submissions
+              </Link>
+            }
+            description={error}
+            title="Submission unavailable"
+          />
         </div>
       ) : null}
 
       {submission ? (
         <div className="mt-6 grid gap-6">
-          <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-700">
+          <div className="surface overflow-hidden">
+            <div className="overflow-x-auto subtle-scrollbar">
+            <table className="data-table min-w-[920px]">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 font-semibold w-24">ID</th>
-                  <th className="px-4 py-3 font-semibold">Time</th>
-                  <th className="px-4 py-3 font-semibold">User</th>
-                  <th className="px-4 py-3 font-semibold">Problem</th>
-                  <th className="px-4 py-3 font-semibold w-28">Lang</th>
-                  <th className="px-4 py-3 font-semibold w-28">Verdict</th>
-                  <th className="px-4 py-3 font-semibold w-28 hidden md:table-cell">Exec</th>
-                  <th className="px-4 py-3 font-semibold w-28 hidden md:table-cell">Memory</th>
+                  <th className="w-24">ID</th>
+                  <th>Time</th>
+                  <th>User</th>
+                  <th>Problem</th>
+                  <th className="w-28">Lang</th>
+                  <th className="w-32">Verdict</th>
+                  <th className="hidden w-28 md:table-cell">Exec</th>
+                  <th className="hidden w-28 md:table-cell">Memory</th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
+              <tbody className="divide-y divide-slate-100">
                 <SubmissionDetailRowClient
                   id={submission.id}
                   sendTime={submission.send_time}
@@ -63,6 +74,7 @@ export default async function Page({ params }: { params: Promise<{ submissionId:
                 />
               </tbody>
             </table>
+            </div>
           </div>
 
           <CodePanel code={submission.code} languageLabel={submission.language} title="Source Code" />

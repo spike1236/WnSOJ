@@ -1,5 +1,6 @@
 import Container from "@/components/Container";
 import MarkdownEditor from "@/components/MarkdownEditor";
+import { PageHeader, SectionPanel } from "@/components/PageShell";
 import { createJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { UserDetail } from "@/lib/types";
@@ -26,12 +27,12 @@ export default async function Page({
 
   if (!user.is_business) {
     return (
-      <Container className="py-10">
-        <div className="rounded-2xl border bg-white p-8 shadow-sm">
-          <h1 className="text-2xl font-semibold tracking-tight">Post a Job</h1>
+      <Container className="py-8 sm:py-10">
+        <div className="surface p-8">
+          <h1 className="text-2xl font-bold tracking-normal text-slate-950">Post a Job</h1>
           <p className="mt-2 text-slate-600">Only business accounts can post job listings.</p>
           <div className="mt-6">
-            <Link className="text-sm font-medium text-blue-600 hover:underline" href="/edit_profile">
+            <Link className="action-link" href="/edit_profile">
               Switch to business account
             </Link>
           </div>
@@ -41,32 +42,34 @@ export default async function Page({
   }
 
   return (
-    <Container className="py-10">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Post a Job</h1>
-          <p className="mt-1 text-slate-600">Markdown is supported in the description.</p>
-        </div>
-        <Link className="text-sm font-medium text-blue-600 hover:underline" href="/jobs">
-          Back to Jobs
-        </Link>
-      </div>
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href="/jobs">
+            Jobs
+          </Link>
+        }
+        description="Create a visible listing for the community job board."
+        kicker="Careers"
+        title="Post a Job"
+      />
 
       {error ? (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mt-6 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div className="mt-6 rounded-2xl border bg-white p-6 shadow-sm">
-        <form action={createJobAction} className="grid gap-4">
+      <SectionPanel className="mt-6" title="Listing Details">
+        <form action={createJobAction} className="grid gap-5 p-5 sm:p-6">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="title">
               Title
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="input-modern"
               id="title"
+              maxLength={200}
               name="title"
               required
               type="text"
@@ -77,8 +80,9 @@ export default async function Page({
               Location
             </label>
             <input
-              className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="input-modern"
               id="location"
+              maxLength={200}
               name="location"
               required
               type="text"
@@ -93,7 +97,7 @@ export default async function Page({
                   Minimum
                 </label>
                 <input
-                  className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   id="min_salary"
                   min={0}
                   name="min_salary"
@@ -106,7 +110,7 @@ export default async function Page({
                   Maximum
                 </label>
                 <input
-                  className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   id="max_salary"
                   min={0}
                   name="max_salary"
@@ -119,7 +123,7 @@ export default async function Page({
                   Currency
                 </label>
                 <select
-                  className="h-11 rounded-lg border bg-white px-3 text-sm outline-none ring-blue-600 focus:ring-2"
+                  className="input-modern"
                   defaultValue="$"
                   id="currency"
                   name="currency"
@@ -128,7 +132,6 @@ export default async function Page({
                 </select>
               </div>
             </div>
-            <div className="text-xs text-slate-500">All salary fields are optional.</div>
           </div>
 
           <div className="grid gap-1.5">
@@ -140,14 +143,14 @@ export default async function Page({
 
           <div className="flex justify-end">
             <button
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
+              className="action-primary"
               type="submit"
             >
               Submit
             </button>
           </div>
         </form>
-      </div>
+      </SectionPanel>
     </Container>
   );
 }

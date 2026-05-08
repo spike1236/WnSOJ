@@ -48,13 +48,13 @@ export default function CodeEditor({
   }, [resolvedTheme]);
 
   return (
-    <div className="rounded-2xl border bg-white shadow-sm">
-      <div className="flex flex-col gap-3 border-b bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
+    <div className="surface overflow-hidden">
+      <div className="flex flex-col gap-3 border-b bg-slate-50/80 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600">Language</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">Language</span>
             <select
-              className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-9 rounded-[8px] border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
               name="language"
               onChange={(e) => setLanguage(e.target.value as "cpp" | "py")}
               value={language}
@@ -67,9 +67,9 @@ export default function CodeEditor({
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600">Theme</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">Theme</span>
             <select
-              className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-9 rounded-[8px] border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
               onChange={(e) => setTheme(e.target.value as ThemeMode)}
               value={theme}
             >
@@ -81,7 +81,6 @@ export default function CodeEditor({
             </select>
           </div>
         </div>
-        <div className="text-xs text-slate-500">Source code is submitted to the judge for testing.</div>
       </div>
       <CodeMirror
         basicSetup={{
@@ -90,7 +89,7 @@ export default function CodeEditor({
           highlightActiveLineGutter: true,
           foldGutter: true
         }}
-        className="overflow-hidden rounded-b-2xl"
+        className="overflow-hidden"
         extensions={extensions}
         height="420px"
         onChange={(v) => setValue(v)}

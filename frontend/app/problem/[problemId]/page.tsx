@@ -1,6 +1,7 @@
 import CodeEditor from "@/components/CodeEditor";
 import Container from "@/components/Container";
 import Markdown from "@/components/Markdown";
+import { Badge, PageHeader, SectionPanel } from "@/components/PageShell";
 import ProblemNav from "@/components/ProblemNav";
 import SubmitSolutionButton from "@/components/SubmitSolutionButton";
 import { submitSolutionAction } from "@/app/actions/submissions";
@@ -31,65 +32,79 @@ export default async function Page({
   const sp = await searchParams;
   const error = typeof sp.error === "string" ? sp.error : null;
   const problem = await getProblem(problemId);
+  const categories = (problem.categories ?? [])
+    .map((c) => c.long_name)
+    .filter((name) => name.toLowerCase() !== "problemset");
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{problem.title}</h1>
-          <div className="mt-2 flex flex-wrap gap-2 text-sm">
-            <span className="rounded-full border bg-slate-50 px-3 py-1 text-slate-700">
-              Time limit: {problem.time_limit} sec
-            </span>
-            <span className="rounded-full border bg-slate-50 px-3 py-1 text-slate-700">
-              Memory limit: {problem.memory_limit} MB
-            </span>
-            {problem.categories?.length ? (
-              <span className="rounded-full border bg-slate-50 px-3 py-1 text-slate-700">
-                {problem.categories
-                  .map((c) => c.long_name)
-                  .filter((name) => name.toLowerCase() !== "problemset")
-                  .join(", ")}
-              </span>
-            ) : null}
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Link className="text-sm font-medium text-blue-600 hover:underline" href="/problems">
-            Back to problems
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href="/problems">
+            Problems
           </Link>
-        </div>
-      </div>
+        }
+        description={categories.length ? categories.join(", ") : "Programming challenge"}
+        kicker={`Problem ${problem.id}`}
+        title={problem.title}
+      />
 
       <ProblemNav active="statement" problemId={problem.id} />
 
       {error ? (
-        <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mt-6 rounded-[8px] border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
           {error}
         </div>
       ) : null}
 
-      <div className="mt-6 grid gap-6">
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold tracking-tight">Problem Statement</h2>
-          <div className="mt-4">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <SectionPanel className="lg:row-span-2" title="Problem Statement">
+          <div className="p-5 sm:p-6">
             <Markdown content={problem.statement} />
           </div>
-        </div>
+        </SectionPanel>
 
-        <div className="rounded-2xl border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold tracking-tight">Code Editor</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Submit a solution and follow the live verdict on the submission page.
-          </p>
-          <form action={submitSolutionAction} className="mt-4 grid gap-4">
+        <aside className="surface h-fit p-5 lg:sticky lg:top-24">
+          <div className="text-sm font-bold uppercase tracking-wide text-slate-500">Quick Facts</div>
+          <div className="mt-4 grid gap-3">
+            <div className="soft-panel p-3">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-500">Time</div>
+              <div className="mt-1 text-lg font-bold text-slate-950">{problem.time_limit} sec</div>
+            </div>
+            <div className="soft-panel p-3">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-500">Memory</div>
+              <div className="mt-1 text-lg font-bold text-slate-950">{problem.memory_limit} MB</div>
+            </div>
+          </div>
+          {categories.length ? (
+            <div className="mt-5">
+              <div className="text-xs font-bold uppercase tracking-wide text-slate-500">Tags</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {categories.map((name) => (
+                  <Badge key={name}>{name}</Badge>
+                ))}
+              </div>
+            </div>
+          ) : null}
+          <div className="mt-5 grid gap-2">
+            <Link className="action-primary" href="#submit">
+              Submit Solution
+            </Link>
+            <Link className="action-link" href={`/problem/${problem.id}/submissions`}>
+              View Submissions
+            </Link>
+          </div>
+        </aside>
+
+        <SectionPanel className="lg:col-start-1" title="Code Editor">
+          <form action={submitSolutionAction} className="grid gap-4 p-5 sm:p-6" id="submit">
             <input name="problem_id" type="hidden" value={problem.id} />
             <CodeEditor name="code" />
             <div className="flex justify-end">
               <SubmitSolutionButton />
             </div>
           </form>
-        </div>
+        </SectionPanel>
       </div>
     </Container>
   );

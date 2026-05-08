@@ -1,4 +1,5 @@
 import Container from "@/components/Container";
+import { Badge, PageHeader } from "@/components/PageShell";
 import ProblemNav from "@/components/ProblemNav";
 import SubmissionsTableClient from "@/components/SubmissionsTableClient";
 import { backendFetchJson } from "@/lib/backend.server";
@@ -42,46 +43,58 @@ export default async function Page({
   const submissions = asArray(
     await backendFetchJson<ApiList<SubmissionListItem>>(`/api/submissions/?${qs.toString()}`)
   );
+  const filterCodes = ["all", "AC", "WA", "TLE", "MLE", "CE", "RE"];
+  const filterHref = (code: string) => {
+    const next = new URLSearchParams();
+    if (username) next.set("username", username);
+    if (code !== "all") next.set("verdict", code);
+    const str = next.toString();
+    return `/problem/${problem.id}/submissions${str ? `?${str}` : ""}`;
+  };
 
   return (
-    <Container className="py-10">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Submissions</h1>
-          <p className="mt-1 text-slate-600">
-            {username ? `User: ${username}` : "All users"} · {problem.title}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            className="text-sm font-medium text-blue-600 hover:underline"
-            href={`/problem/${problem.id}`}
-          >
-            Back to problem
+    <Container className="py-8 sm:py-10">
+      <PageHeader
+        actions={
+          <Link className="action-link" href={`/problem/${problem.id}`}>
+            Statement
           </Link>
-        </div>
-      </div>
+        }
+        description={username ? `Filtered to ${username} on ${problem.title}.` : problem.title}
+        kicker="Problem Judge"
+        title="Submissions"
+      />
 
       <ProblemNav active="submissions" problemId={problem.id} />
 
-      <div className="mt-6 overflow-hidden rounded-2xl border bg-white shadow-sm">
-        <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-slate-700">
-            <tr>
-              <th className="px-4 py-3 font-semibold w-24">ID</th>
-              <th className="px-4 py-3 font-semibold">Time</th>
-              <th className="px-4 py-3 font-semibold">User</th>
-              <th className="px-4 py-3 font-semibold">Problem</th>
-              <th className="px-4 py-3 font-semibold hidden lg:table-cell">Language</th>
-              <th className="px-4 py-3 font-semibold w-28">Verdict</th>
-              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Exec</th>
-              <th className="px-4 py-3 font-semibold hidden md:table-cell w-28">Memory</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            <SubmissionsTableClient initial={submissions.slice(0, 50)} />
-          </tbody>
-        </table>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {filterCodes.map((code) => (
+          <Link href={filterHref(code)} key={code}>
+            <Badge tone={(verdict ?? "all") === code ? "blue" : "slate"}>{code === "all" ? "All" : code}</Badge>
+          </Link>
+        ))}
+      </div>
+
+      <div className="surface mt-6 overflow-hidden">
+        <div className="overflow-x-auto subtle-scrollbar">
+          <table className="data-table min-w-[920px]">
+            <thead>
+              <tr>
+                <th className="w-24">ID</th>
+                <th>Time</th>
+                <th>User</th>
+                <th>Problem</th>
+                <th className="hidden lg:table-cell">Language</th>
+                <th className="w-32">Verdict</th>
+                <th className="hidden w-28 md:table-cell">Exec</th>
+                <th className="hidden w-28 md:table-cell">Memory</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <SubmissionsTableClient initial={submissions.slice(0, 50)} />
+            </tbody>
+          </table>
+        </div>
       </div>
     </Container>
   );

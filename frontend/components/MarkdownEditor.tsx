@@ -42,13 +42,13 @@ export default function MarkdownEditor({
   }, [theme]);
 
   return (
-    <div className="rounded-2xl border bg-white shadow-sm">
-      <div className="flex flex-col gap-3 border-b bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
+    <div className="surface overflow-hidden">
+      <div className="flex flex-col gap-3 border-b bg-slate-50/80 p-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600">Editor</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">Editor</span>
             <select
-              className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-9 rounded-[8px] border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
               onChange={(e) => setMode(e.target.value as EditorMode)}
               value={mode}
             >
@@ -57,9 +57,9 @@ export default function MarkdownEditor({
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600">View</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">View</span>
             <select
-              className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-9 rounded-[8px] border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
               onChange={(e) => setView(e.target.value as ViewMode)}
               value={view}
             >
@@ -69,9 +69,9 @@ export default function MarkdownEditor({
             </select>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-600">Theme</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-slate-500">Theme</span>
             <select
-              className="h-9 rounded-lg border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
+              className="h-9 rounded-[8px] border bg-white px-2 text-sm outline-none ring-blue-600 focus:ring-2"
               onChange={(e) => setTheme(e.target.value as "light" | "dark")}
               value={theme}
             >
@@ -80,7 +80,6 @@ export default function MarkdownEditor({
             </select>
           </div>
         </div>
-        <div className="text-xs text-slate-500">Changes are saved as Markdown.</div>
       </div>
 
       <div className={view === "split" ? "grid gap-4 p-4 md:grid-cols-2" : "p-4"}>
@@ -88,7 +87,7 @@ export default function MarkdownEditor({
           mode === "rich" ? (
             <TiptapMarkdownEditor height={height} onChange={setValue} theme={theme} value={value} />
           ) : (
-            <div className="rounded-xl border">
+            <div className="overflow-hidden rounded-[8px] border">
               <CodeMirror
                 basicSetup={{
                   lineNumbers: true,
@@ -96,7 +95,7 @@ export default function MarkdownEditor({
                   highlightActiveLineGutter: true,
                   foldGutter: true
                 }}
-                className="overflow-hidden rounded-xl"
+                className="overflow-hidden"
                 extensions={extensions}
                 height={height}
                 onChange={(v) => setValue(v)}
@@ -108,7 +107,7 @@ export default function MarkdownEditor({
         ) : null}
 
         {view !== "write" ? (
-          <div className="overflow-auto rounded-xl border bg-white p-4" style={{ height }}>
+          <div className="overflow-auto rounded-[8px] border bg-white p-4" style={{ height }}>
             <MarkdownPreview content={value || ""} />
           </div>
         ) : null}

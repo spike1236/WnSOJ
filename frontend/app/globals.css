@@ -2,7 +2,7 @@
 @import "katex/dist/katex.min.css";
 
 :root {
-  --background: 0 0% 100%;
+  --background: 210 40% 98%;
   --foreground: 222.2 47.4% 11.2%;
   --muted: 210 40% 96.1%;
   --muted-foreground: 215.4 16.3% 46.9%;
@@ -12,7 +12,7 @@
   --primary: 221.2 83.2% 53.3%;
   --primary-foreground: 210 40% 98%;
   --ring: 221.2 83.2% 53.3%;
-  --radius: 14px;
+  --radius: 8px;
 }
 
 html,
@@ -21,8 +21,11 @@ body {
 }
 
 body {
-  background: hsl(var(--background));
+  background:
+    linear-gradient(180deg, rgb(248 250 252) 0, rgb(255 255 255) 34rem),
+    hsl(var(--background));
   color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 * {
@@ -38,7 +41,7 @@ body {
 .prose-md h2,
 .prose-md h3 {
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: rgb(15 23 42);
 }
 
@@ -79,6 +82,7 @@ body {
 .prose-md a {
   color: rgb(37 99 235);
   text-decoration: none;
+  font-weight: 500;
 }
 
 .prose-md a:hover {
@@ -88,6 +92,7 @@ body {
 .prose-md code {
   border-radius: 0.375rem;
   background: rgb(241 245 249);
+  border: 1px solid rgb(226 232 240);
   padding: 0.125rem 0.375rem;
   font-size: 0.9em;
 }
@@ -95,7 +100,7 @@ body {
 .prose-md pre {
   margin: 1rem 0;
   overflow: auto;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid rgb(15 23 42);
   background: rgb(2 6 23);
   padding: 1rem;
@@ -110,9 +115,13 @@ body {
 
 .prose-md blockquote {
   margin: 1rem 0;
-  border-left: 4px solid rgb(226 232 240);
+  border-left: 4px solid rgb(59 130 246);
   padding-left: 1rem;
   color: rgb(71 85 105);
+  background: rgb(248 250 252);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .prose-md hr {
@@ -126,7 +135,7 @@ body {
   border-collapse: collapse;
   margin: 1rem 0;
   overflow: hidden;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid rgb(226 232 240);
 }
 
@@ -150,8 +159,140 @@ body {
 .prose-md img {
   max-width: 100%;
   height: auto;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   border: 1px solid rgb(226 232 240);
+}
+
+.page-kicker {
+  color: rgb(37 99 235);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.surface {
+  border: 1px solid rgb(226 232 240);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+}
+
+.soft-panel {
+  border: 1px solid rgb(226 232 240);
+  border-radius: 8px;
+  background: rgb(248 250 252);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.data-table thead {
+  background: rgb(248 250 252);
+  color: rgb(71 85 105);
+}
+
+.data-table th {
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+}
+
+.data-table td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+}
+
+.data-table tbody tr {
+  background: white;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.data-table tbody tr:hover {
+  background: rgb(248 250 252);
+}
+
+.action-link {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid rgb(203 213 225);
+  background: white;
+  padding: 0.5rem 0.9rem;
+  color: rgb(15 23 42);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.action-link:hover {
+  border-color: rgb(148 163 184);
+  background: rgb(248 250 252);
+}
+
+.action-primary {
+  display: inline-flex;
+  min-height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgb(37 99 235);
+  padding: 0.5rem 0.95rem;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition:
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.action-primary:hover {
+  background: rgb(29 78 216);
+  box-shadow: 0 10px 24px rgb(37 99 235 / 0.2);
+}
+
+.input-modern {
+  height: 2.75rem;
+  border-radius: 8px;
+  border: 1px solid rgb(203 213 225);
+  background: white;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  color: rgb(15 23 42);
+  outline: none;
+}
+
+.input-modern:focus {
+  border-color: rgb(37 99 235);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.14);
+}
+
+.subtle-scrollbar {
+  scrollbar-color: rgb(203 213 225) transparent;
+}
+
+.subtle-scrollbar::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+.subtle-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(203 213 225);
+  border: 3px solid transparent;
+  background-clip: content-box;
 }
 
 .ProseMirror {
