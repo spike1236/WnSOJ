@@ -57,6 +57,7 @@ urlpatterns = [
     path('api/session/login/', accounts_views.SessionLoginAPIView.as_view(), name='session_login_api'),
     path('api/session/logout/', accounts_views.SessionLogoutAPIView.as_view(), name='session_logout_api'),
     path('api/session/register/', accounts_views.SessionRegisterAPIView.as_view(), name='session_register_api'),
+    path('api/overview/', problem_views.OverviewAPIView.as_view(), name='overview_api'),
     path('api/register/', accounts_views.RegisterAPIView.as_view(), name='register_api'),
     path('api/profile/', accounts_views.UserDetailAPIView.as_view(), name='profile_api'),
     path('api/profile/icon/', accounts_views.ProfileIconAPIView.as_view(), name='profile_icon_api'),

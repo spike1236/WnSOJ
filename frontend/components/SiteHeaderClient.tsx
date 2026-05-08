@@ -49,6 +49,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
   const links = useMemo(
     () => [
       { href: "/home", label: "Home" },
+      { href: "/dashboard", label: "Dashboard" },
       { href: "/problems", label: "Problems" },
       { href: "/jobs", label: "Jobs" },
       { href: "/faq", label: "FAQ" }
@@ -112,6 +113,13 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
                     <div className="text-xs text-slate-600">{user.email}</div>
                   </div>
                   <div className="grid gap-1 p-2 text-sm">
+                    <Link
+                      className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-50"
+                      href="/dashboard"
+                      onClick={() => setUserOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
                     <Link
                       className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-50"
                       href={`/profile/${encodeURIComponent(user.username)}`}
@@ -182,6 +190,13 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
                   <div className="grid gap-1">
                     <Link
                       className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                       href={`/profile/${encodeURIComponent(user.username)}`}
                       onClick={() => setMobileOpen(false)}
                     >
@@ -235,4 +250,3 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
     </header>
   );
 }
-

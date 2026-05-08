@@ -163,13 +163,23 @@ class PublicUserProfileSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        min_length=USERNAME_MIN_LENGTH, max_length=USERNAME_MAX_LENGTH
+        min_length=USERNAME_MIN_LENGTH,
+        max_length=USERNAME_MAX_LENGTH,
+        required=True,
+        allow_blank=False,
     )
+    email = serializers.EmailField(required=True, allow_blank=False)
     password = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
+        write_only=True,
+        required=True,
+        allow_blank=False,
+        style={"input_type": "password"},
     )
     password2 = serializers.CharField(
-        write_only=True, required=True, style={"input_type": "password"}
+        write_only=True,
+        required=True,
+        allow_blank=False,
+        style={"input_type": "password"},
     )
     icon = serializers.ImageField(required=False)
     is_business = serializers.BooleanField(required=False, default=False)
@@ -190,7 +200,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        if attrs["password"] != attrs["password2"]:
+        password = attrs.get("password") or ""
+        password2 = attrs.get("password2") or ""
+        if not password:
+            raise serializers.ValidationError({"password": "Password is required."})
+        if not password2:
+            raise serializers.ValidationError(
+                {"password2": "Password confirmation is required."}
+            )
+        if password != password2:
             raise serializers.ValidationError({"password": "Passwords must match."})
         return attrs
 

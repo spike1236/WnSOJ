@@ -41,6 +41,10 @@ async function parseErrorResponse(res: Response) {
   return text;
 }
 
+function RequiredMark() {
+  return <span className="text-red-600" aria-hidden="true">*</span>;
+}
+
 export default function LoginForm({ initialError }: { initialError?: string | null }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(initialError ?? null);
@@ -80,7 +84,7 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
       <form className="grid gap-4" onSubmit={onSubmit}>
         <div className="grid gap-1.5">
           <label className="text-sm font-medium text-slate-700" htmlFor="username">
-            Username
+            Username <RequiredMark />
           </label>
           <input
             className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -93,7 +97,7 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
         </div>
         <div className="grid gap-1.5">
           <label className="text-sm font-medium text-slate-700" htmlFor="password">
-            Password
+            Password <RequiredMark />
           </label>
           <input
             className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -109,7 +113,7 @@ export default function LoginForm({ initialError }: { initialError?: string | nu
           disabled={busy}
           type="submit"
         >
-          Login
+          {busy ? "Logging in..." : "Login"}
         </button>
       </form>
     </>

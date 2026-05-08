@@ -1,8 +1,9 @@
 import Container from "@/components/Container";
+import LocalTime from "@/components/LocalTime";
 import Markdown from "@/components/Markdown";
 import { deleteJobAction } from "@/app/actions/jobs";
 import { backendFetchJson } from "@/lib/backend.server";
-import { formatDateTime, formatSalaryRange } from "@/lib/format";
+import { formatSalaryRange } from "@/lib/format";
 import type { Job, UserDetail } from "@/lib/types";
 import Link from "next/link";
 
@@ -86,7 +87,9 @@ export default async function Page({
           </div>
           <div>
             <div className="text-xs font-semibold text-slate-600">Posted On</div>
-            <div className="mt-1 text-slate-900">{formatDateTime(job.created_at)}</div>
+            <div className="mt-1 text-slate-900">
+              <LocalTime value={job.created_at} />
+            </div>
           </div>
         </div>
       </div>

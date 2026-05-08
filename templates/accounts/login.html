@@ -11,7 +11,7 @@
                 <form action="" method="post" enctype="multipart/form-data" class="accounts-form">{{ csrf_input }}
                     <!-- Username field -->
                     <div class="accounts-form-group mb-3">
-                        <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }}</label>
+                        <label for="{{ form.username.id_for_label }}" class="accounts-form-label fw-bold">{{ form.username.label }} <span class="text-danger">*</span></label>
                         <div class="accounts-input-group input-group">
                             <span class="input-group-text"><i class="fa fa-user"></i></span>
                             {{ form.username }}
@@ -25,7 +25,7 @@
                     
                     <!-- Password field -->
                     <div class="accounts-form-group mb-3">
-                        <label for="{{ form.password.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password.label }}</label>
+                        <label for="{{ form.password.id_for_label }}" class="accounts-form-label fw-bold">{{ form.password.label }} <span class="text-danger">*</span></label>
                         <div class="accounts-input-group input-group">
                             <span class="input-group-text"><i class="fa fa-lock"></i></span>
                             {{ form.password }}

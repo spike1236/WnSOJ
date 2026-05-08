@@ -103,15 +103,15 @@ export default async function HomePage() {
             <>
               <Link
                 className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
-                href="/problems"
+                href="/dashboard"
               >
-                Explore Problems
+                Open Dashboard
               </Link>
               <Link
                 className="inline-flex items-center justify-center rounded-lg border px-5 py-2.5 text-sm font-medium hover:bg-slate-50"
-                href={`/profile/${encodeURIComponent(user.username)}`}
+                href="/problems"
               >
-                View Profile
+                Explore Problems
               </Link>
             </>
           ) : (

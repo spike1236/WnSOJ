@@ -41,6 +41,10 @@ async function parseErrorResponse(res: Response) {
   return text;
 }
 
+function RequiredMark() {
+  return <span className="text-red-600" aria-hidden="true">*</span>;
+}
+
 export default function RegisterForm({ initialError }: { initialError?: string | null }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(initialError ?? null);
@@ -76,7 +80,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
         <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="username">
-              Username
+              Username <RequiredMark />
             </label>
             <input
               className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -93,7 +97,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
           </div>
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="email">
-              Email
+              Email <RequiredMark />
             </label>
             <input
               className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -157,7 +161,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
         <div className="grid gap-4 md:grid-cols-2">
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="password">
-              Password
+              Password <RequiredMark />
             </label>
             <input
               className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -170,7 +174,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
           </div>
           <div className="grid gap-1.5">
             <label className="text-sm font-medium text-slate-700" htmlFor="password2">
-              Confirm password
+              Confirm password <RequiredMark />
             </label>
             <input
               className="h-11 rounded-lg border px-3 text-sm outline-none ring-blue-600 focus:ring-2"
@@ -193,7 +197,7 @@ export default function RegisterForm({ initialError }: { initialError?: string |
           disabled={busy}
           type="submit"
         >
-          Create account
+          {busy ? "Creating account..." : "Create account"}
         </button>
       </form>
     </>

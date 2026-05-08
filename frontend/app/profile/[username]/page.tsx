@@ -1,8 +1,8 @@
 import Container from "@/components/Container";
+import LocalTime from "@/components/LocalTime";
 import StatusPill, { statusPillMetaForCode } from "@/components/StatusPill";
 import { BackendFetchError, backendFetchJson } from "@/lib/backend.server";
 import { cn } from "@/lib/cn";
-import { formatDateTime } from "@/lib/format";
 import type { SubmissionListItem, UserDetail, UserPublic } from "@/lib/types";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -156,7 +156,9 @@ export default async function Page({ params }: { params: Promise<{ username: str
                         {s.id}
                       </Link>
                     </td>
-                    <td className="px-6 py-3 text-slate-700">{formatDateTime(s.send_time)}</td>
+                    <td className="px-6 py-3 text-slate-700">
+                      <LocalTime value={s.send_time} />
+                    </td>
                     <td className="px-6 py-3">
                       <Link className="font-medium text-slate-900 hover:underline" href={`/problem/${s.problem_id}`}>
                         {s.problem_title}

@@ -45,7 +45,9 @@ def get_submission_progress(submission_id: int) -> Optional[dict[str, Any]]:
     return value if isinstance(value, dict) else None
 
 
-def publish_submission_event(submission_id: int, payload: dict[str, Any], *, ttl_seconds: int = 60 * 60) -> None:
+def publish_submission_event(
+    submission_id: int, payload: dict[str, Any], *, ttl_seconds: int = 60 * 60
+) -> None:
     try:
         client = _redis_client()
         data = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)

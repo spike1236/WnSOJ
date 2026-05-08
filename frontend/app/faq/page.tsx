@@ -58,6 +58,10 @@ export default function Page() {
                 <td className="px-4 py-3 text-slate-700">In queue. Solution is waiting for testing.</td>
               </tr>
               <tr className="bg-white">
+                <td className="px-4 py-3 font-mono text-slate-700">T</td>
+                <td className="px-4 py-3 text-slate-700">Testing. Solution is currently running on test data.</td>
+              </tr>
+              <tr className="bg-white">
                 <td className="px-4 py-3 font-mono text-amber-700">CE</td>
                 <td className="px-4 py-3 text-slate-700">Compilation error.</td>
               </tr>

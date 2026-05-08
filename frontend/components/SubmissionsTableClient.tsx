@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import LocalTime from "@/components/LocalTime";
 import StatusPill from "@/components/StatusPill";
-import { formatDateTime } from "@/lib/format";
 import type { SubmissionListItem } from "@/lib/types";
 import { isFinalVerdictDisplay } from "@/lib/verdict";
 
@@ -94,9 +94,7 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
             </Link>
           </td>
           <td className="px-4 py-3 text-slate-700">
-            <time dateTime={s.send_time} suppressHydrationWarning>
-              {formatDateTime(s.send_time)}
-            </time>
+            <LocalTime value={s.send_time} />
           </td>
           <td className="px-4 py-3">
             <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(s.username)}`}>

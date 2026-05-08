@@ -1,8 +1,9 @@
 import Container from "@/components/Container";
+import LocalTime from "@/components/LocalTime";
 import Markdown from "@/components/Markdown";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
-import { formatDate, formatSalaryRange } from "@/lib/format";
+import { formatSalaryRange } from "@/lib/format";
 import type { ApiList, Job, UserDetail } from "@/lib/types";
 import Link from "next/link";
 
@@ -63,7 +64,7 @@ export default async function Page({
                   </Link>
                 </span>
                 <span>·</span>
-                <span>{formatDate(job.created_at)}</span>
+                <LocalTime value={job.created_at} mode="date" />
               </div>
               <div className="relative mt-4 max-h-32 overflow-hidden">
                 <Markdown content={job.info} />

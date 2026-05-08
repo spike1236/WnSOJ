@@ -45,7 +45,15 @@ class SubmissionAdmin(admin.ModelAdmin):
     def verdict_pretty(self, obj: Submission):
         return obj.verdict_display
 
-    list_display = ("id", "problem", "user", "language", "verdict_pretty", "send_time", "updated_at")
+    list_display = (
+        "id",
+        "problem",
+        "user",
+        "language",
+        "verdict_pretty",
+        "send_time",
+        "updated_at",
+    )
     list_filter = (VerdictCodeFilter, "language", "problem")
     search_fields = ("user__username", "problem__title", "id")
     ordering = ("-id",)
@@ -70,7 +78,10 @@ class SubmissionAdmin(admin.ModelAdmin):
             raise PermissionDenied
         ids = list(queryset.values_list("id", flat=True))
         retest_submissions_task.delay(ids)
-        messages.success(request, f"Queued retest for {len(ids)} submission(s) (skipping those already in queue).")
+        messages.success(
+            request,
+            f"Queued retest for {len(ids)} submission(s) (skipping those already in queue).",
+        )
 
     def retest_all_view(self, request):
         if not self.has_change_permission(request):
@@ -78,7 +89,10 @@ class SubmissionAdmin(admin.ModelAdmin):
 
         if request.method == "POST":
             retest_all_submissions_task.delay()
-            messages.success(request, "Queued retest for all submissions (skipping those already in queue).")
+            messages.success(
+                request,
+                "Queued retest for all submissions (skipping those already in queue).",
+            )
             return redirect("..")
 
         context = {
@@ -86,4 +100,6 @@ class SubmissionAdmin(admin.ModelAdmin):
             "opts": self.model._meta,
             "title": "Retest all submissions",
         }
-        return TemplateResponse(request, "admin/problemset/submission/retest_all.html", context)
+        return TemplateResponse(
+            request, "admin/problemset/submission/retest_all.html", context
+        )

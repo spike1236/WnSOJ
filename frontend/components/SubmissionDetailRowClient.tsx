@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
+import LocalTime from "@/components/LocalTime";
 import StatusPill from "@/components/StatusPill";
-import { formatDateTime } from "@/lib/format";
 import { isFinalVerdictDisplay } from "@/lib/verdict";
 
 type StreamPayload = {
@@ -79,9 +79,7 @@ export default function SubmissionDetailRowClient(props: {
     <tr className="bg-white">
       <td className="px-4 py-3 font-mono text-slate-700">{props.id}</td>
       <td className="px-4 py-3 text-slate-700">
-        <time dateTime={props.sendTime} suppressHydrationWarning>
-          {formatDateTime(props.sendTime)}
-        </time>
+        <LocalTime value={props.sendTime} />
       </td>
       <td className="px-4 py-3">
         <Link className="text-blue-600 hover:underline" href={`/profile/${encodeURIComponent(props.username)}`}>

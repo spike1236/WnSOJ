@@ -94,9 +94,7 @@ def test_submission_task(submission_id):
         submission.memory = 0
         submission.save()
         publish_submission_final(submission)
-        logger.error(
-            f"Unknown language '{language}' for submission {submission_id}."
-        )
+        logger.error(f"Unknown language '{language}' for submission {submission_id}.")
         return
 
     box_id = random.randint(1, 999)
@@ -188,7 +186,11 @@ def retest_submissions_task(submission_ids: list[int]):
     if not submission_ids:
         return {"queued": 0}
 
-    ids = [int(i) for i in submission_ids if isinstance(i, int) or (isinstance(i, str) and i.isdigit())]
+    ids = [
+        int(i)
+        for i in submission_ids
+        if isinstance(i, int) or (isinstance(i, str) and i.isdigit())
+    ]
     if not ids:
         return {"queued": 0}
 
@@ -196,7 +198,9 @@ def retest_submissions_task(submission_ids: list[int]):
     queued = 0
     for batch in _chunks(ids, 500):
         to_queue = list(
-            Submission.objects.filter(id__in=batch).exclude(verdict="IQ").values_list("id", flat=True)
+            Submission.objects.filter(id__in=batch)
+            .exclude(verdict="IQ")
+            .values_list("id", flat=True)
         )
         if not to_queue:
             continue

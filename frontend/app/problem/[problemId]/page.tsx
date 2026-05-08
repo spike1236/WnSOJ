@@ -2,6 +2,7 @@ import CodeEditor from "@/components/CodeEditor";
 import Container from "@/components/Container";
 import Markdown from "@/components/Markdown";
 import ProblemNav from "@/components/ProblemNav";
+import SubmitSolutionButton from "@/components/SubmitSolutionButton";
 import { submitSolutionAction } from "@/app/actions/submissions";
 import { backendFetchJson } from "@/lib/backend.server";
 import type { Problem } from "@/lib/types";
@@ -79,18 +80,13 @@ export default async function Page({
         <div className="rounded-2xl border bg-white p-6 shadow-sm">
           <h2 className="text-lg font-semibold tracking-tight">Code Editor</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Submit a solution. Authentication is required to create submissions.
+            Submit a solution and follow the live verdict on the submission page.
           </p>
           <form action={submitSolutionAction} className="mt-4 grid gap-4">
             <input name="problem_id" type="hidden" value={problem.id} />
             <CodeEditor name="code" />
             <div className="flex justify-end">
-              <button
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-blue-600 px-5 text-sm font-medium text-white hover:bg-blue-700"
-                type="submit"
-              >
-                Submit Solution
-              </button>
+              <SubmitSolutionButton />
             </div>
           </form>
         </div>

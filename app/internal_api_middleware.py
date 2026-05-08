@@ -13,4 +13,3 @@ class InternalApiKeyMiddleware:
             if provided != key:
                 return HttpResponseNotFound()
         return self.get_response(request)
-

@@ -59,7 +59,9 @@ class ProblemCreateSerializer(serializers.Serializer):
     statement = serializers.CharField()
     editorial = serializers.CharField()
     code = serializers.CharField(required=False, allow_blank=True, default="")
-    categories = serializers.ListField(child=serializers.IntegerField(), allow_empty=False)
+    categories = serializers.ListField(
+        child=serializers.IntegerField(), allow_empty=False
+    )
     test_data = serializers.FileField()
 
     def validate_categories(self, value):
@@ -104,11 +106,15 @@ class ProblemCreateSerializer(serializers.Serializer):
                         continue
                     total_size += int(getattr(info, "file_size", 0) or 0)
                     if total_size > 250 * 1024 * 1024:
-                        raise serializers.ValidationError({"test_data": "Zip is too large."})
+                        raise serializers.ValidationError(
+                            {"test_data": "Zip is too large."}
+                        )
                     normalized = name.replace("\\", "/")
                     p = Path(normalized)
                     if p.is_absolute() or ".." in p.parts:
-                        raise serializers.ValidationError({"test_data": "Invalid zip contents."})
+                        raise serializers.ValidationError(
+                            {"test_data": "Invalid zip contents."}
+                        )
                     out_path = dest / p
                     out_path.parent.mkdir(parents=True, exist_ok=True)
                     with zf.open(info) as src, open(out_path, "wb") as dst:

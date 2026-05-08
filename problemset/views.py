@@ -3,6 +3,9 @@ from django.templatetags.static import static
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.db import transaction
+from accounts.models import User
+from jobboard.models import Job
+from jobboard.serializers import JobListSerializer
 from .models import Category, Problem, Submission
 from .forms import AddProblemForm, SubmitForm
 import os
@@ -11,6 +14,7 @@ from io import BytesIO
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.db.models import Count, Exists, OuterRef, Prefetch
@@ -217,6 +221,84 @@ def faq(request):
     return render(request, "faq.html", {"title": "FAQ | WnSOJ", "navbar_item_id": 4})
 
 
+class OverviewAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    verdict_codes = ["IQ", "T", "AC", "CE", "WA", "RE", "TLE", "MLE"]
+
+    def get_verdict_counts(self):
+        counts = {code: 0 for code in self.verdict_codes}
+        rows = Submission.objects.values("verdict").annotate(total=Count("id"))
+        for row in rows:
+            code, _ = Submission.parse_verdict(row["verdict"])
+            if code in counts:
+                counts[code] += row["total"]
+        return counts
+
+    def get(self, request):
+        accepted_count = Submission.objects.filter(verdict__startswith="AC").count()
+        judged_count = Submission.objects.exclude(verdict__in=["", "IQ"]).count()
+        acceptance_rate = (
+            round((accepted_count / judged_count) * 100, 1) if judged_count else 0.0
+        )
+
+        recent_submissions = Submission.objects.select_related(
+            "user", "problem"
+        ).order_by("-id")[:8]
+        recent_jobs = Job.objects.select_related("user").order_by("-created_at")[:5]
+        categories = Category.objects.annotate(
+            problem_count=Count("problems", distinct=True)
+        ).order_by("-problem_count", "long_name")[:6]
+
+        user_progress = None
+        user = getattr(request, "user", None)
+        if user and user.is_authenticated:
+            user_recent = (
+                Submission.objects.filter(user=user)
+                .select_related("user", "problem")
+                .order_by("-id")[:5]
+            )
+            user_progress = {
+                "solved_count": user.problems_solved.count(),
+                "attempted_count": user.problems_unsolved.count(),
+                "submissions_count": Submission.objects.filter(user=user).count(),
+                "recent_submissions": SubmissionListSerializer(
+                    user_recent, many=True
+                ).data,
+            }
+
+        return Response(
+            {
+                "stats": {
+                    "users": User.objects.count(),
+                    "problems": Problem.objects.count(),
+                    "categories": Category.objects.count(),
+                    "submissions": Submission.objects.count(),
+                    "accepted_submissions": accepted_count,
+                    "jobs": Job.objects.count(),
+                    "business_accounts": User.objects.filter(account_type=2).count(),
+                    "acceptance_rate": acceptance_rate,
+                },
+                "verdict_counts": self.get_verdict_counts(),
+                "featured_categories": [
+                    {
+                        "id": category.id,
+                        "short_name": category.short_name,
+                        "long_name": category.long_name,
+                        "img_url": category.img_url,
+                        "problem_count": category.problem_count,
+                    }
+                    for category in categories
+                ],
+                "recent_submissions": SubmissionListSerializer(
+                    recent_submissions, many=True
+                ).data,
+                "recent_jobs": JobListSerializer(recent_jobs, many=True).data,
+                "user_progress": user_progress,
+            }
+        )
+
+
 class CategoryAPIViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all().order_by("id")
     serializer_class = CategorySerializer
@@ -251,10 +333,14 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
             unsolved_through = Problem.users_unsolved.through
             qs = qs.annotate(
                 is_solved=Exists(
-                    solved_through.objects.filter(user_id=user.id, problem_id=OuterRef("pk"))
+                    solved_through.objects.filter(
+                        user_id=user.id, problem_id=OuterRef("pk")
+                    )
                 ),
                 is_attempted=Exists(
-                    unsolved_through.objects.filter(user_id=user.id, problem_id=OuterRef("pk"))
+                    unsolved_through.objects.filter(
+                        user_id=user.id, problem_id=OuterRef("pk")
+                    )
                 ),
             )
 
@@ -308,7 +394,9 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
         qs = Submission.objects.all().select_related("user", "problem").order_by("-id")
 
         if self.action == "list":
-            username = self.request.query_params.get("username") or self.request.query_params.get("user")
+            username = self.request.query_params.get(
+                "username"
+            ) or self.request.query_params.get("user")
             if username:
                 qs = qs.filter(user__username=username)
 
@@ -335,7 +423,9 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
         from .tasks import test_submission_task
 
         transaction.on_commit(
-            lambda submission_id=submission.id: test_submission_task.delay(submission_id)
+            lambda submission_id=submission.id: test_submission_task.delay(
+                submission_id
+            )
         )
 
     def get_permissions(self):

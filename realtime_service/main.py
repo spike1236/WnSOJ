@@ -98,7 +98,9 @@ async def stream_submission(request: Request, submission_id: int):
             payload = None
 
     snapshot = payload or {"kind": "snapshot", "id": submission_id, "verdict": "IQ"}
-    code = _verdict_code(snapshot.get("verdict") if isinstance(snapshot, dict) else None)
+    code = _verdict_code(
+        snapshot.get("verdict") if isinstance(snapshot, dict) else None
+    )
 
     async def gen():
         yield _sse(snapshot, "snapshot")
@@ -127,9 +129,21 @@ async def stream_submission(request: Request, submission_id: int):
                             if isinstance(obj, dict):
                                 yield _sse(obj)
                             else:
-                                yield _sse({"kind": "progress", "id": submission_id, "verdict": data})
+                                yield _sse(
+                                    {
+                                        "kind": "progress",
+                                        "id": submission_id,
+                                        "verdict": data,
+                                    }
+                                )
                         except Exception:
-                            yield _sse({"kind": "progress", "id": submission_id, "verdict": data})
+                            yield _sse(
+                                {
+                                    "kind": "progress",
+                                    "id": submission_id,
+                                    "verdict": data,
+                                }
+                            )
                 else:
                     now = time.monotonic()
                     if now - last_ping >= 15:
@@ -176,7 +190,9 @@ async def stream_submissions(request: Request, ids: str):
         for sid in sub_ids:
             snap = await snapshot_for(sid)
             yield _sse(snap, "snapshot")
-            code = _verdict_code(snap.get("verdict") if isinstance(snap, dict) else None)
+            code = _verdict_code(
+                snap.get("verdict") if isinstance(snap, dict) else None
+            )
             if _is_final_code(code):
                 final_payload = dict(snap)
                 final_payload["kind"] = "final"
@@ -208,8 +224,12 @@ async def stream_submissions(request: Request, ids: str):
                             elif isinstance(obj, dict):
                                 yield _sse(obj)
                             else:
-                                sid = _submission_id_from_channel(message.get("channel"))
-                                yield _sse({"kind": "progress", "id": sid, "verdict": data})
+                                sid = _submission_id_from_channel(
+                                    message.get("channel")
+                                )
+                                yield _sse(
+                                    {"kind": "progress", "id": sid, "verdict": data}
+                                )
                         except Exception:
                             sid = _submission_id_from_channel(message.get("channel"))
                             yield _sse({"kind": "progress", "id": sid, "verdict": data})

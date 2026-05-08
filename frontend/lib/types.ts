@@ -114,3 +114,34 @@ export type JobListItem = {
   salary_range: SalaryRange | null;
   created_at: string;
 };
+
+export type OverviewCategory = Category & {
+  problem_count: number;
+};
+
+export type OverviewStats = {
+  users: number;
+  problems: number;
+  categories: number;
+  submissions: number;
+  accepted_submissions: number;
+  jobs: number;
+  business_accounts: number;
+  acceptance_rate: number;
+};
+
+export type OverviewUserProgress = {
+  solved_count: number;
+  attempted_count: number;
+  submissions_count: number;
+  recent_submissions: SubmissionListItem[];
+};
+
+export type Overview = {
+  stats: OverviewStats;
+  verdict_counts: Record<string, number>;
+  featured_categories: OverviewCategory[];
+  recent_submissions: SubmissionListItem[];
+  recent_jobs: JobListItem[];
+  user_progress: OverviewUserProgress | null;
+};

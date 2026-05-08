@@ -25,4 +25,3 @@ class InternalBypassUserRateThrottle(_InternalBypassMixin, UserRateThrottle):
 
 class InternalBypassAnonRateThrottle(_InternalBypassMixin, AnonRateThrottle):
     pass
-

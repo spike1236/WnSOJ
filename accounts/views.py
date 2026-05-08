@@ -232,11 +232,16 @@ class SessionLoginAPIView(APIView):
         password = request.data.get("password") or ""
 
         if not username or not password:
-            return Response({"detail": "Missing credentials."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Missing credentials."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         user = authenticate(username=username, password=password)
         if user is None:
-            return Response({"detail": "Invalid username or password."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid username or password."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         login(request, user)
         get_token(request)
@@ -271,6 +276,7 @@ class SessionRegisterAPIView(APIView):
         login(request, user)
         get_token(request)
         return Response(UserDetailSerializer(user).data, status=status.HTTP_201_CREATED)
+
 
 class PublicUserProfileAPIView(APIView):
     """Public profile data for a given user.
@@ -332,7 +338,9 @@ class ProfileIconAPIView(APIView):
     def post(self, request):
         icon = request.FILES.get("icon")
         if not icon:
-            return Response({"detail": "Missing icon file."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Missing icon file."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         user = request.user
         if not user.icon_id:
@@ -370,14 +378,20 @@ class ProfilePasswordAPIView(APIView):
         new_password2 = request.data.get("new_password2") or ""
 
         if not old_password or not new_password1 or not new_password2:
-            return Response({"detail": "Missing fields."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Missing fields."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         user = request.user
         if not user.check_password(old_password):
-            return Response({"detail": "Invalid old password."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid old password."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         if new_password1 != new_password2:
-            return Response({"detail": "Passwords must match."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Passwords must match."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         user.set_password(new_password1)
         user.save()

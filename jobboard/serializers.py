@@ -21,7 +21,7 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class JobListSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField(source="user_id", read_only=True)
+    user_id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(source="user.username", read_only=True)
 
     class Meta:
