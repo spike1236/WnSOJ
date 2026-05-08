@@ -62,7 +62,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
       <Container className="flex h-16 items-center justify-between">
         <div className="flex items-center gap-3">
           <Link className="inline-flex items-center gap-2 text-sm font-bold tracking-normal text-slate-950" href="/">
-            <span className="grid h-8 w-8 place-items-center rounded-[8px] bg-blue-600 text-white shadow-sm">W</span>
+            <img alt="" className="h-8 w-8 rounded-[8px] shadow-sm" src="/favicon.svg" />
             <span>WnSOJ</span>
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
@@ -102,7 +102,7 @@ export default function SiteHeaderClient({ user }: { user: UserDetail | null }) 
                 <img
                   alt=""
                   className="h-6 w-6 rounded-full border object-cover"
-                  src={user.icon64_url ?? "/img/favicon.svg"}
+                  src={user.icon64_url ?? "/favicon.svg"}
                 />
                 <span className="hidden md:inline">{user.username}</span>
                 <IconChevronDown className="text-slate-500" />

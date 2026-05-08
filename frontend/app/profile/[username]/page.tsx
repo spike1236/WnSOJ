@@ -55,7 +55,7 @@ export default async function Page({ params }: { params: Promise<{ username: str
               <img
                 alt={`${profile.user.username}'s profile picture`}
                 className="h-28 w-28 rounded-full border object-cover"
-                src={profile.user.icon170_url ?? "/img/favicon.svg"}
+                src={profile.user.icon170_url ?? "/favicon.svg"}
               />
               <div className="mt-3 text-xl font-semibold tracking-tight">{profile.user.username}</div>
               {isMe ? (

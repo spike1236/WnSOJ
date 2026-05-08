@@ -9,7 +9,14 @@ export const metadata: Metadata = {
     default: "WnSOJ",
     template: "%s | WnSOJ"
   },
-  description: "Programming challenges, problem-solving, and career opportunities."
+  description: "Programming challenges, problem-solving, and career opportunities.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" }
+    ],
+    shortcut: "/favicon.ico"
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

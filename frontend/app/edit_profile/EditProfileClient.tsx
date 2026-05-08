@@ -156,7 +156,7 @@ export default function EditProfileClient({ user }: { user: UserDetail }) {
             <img
               alt={`${user.username}'s profile picture`}
               className="h-28 w-28 rounded-full border object-cover"
-              src={user.icon170_url ?? "/img/favicon.svg"}
+              src={user.icon170_url ?? "/favicon.svg"}
             />
             <div className="mt-3 text-xl font-semibold tracking-tight">{user.username}</div>
             <a className="mt-2 text-sm font-medium text-blue-600 hover:underline" href={profileHref}>
