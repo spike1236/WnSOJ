@@ -2,7 +2,7 @@ import Container from "@/components/Container";
 import { PageHeader } from "@/components/PageShell";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
-import type { ApiList, Category } from "@/lib/types";
+import type { ApiList, Category, UserDetail } from "@/lib/types";
 import Link from "next/link";
 
 export const metadata = {
@@ -10,16 +10,25 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const categories = asArray(
-    await backendFetchJson<ApiList<Category>>("/api/categories/?limit=1000", {
+  const [categoryList, user] = await Promise.all([
+    backendFetchJson<ApiList<Category>>("/api/categories/?limit=1000", {
       forwardCookies: false,
       revalidate: 3600
-    })
-  );
+    }),
+    backendFetchJson<UserDetail>("/api/profile/").catch(() => null)
+  ]);
+  const categories = asArray(categoryList);
 
   return (
     <Container className="py-8 sm:py-10">
       <PageHeader
+        actions={
+          user?.is_staff ? (
+            <Link className="action-primary" href="/add_problem">
+              Add Problem
+            </Link>
+          ) : null
+        }
         description="Choose a topic, scan the limits, and jump straight into solving."
         kicker="Problemset"
         title="Practice by Category"
@@ -38,7 +47,6 @@ export default async function Page() {
             <div className="flex items-center justify-between gap-4 p-5">
               <div>
                 <div className="text-base font-bold tracking-normal text-slate-950">{cat.long_name}</div>
-                <div className="mt-1 text-sm font-medium text-slate-500">{cat.short_name}</div>
               </div>
               <div className="rounded-full border bg-white px-3 py-1 text-xs font-bold text-blue-600">Open</div>
             </div>

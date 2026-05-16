@@ -2,17 +2,19 @@ import Container from "@/components/Container";
 import { Badge, EmptyState, PageHeader } from "@/components/PageShell";
 import { backendFetchJson } from "@/lib/backend.server";
 import { asArray } from "@/lib/apiList";
-import type { ApiList, Category, ProblemListItem } from "@/lib/types";
+import type { ApiList, Category, ProblemListItem, UserDetail } from "@/lib/types";
 import Link from "next/link";
 
 export default async function Page({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
-  const categories = asArray(
-    await backendFetchJson<ApiList<Category>>("/api/categories/?limit=1000", {
+  const [categoryList, user] = await Promise.all([
+    backendFetchJson<ApiList<Category>>("/api/categories/?limit=1000", {
       forwardCookies: false,
       revalidate: 3600
-    })
-  );
+    }),
+    backendFetchJson<UserDetail>("/api/profile/").catch(() => null)
+  ]);
+  const categories = asArray(categoryList);
   const categoryName = categories.find((c) => c.short_name === category)?.long_name ?? category;
   const problems = asArray(
     await backendFetchJson<ApiList<ProblemListItem>>(
@@ -24,9 +26,16 @@ export default async function Page({ params }: { params: Promise<{ category: str
     <Container className="py-8 sm:py-10">
       <PageHeader
         actions={
-          <Link className="action-link" href="/problems">
-            All categories
-          </Link>
+          <>
+            {user?.is_staff ? (
+              <Link className="action-primary" href="/add_problem">
+                Add Problem
+              </Link>
+            ) : null}
+            <Link className="action-link" href="/problems">
+              All categories
+            </Link>
+          </>
         }
         description="A focused queue of problems for this track."
         kicker="Problems"

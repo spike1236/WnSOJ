@@ -19,10 +19,11 @@ type StreamPayload = {
   stage?: string;
 };
 
+type SubmissionRow = SubmissionListItem & { progressLabel?: string | null };
+
 export default function SubmissionsTableClient({ initial }: { initial: SubmissionListItem[] }) {
-  const [rows, setRows] = useState<(SubmissionListItem & { progressLabel?: string | null })[]>(
-    initial.map((r) => ({ ...r, progressLabel: null }))
-  );
+  const initialRows = useMemo<SubmissionRow[]>(() => initial.map((r) => ({ ...r, progressLabel: null })), [initial]);
+  const [rows, setRows] = useState<SubmissionRow[]>(initialRows);
 
   const idsToWatch = useMemo(() => {
     const ids: number[] = [];
@@ -35,6 +36,11 @@ export default function SubmissionsTableClient({ initial }: { initial: Submissio
   const pending = useRef<Set<number>>(new Set(idsToWatch));
 
   useEffect(() => {
+    setRows(initialRows);
+  }, [initialRows]);
+
+  useEffect(() => {
+    pending.current = new Set(idsToWatch);
     if (!idsToWatch.length) return;
 
     const url = `/backend/submissions/stream?ids=${encodeURIComponent(idsToWatch.join(","))}`;
