@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,6 +21,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY and "test" in sys.argv:
+    SECRET_KEY = "django-insecure-test-key"
 INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -115,6 +118,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            BASE_DIR / "templates",
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -144,6 +148,19 @@ DATABASES = {
         "PORT": os.getenv("DB_PORT"),
     }
 }
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "test.sqlite3",
+        }
+    }
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
+PROBLEMS_DATA_ROOT = Path(
+    os.getenv("PROBLEMS_DATA_ROOT", BASE_DIR / "data" / "problems")
+)
 
 AUTH_USER_MODEL = 'accounts.User'
 

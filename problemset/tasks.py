@@ -7,7 +7,7 @@ import subprocess
 import logging
 from logging.handlers import RotatingFileHandler
 from .utils import run_isolate, run_tests
-from app import settings
+from django.conf import settings
 from django.utils import timezone
 from .realtime import clear_submission_progress, publish_submission_final
 

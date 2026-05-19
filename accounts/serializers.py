@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import User
 import os
-from app import settings
+from django.conf import settings
 from PIL import Image
 import random
 
@@ -129,6 +129,12 @@ class UserDetailSerializer(serializers.ModelSerializer):
             )
         return phone
 
+    def update(self, instance, validated_data):
+        if "is_business" in validated_data:
+            is_business = validated_data.pop("is_business")
+            instance.account_type = 2 if is_business else 1
+        return super().update(instance, validated_data)
+
 
 class PublicUserProfileSerializer(serializers.ModelSerializer):
     icon64_url = serializers.SerializerMethodField(read_only=True)
@@ -153,13 +159,6 @@ class PublicUserProfileSerializer(serializers.ModelSerializer):
             "icon170_url",
             "is_staff",
         ]
-
-    def update(self, instance, validated_data):
-        if "is_business" in validated_data:
-            is_business = validated_data.pop("is_business")
-            instance.account_type = 2 if is_business else 1
-        return super().update(instance, validated_data)
-
 
 class RegisterSerializer(serializers.ModelSerializer):
     username = serializers.CharField(

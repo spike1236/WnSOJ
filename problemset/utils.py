@@ -1,6 +1,6 @@
 import subprocess
 import os
-from app.settings import ISOLATE_PATH
+from django.conf import settings
 from .realtime import publish_submission_event, publish_submission_final
 
 
@@ -29,7 +29,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
         f"--time={time_limit}",
         f"--wall-time={time_limit * 2}",
         f"--cg-mem={mem_limit}",
-        f"--meta={ISOLATE_PATH}/{box_id}/box/meta.txt",
+        f"--meta={settings.ISOLATE_PATH}/{box_id}/box/meta.txt",
     ]
 
     if is_compile:
@@ -48,7 +48,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
         result = subprocess.run(
             isolate_cmd, input=input_data, capture_output=True, timeout=time_limit * 2
         )
-        res = parse_meta_file(f"{ISOLATE_PATH}/{box_id}/box/meta.txt")
+        res = parse_meta_file(f"{settings.ISOLATE_PATH}/{box_id}/box/meta.txt")
         res["stdout"] = result.stdout.decode()
         res["run_success"] = result.returncode == 0
     except subprocess.TimeoutExpired:
@@ -57,7 +57,7 @@ def run_isolate(box_id, cmd, time_limit, mem_limit, input_data=None, is_compile=
 
 
 def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
-    path_to_tests = os.path.join("data", "problems", str(problem_id), "tests")
+    path_to_tests = os.path.join(settings.PROBLEMS_DATA_ROOT, str(problem_id), "tests")
     stat = {"verdict": "AC", "time": 0, "memory": 0}
     test_case = 0
     input_dir = os.path.join(path_to_tests, "input")

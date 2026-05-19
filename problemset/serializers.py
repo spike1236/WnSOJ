@@ -75,9 +75,8 @@ class ProblemCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         from django.conf import settings
         from pathlib import Path
-        from zipfile import ZipFile
-        from io import BytesIO
         import shutil
+        from .test_data import TestDataValidationError, extract_problem_test_data
 
         category_ids = validated_data.pop("categories")
         test_data = validated_data.pop("test_data")
@@ -91,36 +90,19 @@ class ProblemCreateSerializer(serializers.Serializer):
         except Category.DoesNotExist:
             pass
 
-        dest = Path(settings.BASE_DIR) / "data" / "problems" / str(problem.id)
+        dest = Path(settings.PROBLEMS_DATA_ROOT) / str(problem.id)
         if dest.exists():
             shutil.rmtree(dest, ignore_errors=True)
-        dest.mkdir(parents=True, exist_ok=True)
 
         try:
-            data = test_data.read()
-            with ZipFile(BytesIO(data), "r") as zf:
-                total_size = 0
-                for info in zf.infolist():
-                    name = info.filename
-                    if not name or name.endswith("/"):
-                        continue
-                    total_size += int(getattr(info, "file_size", 0) or 0)
-                    if total_size > 250 * 1024 * 1024:
-                        raise serializers.ValidationError(
-                            {"test_data": "Zip is too large."}
-                        )
-                    normalized = name.replace("\\", "/")
-                    p = Path(normalized)
-                    if p.is_absolute() or ".." in p.parts:
-                        raise serializers.ValidationError(
-                            {"test_data": "Invalid zip contents."}
-                        )
-                    out_path = dest / p
-                    out_path.parent.mkdir(parents=True, exist_ok=True)
-                    with zf.open(info) as src, open(out_path, "wb") as dst:
-                        shutil.copyfileobj(src, dst)
+            extract_problem_test_data(test_data, dest)
+        except TestDataValidationError as exc:
+            shutil.rmtree(dest, ignore_errors=True)
+            problem.delete()
+            raise serializers.ValidationError({"test_data": str(exc)}) from exc
         except Exception:
             shutil.rmtree(dest, ignore_errors=True)
+            problem.delete()
             raise
 
         return problem
