@@ -6,9 +6,14 @@ from accounts.tests.helpers import create_user
 from jobboard.models import Job
 from jobboard.tests.helpers import create_business_user, create_job
 
+TEST_API_KEY = "test-internal-api-key"
 
-@override_settings(INTERNAL_API_KEY="")
+
+@override_settings(INTERNAL_API_KEY=TEST_API_KEY)
 class JobAPITests(TestCase):
+    def setUp(self):
+        self.client.defaults["HTTP_X_INTERNAL_API_KEY"] = TEST_API_KEY
+
     def post_json(self, path, payload):
         return self.client.post(
             path,

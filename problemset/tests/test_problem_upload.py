@@ -108,3 +108,20 @@ class AddProblemViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Problem.objects.count(), 0)
+
+    def test_extra_zip_file_rolls_back_problem_creation(self):
+        self.client.force_login(self.staff)
+
+        response = self.post_problem(
+            make_problem_zip(
+                {
+                    "tests/input/01.txt": "1 2\n",
+                    "tests/output/01.txt": "3\n",
+                    "README.txt": "extra",
+                },
+                name="extra.zip",
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Problem.objects.count(), 0)

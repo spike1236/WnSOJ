@@ -1,5 +1,6 @@
 import json
 import os
+import secrets
 import time
 from functools import lru_cache
 from typing import Optional
@@ -16,9 +17,11 @@ def _internal_api_key() -> str:
 async def _require_internal_key(request: Request) -> None:
     key = _internal_api_key()
     if not key:
-        return
+        raise HTTPException(
+            status_code=503, detail="Internal API key is not configured."
+        )
     provided = request.headers.get("x-internal-api-key") or ""
-    if provided != key:
+    if not secrets.compare_digest(provided, key):
         raise HTTPException(status_code=404)
 
 

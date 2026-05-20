@@ -1,11 +1,11 @@
 from celery import shared_task
 from .models import Submission
 import os
-import shutil
 import random
 import subprocess
 import logging
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 from .utils import run_isolate, run_tests
 from django.conf import settings
 from django.utils import timezone
@@ -37,6 +37,74 @@ def configure_logger():
 
 logger = configure_logger()
 
+
+class IsolateBoxUnavailable(RuntimeError):
+    pass
+
+
+def _pid_is_running(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def _clear_stale_lock(lock_path):
+    try:
+        pid = int(lock_path.read_text().strip())
+    except (OSError, ValueError):
+        pid = None
+
+    if pid and _pid_is_running(pid):
+        return False
+
+    try:
+        lock_path.unlink()
+    except FileNotFoundError:
+        pass
+    except OSError:
+        pass
+    except OSError:
+        return False
+    return True
+
+
+def reserve_isolate_box_id():
+    lock_dir = Path(
+        getattr(settings, "ISOLATE_LOCK_DIR", "/tmp/wnsoj-isolate-locks")
+    )
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    min_box_id = int(getattr(settings, "ISOLATE_BOX_ID_MIN", 1))
+    max_box_id = int(getattr(settings, "ISOLATE_BOX_ID_MAX", 999))
+
+    for box_id in range(min_box_id, max_box_id + 1):
+        lock_path = lock_dir / f"{box_id}.lock"
+        for _ in range(2):
+            try:
+                fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            except FileExistsError:
+                if _clear_stale_lock(lock_path):
+                    continue
+                break
+
+            with os.fdopen(fd, "w") as lock_file:
+                lock_file.write(str(os.getpid()))
+            return box_id, lock_path
+
+    raise IsolateBoxUnavailable("No isolate boxes are available.")
+
+
+def release_isolate_box(lock_path):
+    if not lock_path:
+        return
+    try:
+        lock_path.unlink()
+    except FileNotFoundError:
+        pass
+
 LANGUAGE_CONFIGS = {
     "cpp": {
         "compile": [
@@ -65,7 +133,8 @@ def test_submission_task(submission_id):
 
     if submission.verdict != "IQ":
         logger.info(
-            f"Submission {submission_id} already processed with verdict {submission.verdict}."
+            "Submission "
+            f"{submission_id} already processed with verdict {submission.verdict}."
         )
         return
 
@@ -97,7 +166,16 @@ def test_submission_task(submission_id):
         logger.error(f"Unknown language '{language}' for submission {submission_id}.")
         return
 
-    box_id = random.randint(1, 999)
+    try:
+        box_id, lock_path = reserve_isolate_box_id()
+    except IsolateBoxUnavailable:
+        submission.verdict = "RE 1"
+        submission.time = 0
+        submission.memory = 0
+        submission.save()
+        publish_submission_final(submission)
+        logger.error(f"No isolate box available for submission {submission_id}.")
+        return
 
     try:
         subprocess.run(
@@ -110,28 +188,32 @@ def test_submission_task(submission_id):
             ["isolate", "--cg", "--box-id", str(box_id), "--init"], check=True
         )
         logger.info(
-            f"Initialized isolate box with box_id={box_id} for submission={submission_id}"
+            f"Initialized isolate box with box_id={box_id} "
+            f"for submission={submission_id}"
         )
     except subprocess.CalledProcessError:
         submission.verdict = "RE 1"
         submission.save()
         publish_submission_final(submission)
         logger.error(f"Failed to initialize isolate box for submission {submission_id}")
+        subprocess.run(["isolate", "--cg", "--box-id", str(box_id), "--cleanup"])
+        release_isolate_box(lock_path)
         return
 
-    isolate_box_path = f"{settings.ISOLATE_PATH}/{box_id}/box"
+    isolate_box_path = Path(settings.ISOLATE_PATH) / str(box_id) / "box"
     try:
-        with open(os.path.join(isolate_box_path, config["source_file"]), "w") as f:
+        with open(isolate_box_path / config["source_file"], "w") as f:
             f.write(submission.code)
         logger.info(
             f"Copied source file to isolate box: {submission_id} -> {isolate_box_path}"
         )
-    except (FileNotFoundError, shutil.Error) as e:
+    except OSError as e:
         submission.verdict = "RE 1"
         submission.save()
         publish_submission_final(submission)
         logger.error(f"Failed to copy source file for submission {submission_id}: {e}")
         subprocess.run(["isolate", "--cg", "--box-id", str(box_id), "--cleanup"])
+        release_isolate_box(lock_path)
         return
 
     try:
@@ -145,7 +227,9 @@ def test_submission_task(submission_id):
                 is_compile=True,
             )
             logger.info(
-                f"Compilation result for submission {submission_id}: {compile_result}"
+                "Compilation result for submission "
+                f"{submission_id}: success={compile_result.get('run_success')} "
+                f"status={compile_result.get('status')}"
             )
             if not compile_result.get("run_success", False):
                 submission.verdict = "CE"
@@ -170,9 +254,10 @@ def test_submission_task(submission_id):
         logger.error(f"Error while testing submission {submission_id}: {e}")
     finally:
         subprocess.run(["isolate", "--cg", "--box-id", str(box_id), "--cleanup"])
+        release_isolate_box(lock_path)
         logger.info(
-            f"Cleaned up isolate box with box_id={box_id} for submission"
-            + f"{submission_id}"
+            f"Cleaned up isolate box with box_id={box_id} "
+            f"for submission={submission_id}"
         )
 
 

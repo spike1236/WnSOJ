@@ -26,7 +26,8 @@ def _redis_client() -> redis.Redis:
     url = _realtime_redis_url()
     if not url.startswith("redis://") and not url.startswith("rediss://"):
         raise RuntimeError(
-            "Redis realtime is enabled but REALTIME_REDIS_URL/CELERY_BROKER_URL is not a redis:// URL."
+            "Redis realtime is enabled but "
+            "REALTIME_REDIS_URL/CELERY_BROKER_URL is not a redis:// URL."
         )
     return redis.Redis.from_url(url, decode_responses=True)
 

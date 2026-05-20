@@ -295,7 +295,7 @@ server {
     ssl_certificate /etc/letsencrypt/live/wnsoj.example.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/wnsoj.example.com/privkey.pem;
 
-    client_max_body_size 50m;
+    client_max_body_size 250m;
 
     location /static/ {
         alias /srv/wnsoj/staticfiles/;

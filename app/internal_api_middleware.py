@@ -1,3 +1,5 @@
+import secrets
+
 from django.conf import settings
 from django.http import HttpResponseNotFound
 
@@ -7,9 +9,11 @@ class InternalApiKeyMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        key = getattr(settings, "INTERNAL_API_KEY", "") or ""
-        if key and request.path.startswith("/api/"):
+        if request.path.startswith("/api/"):
+            key = (getattr(settings, "INTERNAL_API_KEY", "") or "").strip()
+            if not key:
+                return HttpResponseNotFound()
             provided = request.headers.get("X-Internal-API-Key") or ""
-            if provided != key:
+            if not secrets.compare_digest(provided, key):
                 return HttpResponseNotFound()
         return self.get_response(request)

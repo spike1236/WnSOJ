@@ -25,6 +25,26 @@ def format_number(value):
         return str(value)
 
 
+def build_salary_range(min_salary, max_salary, currency):
+    min_salary = (min_salary or "").strip()
+    max_salary = (max_salary or "").strip()
+    currency = (currency or "$").strip() or "$"
+
+    try:
+        min_value = float(min_salary) if min_salary else None
+        max_value = float(max_salary) if max_salary else None
+    except ValueError:
+        return None, "Salary values must be valid numbers."
+
+    if min_value is not None and max_value is not None and min_value > max_value:
+        return None, "Minimum salary cannot be greater than maximum salary."
+
+    salary_range = {"min": min_salary if min_salary else 0, "currency": currency}
+    if max_salary:
+        salary_range["max"] = max_salary
+    return salary_range, None
+
+
 def jobs(request):
     jobs = Job.objects.all()
     query = (request.GET.get("q") or "").strip()
@@ -59,25 +79,13 @@ def add_job(request):
             max_salary = request.POST.get("max_salary", "")
             currency = request.POST.get("currency", "$")
 
-            salary_error = None
-            if min_salary and max_salary and float(min_salary) > float(max_salary):
-                salary_error = "Minimum salary cannot be greater than maximum salary."
+            salary_range, salary_error = build_salary_range(
+                min_salary, max_salary, currency
+            )
 
             if not salary_error:
                 job = form.save(commit=False)
                 job.user = request.user
-
-                salary_range = {}
-                if min_salary:
-                    salary_range["min"] = min_salary
-                else:
-                    salary_range["min"] = 0
-
-                if max_salary:
-                    salary_range["max"] = max_salary
-
-                salary_range["currency"] = currency
-
                 job.salary_range = salary_range
                 job.save()
                 return redirect("jobs")
@@ -105,7 +113,7 @@ def add_job(request):
 
 
 def job(request, job_id):
-    job = Job.objects.get(id=job_id)
+    job = get_object_or_404(Job, id=job_id)
     return render(
         request,
         "jobboard/job.html",
@@ -137,24 +145,12 @@ def edit_job(request, job_id):
             max_salary = request.POST.get("max_salary", "")
             currency = request.POST.get("currency", "$")
 
-            salary_error = None
-            if min_salary and max_salary and float(min_salary) > float(max_salary):
-                salary_error = "Minimum salary cannot be greater than maximum salary."
+            salary_range, salary_error = build_salary_range(
+                min_salary, max_salary, currency
+            )
 
             if not salary_error:
                 job_instance = form.save(commit=False)
-
-                salary_range = {}
-                if min_salary:
-                    salary_range["min"] = min_salary
-                else:
-                    salary_range["min"] = 0
-
-                if max_salary:
-                    salary_range["max"] = max_salary
-
-                salary_range["currency"] = currency
-
                 job_instance.salary_range = salary_range
                 job_instance.save()
                 return redirect("job", job_id=job_id)

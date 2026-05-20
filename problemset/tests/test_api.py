@@ -12,10 +12,13 @@ from problemset.tests.helpers import (
     make_problem_zip,
 )
 
+TEST_API_KEY = "test-internal-api-key"
 
-@override_settings(INTERNAL_API_KEY="")
+
+@override_settings(INTERNAL_API_KEY=TEST_API_KEY)
 class ProblemAPIPermissionTests(TestCase):
     def setUp(self):
+        self.client.defaults["HTTP_X_INTERNAL_API_KEY"] = TEST_API_KEY
         self.tmp = TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.override = override_settings(PROBLEMS_DATA_ROOT=Path(self.tmp.name))
@@ -105,9 +108,10 @@ class ProblemAPIPermissionTests(TestCase):
         self.assertEqual(Problem.objects.count(), 0)
 
 
-@override_settings(INTERNAL_API_KEY="")
+@override_settings(INTERNAL_API_KEY=TEST_API_KEY)
 class SubmissionAPITests(TestCase):
     def setUp(self):
+        self.client.defaults["HTTP_X_INTERNAL_API_KEY"] = TEST_API_KEY
         self.user = create_user()
         self.problem = create_problem()
 
@@ -171,3 +175,11 @@ class InternalAPIKeyMiddlewareTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+
+
+@override_settings(DEBUG=False, INTERNAL_API_KEY="")
+class InternalAPIKeyMissingConfigTests(TestCase):
+    def test_api_request_without_configured_key_returns_not_found(self):
+        response = self.client.get("/api/categories/")
+
+        self.assertEqual(response.status_code, 404)

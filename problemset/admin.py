@@ -80,7 +80,10 @@ class SubmissionAdmin(admin.ModelAdmin):
         retest_submissions_task.delay(ids)
         messages.success(
             request,
-            f"Queued retest for {len(ids)} submission(s) (skipping those already in queue).",
+            (
+                f"Queued retest for {len(ids)} submission(s) "
+                "(skipping those already in queue)."
+            ),
         )
 
     def retest_all_view(self, request):

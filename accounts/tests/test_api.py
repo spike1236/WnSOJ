@@ -1,14 +1,20 @@
 import json
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
 from accounts.models import User
 from accounts.tests.helpers import create_user
 from problemset.models import Problem, Submission
 
+TEST_API_KEY = "test-internal-api-key"
 
-@override_settings(INTERNAL_API_KEY="")
+
+@override_settings(INTERNAL_API_KEY=TEST_API_KEY)
 class SessionAccountAPITests(TestCase):
+    def setUp(self):
+        self.client.defaults["HTTP_X_INTERNAL_API_KEY"] = TEST_API_KEY
+
     def test_session_register_creates_and_logs_in_user(self):
         response = self.client.post(
             "/api/session/register/",
@@ -77,14 +83,14 @@ class SessionAccountAPITests(TestCase):
             "/api/profile/password/",
             {
                 "old_password": "old-password",
-                "new_password1": "new-password",
-                "new_password2": "new-password",
+                "new_password1": "StrongerPass12345!",
+                "new_password2": "StrongerPass12345!",
             },
         )
 
         self.assertEqual(response.status_code, 204)
         user.refresh_from_db()
-        self.assertTrue(user.check_password("new-password"))
+        self.assertTrue(user.check_password("StrongerPass12345!"))
         self.assertEqual(self.client.get("/api/profile/").status_code, 200)
 
     def test_password_endpoint_rejects_wrong_old_password(self):
@@ -103,6 +109,22 @@ class SessionAccountAPITests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["detail"], "Invalid old password.")
 
+    def test_password_endpoint_rejects_weak_new_password(self):
+        user = create_user("password-user", password="old-password")
+        self.client.force_login(user)
+
+        response = self.client.post(
+            "/api/profile/password/",
+            {
+                "old_password": "old-password",
+                "new_password1": "123",
+                "new_password2": "123",
+            },
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("new_password1", response.json())
+
     def test_icon_endpoint_requires_file(self):
         self.client.force_login(create_user("icon-user"))
 
@@ -111,9 +133,22 @@ class SessionAccountAPITests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["detail"], "Missing icon file.")
 
+    @override_settings(PROFILE_ICON_MAX_BYTES=1)
+    def test_icon_endpoint_rejects_oversize_file(self):
+        self.client.force_login(create_user("icon-user"))
+        icon = SimpleUploadedFile("icon.png", b"xx", content_type="image/png")
 
-@override_settings(INTERNAL_API_KEY="")
+        response = self.client.post("/api/profile/icon/", {"icon": icon})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("icon", response.json())
+
+
+@override_settings(INTERNAL_API_KEY=TEST_API_KEY)
 class PublicProfileAPITests(TestCase):
+    def setUp(self):
+        self.client.defaults["HTTP_X_INTERNAL_API_KEY"] = TEST_API_KEY
+
     def test_public_profile_returns_verdict_counts_and_recent_submissions(self):
         user = create_user("solver")
         problem = Problem.objects.create(

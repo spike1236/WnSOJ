@@ -46,6 +46,14 @@ class RegisterSerializerTests(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("password", serializer.errors)
 
+    def test_register_serializer_rejects_weak_password(self):
+        serializer = RegisterSerializer(
+            data=self.valid_data(password="123", password2="123")
+        )
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("password", serializer.errors)
+
     def test_register_serializer_rejects_duplicate_email(self):
         create_user("existing", email="new@example.com")
 

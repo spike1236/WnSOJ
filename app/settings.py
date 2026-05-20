@@ -13,22 +13,53 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import sys
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 load_dotenv()
+IS_TESTING = "test" in sys.argv
+
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def weak_secret_key(value):
+    return (
+        not value
+        or len(value) < 50
+        or len(set(value)) < 5
+        or value.startswith("django-insecure-")
+    )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY and "test" in sys.argv:
+if not SECRET_KEY and IS_TESTING:
     SECRET_KEY = "django-insecure-test-key"
-INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "")
+INTERNAL_API_KEY = os.getenv("INTERNAL_API_KEY", "").strip()
+if not INTERNAL_API_KEY and IS_TESTING:
+    INTERNAL_API_KEY = "test-internal-api-key"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True') == 'True'
+DEBUG = env_bool("DEBUG", True)
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]").split(",")
+if not DEBUG and weak_secret_key(SECRET_KEY):
+    raise ImproperlyConfigured(
+        "A long, random SECRET_KEY is required when DEBUG=False."
+    )
+if not INTERNAL_API_KEY:
+    raise ImproperlyConfigured("INTERNAL_API_KEY is required.")
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]").split(",")
+    if host.strip()
+]
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
     for o in os.getenv(
@@ -149,7 +180,7 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv:
+if IS_TESTING:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -203,6 +234,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+PROFILE_ICON_MAX_BYTES = int(os.getenv("PROFILE_ICON_MAX_BYTES", str(5 * 1024 * 1024)))
+PROFILE_ICON_MAX_PIXELS = int(os.getenv("PROFILE_ICON_MAX_PIXELS", str(12_000_000)))
+PROFILE_ICON_MAX_DIMENSION = int(os.getenv("PROFILE_ICON_MAX_DIMENSION", "4096"))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

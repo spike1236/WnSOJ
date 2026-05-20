@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import User
-import os
-from django.conf import settings
-from PIL import Image
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
+from .images import InvalidProfileIconError, save_profile_icon_files
 import random
 
 USERNAME_MIN_LENGTH = 3
@@ -209,6 +209,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
         if password != password2:
             raise serializers.ValidationError({"password": "Passwords must match."})
+        try:
+            validate_password(password)
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError({"password": list(exc.messages)}) from exc
         return attrs
 
     def validate_username(self, value: str) -> str:
@@ -241,34 +245,20 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop("password2")
+        password = validated_data.pop("password")
         icon = validated_data.pop("icon", None)
         is_business = validated_data.pop("is_business", False)
         user = User(**validated_data)
         user.account_type = 2 if is_business else 1
-        user.set_password(validated_data["password"])
+        user.set_password(password)
         user.icon_id = random.randint(10000000, 99999999)
 
         if icon:
             user.icon_id = abs(user.icon_id)
-            icon64_dir = os.path.join(
-                settings.BASE_DIR, "media", "users_icons", "icon64"
-            )
-            icon170_dir = os.path.join(
-                settings.BASE_DIR, "media", "users_icons", "icon170"
-            )
-            os.makedirs(icon64_dir, exist_ok=True)
-            os.makedirs(icon170_dir, exist_ok=True)
-
-            icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
-            icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
-
-            img = Image.open(icon)
-            img = img.resize((64, 64))
-            img.save(icon64_path)
-            icon.seek(0)
-            img170 = Image.open(icon)
-            img170 = img170.resize((170, 170))
-            img170.save(icon170_path)
+            try:
+                save_profile_icon_files(icon, user.icon_id)
+            except InvalidProfileIconError as exc:
+                raise serializers.ValidationError({"icon": [str(exc)]}) from exc
         else:
             user.icon_id = -user.icon_id
 

@@ -1,9 +1,17 @@
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
 
 from problemset.models import Submission
-from problemset.tasks import retest_submissions_task, test_submission_task
+from problemset.tasks import (
+    IsolateBoxUnavailable,
+    release_isolate_box,
+    reserve_isolate_box_id,
+    retest_submissions_task,
+    test_submission_task,
+)
 from problemset.tests.helpers import create_problem, create_submission, create_user
 
 
@@ -46,7 +54,9 @@ class TestSubmissionTaskTests(TestCase):
 
         with patch("problemset.tasks.clear_submission_progress"), patch(
             "problemset.tasks.publish_submission_final"
-        ) as publish_final:
+        ) as publish_final, patch(
+            "problemset.tasks.logger.error"
+        ):
             test_submission_task(submission.id)
 
         submission.refresh_from_db()
@@ -54,6 +64,24 @@ class TestSubmissionTaskTests(TestCase):
         self.assertEqual(submission.time, 0)
         self.assertEqual(submission.memory, 0)
         publish_final.assert_called_once()
+
+    def test_isolate_box_reservation_uses_distinct_locks(self):
+        with TemporaryDirectory() as tmp:
+            with override_settings(
+                ISOLATE_LOCK_DIR=Path(tmp),
+                ISOLATE_BOX_ID_MIN=10,
+                ISOLATE_BOX_ID_MAX=11,
+            ):
+                first_id, first_lock = reserve_isolate_box_id()
+                second_id, second_lock = reserve_isolate_box_id()
+                try:
+                    self.assertEqual(first_id, 10)
+                    self.assertEqual(second_id, 11)
+                    with self.assertRaises(IsolateBoxUnavailable):
+                        reserve_isolate_box_id()
+                finally:
+                    release_isolate_box(first_lock)
+                    release_isolate_box(second_lock)
 
 
 class RetestSubmissionsTaskTests(TestCase):

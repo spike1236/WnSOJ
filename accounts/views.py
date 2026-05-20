@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
+from django.contrib.auth.password_validation import validate_password
 from .forms import RegisterForm, LoginForm, ChangeIconForm, PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-import os
-from django.conf import settings
-from PIL import Image
+from django.core.exceptions import ValidationError as DjangoValidationError
+from .images import InvalidProfileIconError, save_profile_icon_files
 from .models import User
 from problemset.models import Submission
 import random
@@ -41,25 +41,20 @@ def register(request):
             user.icon_id = random.randint(10000000, 99999999)
             if form.cleaned_data.get("icon"):
                 icon = form.cleaned_data.get("icon")
-                icon64_dir = os.path.join(
-                    settings.BASE_DIR, "media", "users_icons", "icon64"
-                )
-                icon170_dir = os.path.join(
-                    settings.BASE_DIR, "media", "users_icons", "icon170"
-                )
-                os.makedirs(icon64_dir, exist_ok=True)
-                os.makedirs(icon170_dir, exist_ok=True)
-
-                icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
-                icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
-
-                img = Image.open(icon)
-                img = img.resize((64, 64))
-                img.save(icon64_path)
-                icon.seek(0)
-                img170 = Image.open(icon)
-                img170 = img170.resize((170, 170))
-                img170.save(icon170_path)
+                try:
+                    save_profile_icon_files(icon, user.icon_id)
+                except InvalidProfileIconError as exc:
+                    form.add_error("icon", str(exc))
+                    messages.error(request, "Please correct the error below.")
+                    return render(
+                        request,
+                        "accounts/register.html",
+                        {
+                            "form": form,
+                            "navbar_item_id": -1,
+                            "title": "Registration | WnSOJ",
+                        },
+                    )
             else:
                 user.icon_id = -user.icon_id
 
@@ -126,27 +121,14 @@ def edit_profile(request):
         elif "change_icon_submit" in request.POST:
             icon = request.FILES.get("icon")
             if icon:
+                if not user.icon_id:
+                    user.icon_id = random.randint(10000000, 99999999)
                 user.icon_id = abs(user.icon_id)
-                icon64_dir = os.path.join(
-                    settings.BASE_DIR, "media", "users_icons", "icon64"
-                )
-                icon170_dir = os.path.join(
-                    settings.BASE_DIR, "media", "users_icons", "icon170"
-                )
-                os.makedirs(icon64_dir, exist_ok=True)
-                os.makedirs(icon170_dir, exist_ok=True)
-
-                icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
-                icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
-
-                img = Image.open(icon)
-                img = img.resize((64, 64))
-                img.save(icon64_path)
-
-                icon.seek(0)
-                img170 = Image.open(icon)
-                img170 = img170.resize((170, 170))
-                img170.save(icon170_path)
+                try:
+                    save_profile_icon_files(icon, user.icon_id)
+                except InvalidProfileIconError as exc:
+                    messages.error(request, str(exc))
+                    return redirect("edit_profile")
 
                 messages.success(request, "Icon updated successfully.")
                 return redirect("edit_profile")
@@ -347,22 +329,10 @@ class ProfileIconAPIView(APIView):
             user.icon_id = random.randint(10000000, 99999999)
 
         user.icon_id = abs(user.icon_id)
-
-        icon64_dir = os.path.join(settings.BASE_DIR, "media", "users_icons", "icon64")
-        icon170_dir = os.path.join(settings.BASE_DIR, "media", "users_icons", "icon170")
-        os.makedirs(icon64_dir, exist_ok=True)
-        os.makedirs(icon170_dir, exist_ok=True)
-
-        icon64_path = os.path.join(icon64_dir, f"{user.icon_id}.png")
-        icon170_path = os.path.join(icon170_dir, f"{user.icon_id}.png")
-
-        img = Image.open(icon)
-        img = img.resize((64, 64))
-        img.save(icon64_path)
-        icon.seek(0)
-        img170 = Image.open(icon)
-        img170 = img170.resize((170, 170))
-        img170.save(icon170_path)
+        try:
+            save_profile_icon_files(icon, user.icon_id)
+        except InvalidProfileIconError as exc:
+            return Response({"icon": [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
 
         user.save()
         return Response(UserDetailSerializer(user).data)
@@ -391,6 +361,14 @@ class ProfilePasswordAPIView(APIView):
         if new_password1 != new_password2:
             return Response(
                 {"detail": "Passwords must match."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            validate_password(new_password1, user)
+        except DjangoValidationError as exc:
+            return Response(
+                {"new_password1": list(exc.messages)},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         user.set_password(new_password1)

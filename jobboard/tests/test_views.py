@@ -71,6 +71,30 @@ class JobViewPermissionTests(TestCase):
         )
         self.assertEqual(Job.objects.count(), 0)
 
+    def test_business_user_cannot_add_job_with_non_numeric_salary(self):
+        self.client.force_login(create_business_user("company"))
+
+        response = self.client.post(
+            "/add_job/",
+            {
+                "title": "Backend Engineer",
+                "location": "Remote",
+                "info": "Build APIs.",
+                "min_salary": "not-a-number",
+                "max_salary": "100000",
+                "currency": "$",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Salary values must be valid numbers.")
+        self.assertEqual(Job.objects.count(), 0)
+
+    def test_missing_job_page_returns_not_found(self):
+        response = self.client.get("/job/999/")
+
+        self.assertEqual(response.status_code, 404)
+
     def test_non_owner_cannot_delete_job_from_view(self):
         owner = create_business_user("owner")
         job = create_job(user=owner)
