@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import secrets
 import time
@@ -8,6 +9,32 @@ from typing import Optional
 import redis.asyncio as redis
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.responses import StreamingResponse
+
+from observability.logging import (
+    configure_disabled_logging,
+    configure_logging,
+    level_for_status,
+    normalize_request_id,
+    reset_request_id,
+    set_request_id,
+)
+
+
+if not os.getenv("DJANGO_SETTINGS_MODULE"):
+    log_enabled = (os.getenv("LOG_ENABLED", "true").strip().lower()) not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+    if log_enabled:
+        service_name = os.getenv("LOG_SERVICE_NAME", "").strip()
+        if not service_name:
+            raise RuntimeError("LOG_SERVICE_NAME is required.")
+        configure_logging(service_name)
+    else:
+        configure_disabled_logging()
+logger = logging.getLogger("realtime.requests")
 
 
 def _internal_api_key() -> str:
@@ -86,6 +113,44 @@ def _sse(payload: dict, event: Optional[str] = None) -> bytes:
 
 
 app = FastAPI(dependencies=[Depends(_require_internal_key)])
+
+
+@app.middleware("http")
+async def request_log_middleware(request: Request, call_next):
+    request_id = normalize_request_id(request.headers.get("x-request-id"))
+    token = set_request_id(request_id)
+    started = time.perf_counter()
+
+    try:
+        response = await call_next(request)
+    except Exception:
+        duration_ms = round((time.perf_counter() - started) * 1000, 2)
+        logger.exception(
+            "realtime request failed",
+            extra={
+                "http_method": request.method,
+                "http_path": request.url.path,
+                "duration_ms": duration_ms,
+            },
+        )
+        raise
+    else:
+        duration_ms = round((time.perf_counter() - started) * 1000, 2)
+        response.headers["X-Request-ID"] = request_id
+        status_code = response.status_code
+        logger.log(
+            level_for_status(status_code),
+            "realtime request",
+            extra={
+                "http_method": request.method,
+                "http_path": request.url.path,
+                "status_code": status_code,
+                "duration_ms": duration_ms,
+            },
+        )
+        return response
+    finally:
+        reset_request_id(token)
 
 
 @app.get("/sse/submission/{submission_id}")

@@ -16,6 +16,8 @@ import sys
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
+from observability.logging import disabled_logging_config, logging_config
+
 load_dotenv()
 IS_TESTING = "test" in sys.argv
 
@@ -54,6 +56,12 @@ if not DEBUG and weak_secret_key(SECRET_KEY):
     )
 if not INTERNAL_API_KEY:
     raise ImproperlyConfigured("INTERNAL_API_KEY is required.")
+LOG_ENABLED = env_bool("LOG_ENABLED", True)
+LOG_SERVICE_NAME = os.getenv("LOG_SERVICE_NAME", "").strip()
+if LOG_ENABLED and IS_TESTING and not LOG_SERVICE_NAME:
+    LOG_SERVICE_NAME = "django"
+if LOG_ENABLED and not LOG_SERVICE_NAME:
+    raise ImproperlyConfigured("LOG_SERVICE_NAME is required.")
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -107,6 +115,7 @@ CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:63
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 10 * 60
+CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 # Optional: separate Redis URL for realtime verdict streaming (SSE).
 # Defaults to CELERY_BROKER_URL.
@@ -133,6 +142,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'app.request_logging.RequestLogMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -243,21 +253,8 @@ PROFILE_ICON_MAX_DIMENSION = int(os.getenv("PROFILE_ICON_MAX_DIMENSION", "4096")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {"class": "logging.StreamHandler"},
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "INFO",
-    },
-    "loggers": {
-        "django.request": {
-            "handlers": ["console"],
-            "level": "ERROR",
-            "propagate": False,
-        },
-    },
-}
+LOGGING = (
+    logging_config(LOG_SERVICE_NAME, default_level="ERROR" if IS_TESTING else "INFO")
+    if LOG_ENABLED
+    else disabled_logging_config()
+)

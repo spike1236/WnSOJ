@@ -4,8 +4,9 @@ from unittest.mock import patch
 from asgiref.sync import async_to_sync
 from django.test import SimpleTestCase
 from fastapi import HTTPException
+from starlette.responses import Response
 
-from realtime_service.main import _require_internal_key
+from realtime_service.main import _require_internal_key, request_log_middleware
 
 
 class DummyRequest:
@@ -35,3 +36,18 @@ class RealtimeInternalKeyTests(SimpleTestCase):
             async_to_sync(_require_internal_key)(
                 DummyRequest({"x-internal-api-key": "secret"})
             )
+
+
+class RealtimeRequestLoggingTests(SimpleTestCase):
+    def test_forwards_request_id_to_response(self):
+        async def call_next(_request):
+            return Response("ok")
+
+        request = DummyRequest({"x-request-id": "request-123"})
+        request.method = "GET"
+        request.url = type("URL", (), {"path": "/sse/submissions"})()
+
+        with self.assertLogs("realtime.requests", level="INFO"):
+            response = async_to_sync(request_log_middleware)(request, call_next)
+
+        self.assertEqual(response.headers["X-Request-ID"], "request-123")

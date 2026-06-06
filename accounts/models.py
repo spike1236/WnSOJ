@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import random
 from django.conf import settings
 import os
 
@@ -31,6 +30,3 @@ class User(AbstractUser):
         return os.path.join(
             settings.MEDIA_URL, f"users_icons/icon170/{self.icon_id}.png"
         )
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)

@@ -1,7 +1,10 @@
+from contextlib import suppress
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.password_validation import validate_password
-from .forms import RegisterForm, LoginForm, ChangeIconForm, PasswordChangeForm
+from .forms import RegisterForm, LoginForm, ChangeIconForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -12,9 +15,7 @@ import random
 from rest_framework import generics, permissions
 from .serializers import (
     RegisterSerializer,
-    UserSerializer,
     UserDetailSerializer,
-    PublicUserSerializer,
     PublicUserProfileSerializer,
 )
 from rest_framework.authentication import SessionAuthentication
@@ -401,9 +402,7 @@ class PublicUserSubmissionsAPIView(generics.ListAPIView):
 
         problem_id = self.request.query_params.get("problem_id")
         if problem_id:
-            try:
+            with suppress(TypeError, ValueError):
                 qs = qs.filter(problem_id=int(problem_id))
-            except (TypeError, ValueError):
-                pass
 
         return qs

@@ -1,10 +1,10 @@
 from celery import shared_task
 from .models import Submission
+from contextlib import suppress
 import os
 import random
 import subprocess
 import logging
-from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from .utils import run_isolate, run_tests
 from django.conf import settings
@@ -12,30 +12,7 @@ from django.utils import timezone
 from .realtime import clear_submission_progress, publish_submission_final
 
 
-def configure_logger():
-    logger = logging.getLogger(__name__)
-
-    if not logger.handlers:
-        log_file = settings.BASE_DIR / "logs" / "problemset.log"
-        os.makedirs(os.path.dirname(log_file), exist_ok=True)
-
-        handler = RotatingFileHandler(
-            filename=log_file,
-            maxBytes=50 * 1024 * 1024,
-            backupCount=10,
-        )
-
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-        handler.setFormatter(formatter)
-
-        logger.addHandler(handler)
-
-    return logger
-
-
-logger = configure_logger()
+logger = logging.getLogger(__name__)
 
 
 class IsolateBoxUnavailable(RuntimeError):
@@ -64,8 +41,6 @@ def _clear_stale_lock(lock_path):
     try:
         lock_path.unlink()
     except FileNotFoundError:
-        pass
-    except OSError:
         pass
     except OSError:
         return False
@@ -100,10 +75,8 @@ def reserve_isolate_box_id():
 def release_isolate_box(lock_path):
     if not lock_path:
         return
-    try:
+    with suppress(FileNotFoundError):
         lock_path.unlink()
-    except FileNotFoundError:
-        pass
 
 LANGUAGE_CONFIGS = {
     "cpp": {

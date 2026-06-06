@@ -9,7 +9,7 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 - **Backend**: Django + Django REST Framework (DRF) + Celery (judge workers)
 - **Realtime**: FastAPI (ASGI) SSE service in `realtime_service/` (streams verdict/progress from Redis pub/sub)
 - **Frontend**: Next.js (App Router) in `frontend/` (Tailwind UI)
-- **Auth (browser)**: Django **session cookies** (`sessionid`) + **CSRF** (`csrftoken`) — no JWT, no localStorage
+- **Auth (browser)**: Django **session cookies** (`sessionid`) + **CSRF** (`csrftoken`)
 - **Internal API**: Django `/api/*` is **not public** and is protected by a shared secret header (`X-Internal-API-Key`)
   - Next.js server-side requests include the internal key automatically
   - Browser-side mutations go through Next.js route handlers under `/backend/*`, which proxy to Django and attach the internal key
@@ -35,6 +35,7 @@ pip install -r requirements.txt
 4. Create `.env` from `.env.template` and fill in values:
    - `SECRET_KEY`, `DEBUG`, DB settings
    - `INTERNAL_API_KEY` (shared with Next.js)
+   - `LOG_ENABLED` and `LOG_SERVICE_NAME` (`django`, `celery`, `realtime`, or `next`)
    - `REALTIME_ORIGIN` (Next.js -> FastAPI realtime service, default `http://localhost:9000`)
    - `CSRF_TRUSTED_ORIGINS` (include your local/prod frontend origin, e.g. `http://127.0.0.1:8081` if you proxy through nginx)
 5. Apply migrations (and optionally create an admin user):
@@ -56,7 +57,7 @@ In a separate terminal:
 ```shell
 cd frontend
 npm install
-BACKEND_ORIGIN=http://localhost:8000 REALTIME_ORIGIN=http://localhost:9000 INTERNAL_API_KEY=dev-secret npm run dev
+BACKEND_ORIGIN=http://localhost:8000 REALTIME_ORIGIN=http://localhost:9000 INTERNAL_API_KEY=dev-secret LOG_SERVICE_NAME=next npm run dev
 ```
 
 Open `http://localhost:3000`.
@@ -65,6 +66,8 @@ Notes:
 - `INTERNAL_API_KEY` must match the Django `INTERNAL_API_KEY` in `.env`.
 - `REALTIME_ORIGIN` should point to the FastAPI realtime service.
 - In dev, Next.js will proxy `/admin/`, `/static/`, `/media/` to Django. Browser API calls use `/backend/*` route handlers.
+- Logs are written by each process to stdout/stderr. In production systemd stores them in journald; no separate WnSOJ logging service is required.
+- Logging env vars: `LOG_ENABLED=true`, `LOG_SERVICE_NAME=<service>`, `LOG_LEVEL=INFO`, and `LOG_FORMAT=plain` or `LOG_FORMAT=json`. If `LOG_ENABLED=true`, `LOG_SERVICE_NAME` is required.
 
 ## Deployment
 See [DEPLOY.md](./DEPLOY.md).

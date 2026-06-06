@@ -231,9 +231,7 @@ class JobAPIViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_permissions(self):
-        if self.action in ["create"]:
-            self.permission_classes = [permissions.IsAuthenticated]
-        elif self.action in ["update", "partial_update", "destroy"]:
+        if self.action in ["create", "update", "partial_update", "destroy"]:
             self.permission_classes = [permissions.IsAuthenticated]
         else:
             self.permission_classes = [permissions.AllowAny]

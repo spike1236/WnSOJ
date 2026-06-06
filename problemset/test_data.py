@@ -1,4 +1,5 @@
 from pathlib import Path
+from contextlib import suppress
 from zipfile import BadZipFile, ZipFile
 
 
@@ -10,10 +11,8 @@ COPY_CHUNK_SIZE = 1024 * 1024
 
 
 def _seek_start(file_obj):
-    try:
+    with suppress(AttributeError, OSError):
         file_obj.seek(0)
-    except (AttributeError, OSError):
-        pass
 
 
 def _safe_zip_path(name):

@@ -1,4 +1,5 @@
 import warnings
+from contextlib import suppress
 from pathlib import Path
 
 from django.conf import settings
@@ -10,10 +11,8 @@ class InvalidProfileIconError(ValueError):
 
 
 def _seek_start(file_obj):
-    try:
+    with suppress(AttributeError, OSError):
         file_obj.seek(0)
-    except (AttributeError, OSError):
-        pass
 
 
 def _load_profile_icon(icon):

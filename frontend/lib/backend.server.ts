@@ -1,8 +1,9 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers as nextHeaders } from "next/headers";
 
 import { defaultMessageForStatus } from "@/lib/httpStatus";
+import { logError, logInfo, logWarning, normalizeRequestId } from "@/lib/logger.server";
 
 export class BackendFetchError extends Error {
   status: number;
@@ -49,19 +50,22 @@ async function buildForwardHeaders({
   forwardCookies?: boolean;
 }) {
   const cookieStore = await cookies();
+  const incomingHeaders = await nextHeaders();
   const all = forwardCookies ? cookieStore.getAll() : [];
   const cookieHeader = all.length ? all.map(({ name, value }) => `${name}=${value}`).join("; ") : "";
 
   const internalKey = internalApiKey();
+  const requestId = normalizeRequestId(incomingHeaders.get("x-request-id"));
   const headers: Record<string, string> = {
     ...(cookieHeader ? { cookie: cookieHeader } : {}),
     ...(internalKey ? { "x-internal-api-key": internalKey } : {}),
+    "x-request-id": requestId,
     ...extra
   };
 
   const csrf = cookieStore.get("csrftoken")?.value;
   if (csrf && !("x-csrftoken" in headers) && !("X-CSRFToken" in headers)) headers["x-csrftoken"] = csrf;
-  return headers;
+  return { headers, requestId };
 }
 
 export async function backendFetchJson<T>(
@@ -71,7 +75,7 @@ export async function backendFetchJson<T>(
   const url = `${backendOrigin()}${path.startsWith("/") ? "" : "/"}${path}`;
   const method = (options.method ?? "GET").toUpperCase();
   const forwardCookies = options.forwardCookies ?? true;
-  const headers: Record<string, string> = await buildForwardHeaders({
+  const { headers, requestId } = await buildForwardHeaders({
     forwardCookies,
     extra: {
       accept: "application/json",
@@ -91,12 +95,33 @@ export async function backendFetchJson<T>(
       ? { revalidate: options.revalidate ?? 3600 }
       : undefined;
 
-  const res = await fetch(url, {
-    ...options,
-    method,
-    headers,
-    cache,
-    ...(nextConfig ? ({ next: nextConfig } as unknown as RequestInit) : {})
+  const started = performance.now();
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      method,
+      headers,
+      cache,
+      ...(nextConfig ? ({ next: nextConfig } as unknown as RequestInit) : {})
+    });
+  } catch (error) {
+    logError("next backend fetch failed", {
+      request_id: requestId,
+      backend_path: path,
+      http_method: method,
+      duration_ms: durationSince(started),
+      error
+    });
+    throw error;
+  }
+
+  logForStatus(res.status)("next backend fetch", {
+    request_id: requestId,
+    backend_path: path,
+    http_method: method,
+    status_code: res.status,
+    duration_ms: durationSince(started)
   });
 
   if (!res.ok) {
@@ -105,15 +130,21 @@ export async function backendFetchJson<T>(
       const body = (await res.json().catch(() => null)) as unknown;
       const detail = detailFromJson(body);
       if (!detail) {
-        console.error("backendFetchJson non-OK JSON response", { url, status: res.status, body });
+        logWarning("backendFetchJson non-OK JSON response", {
+          request_id: requestId,
+          backend_path: path,
+          status_code: res.status,
+          body
+        });
       }
       throw new BackendFetchError(detail || defaultMessageForStatus(res.status), { status: res.status, url });
     }
     const text = await res.text().catch(() => "");
     const preview = text.length > 500 ? `${text.slice(0, 500)}…` : text;
-    console.error("backendFetchJson non-OK non-JSON response", {
-      url,
-      status: res.status,
+    logWarning("backendFetchJson non-OK non-JSON response", {
+      request_id: requestId,
+      backend_path: path,
+      status_code: res.status,
       contentType,
       bodyPreview: preview
     });
@@ -132,7 +163,7 @@ export async function backendFetchForm<T>(
   const url = `${backendOrigin()}${path.startsWith("/") ? "" : "/"}${path}`;
   const method = (options.method ?? "POST").toUpperCase();
   const forwardCookies = options.forwardCookies ?? true;
-  const headers: Record<string, string> = await buildForwardHeaders({
+  const { headers, requestId } = await buildForwardHeaders({
     forwardCookies,
     extra: {
       accept: "application/json",
@@ -144,12 +175,33 @@ export async function backendFetchForm<T>(
     delete headers["x-csrftoken"];
   }
 
-  const res = await fetch(url, {
-    ...options,
-    method,
-    body: form,
-    headers,
-    cache: "no-store"
+  const started = performance.now();
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      method,
+      body: form,
+      headers,
+      cache: "no-store"
+    });
+  } catch (error) {
+    logError("next backend form fetch failed", {
+      request_id: requestId,
+      backend_path: path,
+      http_method: method,
+      duration_ms: durationSince(started),
+      error
+    });
+    throw error;
+  }
+
+  logForStatus(res.status)("next backend form fetch", {
+    request_id: requestId,
+    backend_path: path,
+    http_method: method,
+    status_code: res.status,
+    duration_ms: durationSince(started)
   });
 
   if (!res.ok) {
@@ -158,15 +210,21 @@ export async function backendFetchForm<T>(
       const body = (await res.json().catch(() => null)) as unknown;
       const detail = detailFromJson(body);
       if (!detail) {
-        console.error("backendFetchForm non-OK JSON response", { url, status: res.status, body });
+        logWarning("backendFetchForm non-OK JSON response", {
+          request_id: requestId,
+          backend_path: path,
+          status_code: res.status,
+          body
+        });
       }
       throw new BackendFetchError(detail || defaultMessageForStatus(res.status), { status: res.status, url });
     }
     const text = await res.text().catch(() => "");
     const preview = text.length > 500 ? `${text.slice(0, 500)}…` : text;
-    console.error("backendFetchForm non-OK non-JSON response", {
-      url,
-      status: res.status,
+    logWarning("backendFetchForm non-OK non-JSON response", {
+      request_id: requestId,
+      backend_path: path,
+      status_code: res.status,
       contentType,
       bodyPreview: preview
     });
@@ -175,4 +233,14 @@ export async function backendFetchForm<T>(
 
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
+}
+
+function durationSince(started: number) {
+  return Math.round((performance.now() - started) * 100) / 100;
+}
+
+function logForStatus(status: number) {
+  if (status >= 500) return logError;
+  if (status >= 400) return logWarning;
+  return logInfo;
 }

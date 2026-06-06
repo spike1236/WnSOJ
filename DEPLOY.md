@@ -32,9 +32,11 @@ sudo chmod 750 /etc/wnsoj
 
 ## 2) Environment variables (the "keys and stuff")
 
-### Django env: `/etc/wnsoj/wnsoj.env`
+### Backend env: `/etc/wnsoj/wnsoj.env`
 
-Create one shared secret and use it in both Django and Next.js.
+Create one shared secret and use it in both Django and Next.js. This file holds
+shared backend settings; service identity is set in the small per-service env
+files below.
 
 ```bash
 sudo tee /etc/wnsoj/wnsoj.env >/dev/null <<'EOF'
@@ -53,10 +55,36 @@ DB_PORT=5432
 CELERY_BROKER_URL=redis://127.0.0.1:6379/0
 CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/0
 
+LOG_ENABLED=true
+LOG_LEVEL=INFO
+LOG_FORMAT=plain
+
 NO_ISOLATE=False
 ISOLATE_PATH=/var/lib/isolate
 EOF
 sudo chmod 640 /etc/wnsoj/wnsoj.env
+```
+
+Create per-service backend logging env files:
+
+```bash
+sudo tee /etc/wnsoj/wnsoj-django.env >/dev/null <<'EOF'
+LOG_SERVICE_NAME=django
+EOF
+
+sudo tee /etc/wnsoj/wnsoj-realtime.env >/dev/null <<'EOF'
+LOG_SERVICE_NAME=realtime
+EOF
+
+sudo tee /etc/wnsoj/wnsoj-celery-worker.env >/dev/null <<'EOF'
+LOG_SERVICE_NAME=celery
+EOF
+
+sudo tee /etc/wnsoj/wnsoj-celery-beat.env >/dev/null <<'EOF'
+LOG_SERVICE_NAME=celery-beat
+EOF
+
+sudo chmod 640 /etc/wnsoj/wnsoj-*.env
 ```
 
 To generate secrets locally:
@@ -77,6 +105,12 @@ HOSTNAME=127.0.0.1
 
 BACKEND_ORIGIN=http://127.0.0.1:8000
 INTERNAL_API_KEY=replace_me_with_the_same_value_as_django
+REALTIME_ORIGIN=http://127.0.0.1:9000
+
+LOG_ENABLED=true
+LOG_SERVICE_NAME=next
+LOG_LEVEL=INFO
+LOG_FORMAT=plain
 EOF
 sudo chmod 640 /etc/wnsoj/wnsoj-frontend.env
 ```
@@ -103,6 +137,7 @@ sudo -u wnsoj -H bash -lc '
 cd /srv/wnsoj
 source .venv/bin/activate
 export $(cat /etc/wnsoj/wnsoj.env | xargs)
+export $(cat /etc/wnsoj/wnsoj-django.env | xargs)
 python3 manage.py migrate
 python3 manage.py collectstatic --noinput
 '
@@ -121,6 +156,7 @@ User=wnsoj
 Group=wnsoj
 WorkingDirectory=/srv/wnsoj
 EnvironmentFile=/etc/wnsoj/wnsoj.env
+EnvironmentFile=/etc/wnsoj/wnsoj-django.env
 ExecStart=/srv/wnsoj/.venv/bin/gunicorn app.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
 Restart=always
 RestartSec=3
@@ -154,6 +190,7 @@ User=wnsoj
 Group=wnsoj
 WorkingDirectory=/srv/wnsoj
 EnvironmentFile=/etc/wnsoj/wnsoj.env
+EnvironmentFile=/etc/wnsoj/wnsoj-realtime.env
 ExecStart=/srv/wnsoj/.venv/bin/uvicorn realtime_service.main:app --host 127.0.0.1 --port 9000
 Restart=always
 RestartSec=3
@@ -187,6 +224,7 @@ User=wnsoj
 Group=wnsoj
 WorkingDirectory=/srv/wnsoj
 EnvironmentFile=/etc/wnsoj/wnsoj.env
+EnvironmentFile=/etc/wnsoj/wnsoj-celery-worker.env
 ExecStart=/srv/wnsoj/.venv/bin/celery -A app worker -l info
 Restart=always
 RestartSec=3
@@ -210,6 +248,7 @@ User=wnsoj
 Group=wnsoj
 WorkingDirectory=/srv/wnsoj
 EnvironmentFile=/etc/wnsoj/wnsoj.env
+EnvironmentFile=/etc/wnsoj/wnsoj-celery-beat.env
 ExecStart=/srv/wnsoj/.venv/bin/celery -A app beat -l info
 Restart=always
 RestartSec=3
@@ -234,6 +273,7 @@ Build the frontend once (as user `wnsoj`):
 sudo -u wnsoj -H bash -lc '
 cd /srv/wnsoj/frontend
 npm ci
+export $(cat /etc/wnsoj/wnsoj-frontend.env | xargs)
 npm run build
 '
 ```
@@ -308,8 +348,11 @@ server {
     location /admin/ {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
+        proxy_set_header X-Request-ID $request_id;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_hide_header X-Request-ID;
+        add_header X-Request-ID $request_id always;
     }
 
     location ^~ /api/ {
@@ -320,10 +363,13 @@ server {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
+        proxy_set_header X-Request-ID $request_id;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+        proxy_hide_header X-Request-ID;
+        add_header X-Request-ID $request_id always;
     }
 }
 ```
@@ -382,8 +428,18 @@ sudo systemctl restart wnsoj-celery-beat
 
 ### Check logs
 
+WnSOJ does not need a separate logging process by default. Gunicorn, realtime,
+Celery, and Next.js write logs to stdout/stderr, and systemd captures those logs
+in journald. Use `LOG_FORMAT=json` if you plan to ship journald entries into a
+central log search system.
+
+Nginx creates the public `X-Request-ID`, forwards it to the app services, and
+returns one copy of that ID to the browser. Next.js forwards that same ID to
+Django and realtime calls so related logs can be searched together.
+
 ```bash
 sudo journalctl -u wnsoj-gunicorn -f
+sudo journalctl -u wnsoj-realtime -f
 sudo journalctl -u wnsoj-next -f
 sudo journalctl -u wnsoj-celery-worker -f
 sudo journalctl -u wnsoj-celery-beat -f

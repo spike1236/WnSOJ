@@ -1,5 +1,6 @@
 import subprocess
 import os
+from contextlib import suppress
 from django.conf import settings
 from .realtime import publish_submission_event, publish_submission_final
 
@@ -7,14 +8,12 @@ from .realtime import publish_submission_event, publish_submission_final
 def parse_meta_file(meta_file_path):
     meta_data = {}
     try:
-        with open(meta_file_path, "r") as file:
+        with open(meta_file_path) as file:
             for line in file:
                 if ":" in line:
                     key, value = line.strip().split(":", 1)
-                    try:
+                    with suppress(ValueError):
                         value = float(value) if "." in value else int(value)
-                    except ValueError:
-                        pass
                     meta_data[key] = value
     except FileNotFoundError:
         pass
@@ -74,8 +73,7 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
     filenames = sorted(os.listdir(input_dir))
     total_tests = len(filenames)
 
-    for filename in filenames:
-        test_case += 1
+    for test_case, filename in enumerate(filenames, start=1):
         publish_submission_event(
             submission.id,
             {
@@ -111,7 +109,7 @@ def run_tests(box_id, config, problem_id, time_limit, mem_limit, submission):
                 break
 
         try:
-            with open(output_path, "r") as output_file:
+            with open(output_path) as output_file:
                 expected_output = output_file.read().strip()
             actual_output = res["stdout"].strip()
             if actual_output != expected_output:

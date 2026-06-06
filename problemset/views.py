@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.db import transaction
 from django.conf import settings
+from contextlib import suppress
 from accounts.models import User
 from jobboard.models import Job
 from jobboard.serializers import JobListSerializer
@@ -391,9 +392,8 @@ class ProblemAPIViewSet(viewsets.ModelViewSet):
 class SubmissionAPIViewSet(viewsets.ModelViewSet):
     """
     ViewSet for viewing and creating submissions.
-    - List: available to authenticated users.
+    - List, Retrieve, Status: available to all users.
     - Create: available to authenticated users.
-    - Retrieve: available to the submitting user or admin.
     - Update, Destroy: restricted to admin users.
     """
 
@@ -412,10 +412,8 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
 
             problem_id = self.request.query_params.get("problem_id")
             if problem_id:
-                try:
+                with suppress(TypeError, ValueError):
                     qs = qs.filter(problem_id=int(problem_id))
-                except (TypeError, ValueError):
-                    pass
 
             verdict = self.request.query_params.get("verdict")
             if verdict:
