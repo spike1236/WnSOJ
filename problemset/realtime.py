@@ -18,7 +18,7 @@ def _realtime_redis_url() -> str:
     url = (getattr(settings, "REALTIME_REDIS_URL", "") or "").strip()
     if url:
         return url
-    return (getattr(settings, "CELERY_BROKER_URL", "") or "").strip()
+    return "redis://localhost:6379/0"
 
 
 @lru_cache(maxsize=1)
@@ -27,7 +27,7 @@ def _redis_client() -> redis.Redis:
     if not url.startswith("redis://") and not url.startswith("rediss://"):
         raise RuntimeError(
             "Redis realtime is enabled but "
-            "REALTIME_REDIS_URL/CELERY_BROKER_URL is not a redis:// URL."
+            "REALTIME_REDIS_URL is not a redis:// URL."
         )
     return redis.Redis.from_url(url, decode_responses=True)
 

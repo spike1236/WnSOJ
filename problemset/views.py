@@ -130,10 +130,10 @@ def problem_statement(request, problem_id):
                     verdict="IQ",
                 )
                 submission.save()
-                from .tasks import test_submission_task
+                from .tasks import queue_submission_for_judging
 
                 transaction.on_commit(
-                    lambda submission_id=submission.id: test_submission_task.delay(
+                    lambda submission_id=submission.id: queue_submission_for_judging(
                         submission_id
                     )
                 )
@@ -430,10 +430,10 @@ class SubmissionAPIViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         submission = serializer.save(user=self.request.user, verdict="IQ")
-        from .tasks import test_submission_task
+        from .tasks import queue_submission_for_judging
 
         transaction.on_commit(
-            lambda submission_id=submission.id: test_submission_task.delay(
+            lambda submission_id=submission.id: queue_submission_for_judging(
                 submission_id
             )
         )

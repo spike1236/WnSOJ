@@ -6,7 +6,8 @@ WnSOJ is a platform where you can solve programming and math tasks, learn new al
 ![Main Page](./readme_screenshots/screenshot_1.png)
 
 ## Architecture
-- **Backend**: Django + Django REST Framework (DRF) + Celery (judge workers)
+- **Backend**: Django + Django REST Framework (DRF)
+- **Judge workers**: Postgres-backed `JudgeJob` workers using `isolate`
 - **Realtime**: FastAPI (ASGI) SSE service in `realtime_service/` (streams verdict/progress from Redis pub/sub)
 - **Frontend**: Next.js (App Router) in `frontend/` (Tailwind UI)
 - **Auth (browser)**: Django **session cookies** (`sessionid`) + **CSRF** (`csrftoken`) — no JWT, no localStorage
@@ -45,7 +46,7 @@ python3 manage.py createsuperuser
 6. Run:
 ```shell
 python3 manage.py runserver
-celery -A app worker -l info
+python3 manage.py run_judge_worker --worker-id judge-local-1 --box-id 1
 uvicorn realtime_service.main:app --host 127.0.0.1 --port 9000
 ```
 Open `http://127.0.0.1:8000` (Django-rendered pages) or start the Next.js frontend (below).
@@ -64,6 +65,7 @@ Open `http://localhost:3000`.
 Notes:
 - `INTERNAL_API_KEY` must match the Django `INTERNAL_API_KEY` in `.env`.
 - `REALTIME_ORIGIN` should point to the FastAPI realtime service.
+- `REALTIME_REDIS_URL` is the realtime Redis setting.
 - In dev, Next.js will proxy `/admin/`, `/static/`, `/media/` to Django. Browser API calls use `/backend/*` route handlers.
 
 ## Deployment
@@ -71,7 +73,7 @@ See [DEPLOY.md](./DEPLOY.md).
 
 ## About Project
 ### Problems and submissions
-Platform provides an extensive set of olympiad programming tasks. To submit solution you need to be signed in system. You can register or sign in into existing account and submit solutions to problems. The testing system runs in parallel with server using Celery worker. You can use Redis, RabbitMQ or Amazon SQS as a broker for Celery worker (more info [here](https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers); personally, I use [Redis](https://redis.io/)).
+Platform provides an extensive set of olympiad programming tasks. To submit solution you need to be signed in system. You can register or sign in into existing account and submit solutions to problems. The testing system runs in separate judge worker processes. Judge jobs are stored durably in Postgres and each worker process owns one fixed, locally locked isolate box id.
 System will automatically test your solution in isolated sandboxes provided by [isolate](https://github.com/ioi/isolate) and report verdict, max used time and max used memory.\
 Also, each problem has editorial and solution in C++ language.\
 Platform administrators can add new problems.
@@ -101,7 +103,7 @@ Recommended approach:
 
 Set env vars:
 - Django: `INTERNAL_API_KEY`
-- Realtime: `INTERNAL_API_KEY` and `REALTIME_REDIS_URL` (optional; defaults to `CELERY_BROKER_URL`)
+- Realtime: `INTERNAL_API_KEY` and `REALTIME_REDIS_URL`
 - Next.js: `BACKEND_ORIGIN` (internal Django origin), `INTERNAL_API_KEY` (same value), `REALTIME_ORIGIN` (realtime service origin)
 
 ## Technologies
@@ -110,7 +112,6 @@ Following technologies and libraries were used to create this project:
 * [Django REST Framework](https://www.django-rest-framework.org)
 * [FastAPI](https://fastapi.tiangolo.com)
 * [Uvicorn](https://www.uvicorn.org)
-* [Celery](https://docs.celeryq.dev/en/stable)
 * [Next.js](https://nextjs.org)
 * [PostgreSQL](https://www.postgresql.org)
 * [isolate](https://github.com/ioi/isolate)

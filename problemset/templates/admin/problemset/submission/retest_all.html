@@ -4,8 +4,8 @@
 {% block content %}
   <div id="content-main">
     <h1>Retest all submissions</h1>
-    <p>This will queue retesting for every submission that is <strong>not</strong> currently in queue (<code>verdict=IQ</code>).</p>
-    <p>This can take a long time and will put load on your worker(s).</p>
+    <p>This will queue a bounded batch of submissions that are <strong>not</strong> currently in queue (<code>verdict=IQ</code>).</p>
+    <p>Submit again to queue another batch.</p>
 
     <form method="post" novalidate>
       {% csrf_token %}
@@ -16,4 +16,3 @@
     </form>
   </div>
 {% endblock %}
-

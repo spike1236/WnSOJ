@@ -1,11 +1,12 @@
 from django.contrib import admin, messages
+from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 
-from .models import Problem, Category, Submission
-from .tasks import retest_all_submissions_task, retest_submissions_task
+from .models import Problem, Category, JudgeJob, Submission
+from .tasks import queue_retest_all_submissions, queue_retest_submissions
 
 
 @admin.register(Problem)
@@ -76,26 +77,36 @@ class SubmissionAdmin(admin.ModelAdmin):
     def retest_selected_submissions(self, request, queryset):
         if not self.has_change_permission(request):
             raise PermissionDenied
-        ids = list(queryset.values_list("id", flat=True))
-        retest_submissions_task.delay(ids)
-        messages.success(
-            request,
-            (
-                f"Queued retest for {len(ids)} submission(s) "
-                "(skipping those already in queue)."
-            ),
+        batch_size = int(getattr(settings, "JUDGE_ADMIN_RETEST_BATCH_SIZE", 500))
+        selected = queryset.order_by("id")
+        ids = list(selected.values_list("id", flat=True)[:batch_size])
+        result = queue_retest_submissions(ids)
+        remaining = max(selected.count() - len(ids), 0)
+        message = (
+            f"Queued retest for {result['queued']} submission(s) "
+            "(skipping those already in queue)."
         )
+        if remaining:
+            message += (
+                f" {remaining} selected submission(s) were not queued in this batch."
+            )
+        messages.success(request, message)
 
     def retest_all_view(self, request):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
         if request.method == "POST":
-            retest_all_submissions_task.delay()
-            messages.success(
-                request,
-                "Queued retest for all submissions (skipping those already in queue).",
+            batch_size = int(getattr(settings, "JUDGE_ADMIN_RETEST_BATCH_SIZE", 500))
+            result = queue_retest_all_submissions(limit=batch_size)
+            message = (
+                f"Queued retest for {result['queued']} submission(s) "
+                "(skipping those already in queue)."
             )
+            remaining = result.get("remaining", 0)
+            if remaining:
+                message += f" {remaining} still eligible; submit again for next batch."
+            messages.success(request, message)
             return redirect("..")
 
         context = {
@@ -106,3 +117,33 @@ class SubmissionAdmin(admin.ModelAdmin):
         return TemplateResponse(
             request, "admin/problemset/submission/retest_all.html", context
         )
+
+
+@admin.register(JudgeJob)
+class JudgeJobAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "submission",
+        "status",
+        "attempt",
+        "claimed_by",
+        "lease_expires_at",
+        "created_at",
+        "finished_at",
+    )
+    list_filter = ("status",)
+    search_fields = ("id", "submission__id", "submission__user__username")
+    ordering = ("-id",)
+    readonly_fields = (
+        "submission",
+        "status",
+        "attempt",
+        "claimed_by",
+        "lease_expires_at",
+        "last_heartbeat_at",
+        "error",
+        "created_at",
+        "started_at",
+        "finished_at",
+        "updated_at",
+    )

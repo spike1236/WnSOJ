@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 from django.test import SimpleTestCase
 from fastapi import HTTPException
 
-from realtime_service.main import _require_internal_key
+from realtime_service.main import _redis_url, _require_internal_key
 
 
 class DummyRequest:
@@ -35,3 +35,24 @@ class RealtimeInternalKeyTests(SimpleTestCase):
             async_to_sync(_require_internal_key)(
                 DummyRequest({"x-internal-api-key": "secret"})
             )
+
+
+class RealtimeRedisUrlTests(SimpleTestCase):
+    def test_realtime_redis_url_prefers_explicit_env(self):
+        with patch.dict(
+            os.environ,
+            {
+                "REALTIME_REDIS_URL": "redis://realtime:6379/1",
+            },
+        ):
+            self.assertEqual(_redis_url(), "redis://realtime:6379/1")
+
+    def test_realtime_redis_url_defaults_to_local_redis(self):
+        with patch.dict(
+            os.environ,
+            {
+                "REALTIME_REDIS_URL": "",
+            },
+            clear=True,
+        ):
+            self.assertEqual(_redis_url(), "redis://localhost:6379/0")

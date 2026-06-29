@@ -50,14 +50,20 @@ DB_PASSWORD=replace_me
 DB_HOST=127.0.0.1
 DB_PORT=5432
 
-CELERY_BROKER_URL=redis://127.0.0.1:6379/0
-CELERY_RESULT_BACKEND=redis://127.0.0.1:6379/0
+REALTIME_REDIS_URL=redis://127.0.0.1:6379/0
 
 NO_ISOLATE=False
 ISOLATE_PATH=/var/lib/isolate
+JUDGE_ISOLATE_BOX_ID=1
+JUDGE_JOB_LEASE_SECONDS=900
+JUDGE_JOB_HEARTBEAT_INTERVAL_SECONDS=30
+JUDGE_ISOLATE_LOCK_DIR=/tmp/wnsoj-isolate-locks
+JUDGE_ADMIN_RETEST_BATCH_SIZE=500
 EOF
 sudo chmod 640 /etc/wnsoj/wnsoj.env
 ```
+
+`REALTIME_REDIS_URL` is the realtime Redis setting.
 
 To generate secrets locally:
 
@@ -170,15 +176,20 @@ sudo systemctl enable --now wnsoj-realtime
 sudo systemctl status wnsoj-realtime
 ```
 
-## 5) Celery workers (judge + background tasks)
+## 5) Judge workers
 
-Submissions enqueue judge jobs directly on creation, so Celery beat is not required by default. If you add your own periodic tasks later, it's usually nicer to run worker and beat separately.
+Submissions create durable `JudgeJob` rows in Postgres. Run one judge worker process per execution slot. Each process must have a unique isolate box id on that host. Workers also take a local lock for their box id and fail at startup if another live process already owns it.
 
-### `wnsoj-celery-worker.service`
+The judge queue relies on Postgres row locks, `SKIP LOCKED` where available, and
+a partial unique constraint for one active job per submission. Before enabling
+multiple production workers, run migrations on Postgres and smoke-test two
+workers claiming distinct queued submissions.
+
+### `wnsoj-judge-worker@.service`
 
 ```ini
 [Unit]
-Description=WnSOJ Celery worker
+Description=WnSOJ judge worker %i
 After=network.target
 
 [Service]
@@ -187,7 +198,7 @@ User=wnsoj
 Group=wnsoj
 WorkingDirectory=/srv/wnsoj
 EnvironmentFile=/etc/wnsoj/wnsoj.env
-ExecStart=/srv/wnsoj/.venv/bin/celery -A app worker -l info
+ExecStart=/srv/wnsoj/.venv/bin/python manage.py run_judge_worker --worker-id judge-%i --box-id %i
 Restart=always
 RestartSec=3
 
@@ -195,35 +206,12 @@ RestartSec=3
 WantedBy=multi-user.target
 ```
 
-### `wnsoj-celery-beat.service`
-
-Optional (only needed if you add periodic tasks).
-
-```ini
-[Unit]
-Description=WnSOJ Celery beat
-After=network.target
-
-[Service]
-Type=simple
-User=wnsoj
-Group=wnsoj
-WorkingDirectory=/srv/wnsoj
-EnvironmentFile=/etc/wnsoj/wnsoj.env
-ExecStart=/srv/wnsoj/.venv/bin/celery -A app beat -l info
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Enable:
+Enable as many workers as the machine can safely run:
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now wnsoj-celery-worker
-sudo systemctl enable --now wnsoj-celery-beat  # optional
+sudo systemctl enable --now wnsoj-judge-worker@1
+sudo systemctl enable --now wnsoj-judge-worker@2
 ```
 
 ## 6) Next.js (systemd)
@@ -376,8 +364,8 @@ npm run build
 
 sudo systemctl start wnsoj-gunicorn
 sudo systemctl start wnsoj-next
-sudo systemctl restart wnsoj-celery-worker
-sudo systemctl restart wnsoj-celery-beat
+sudo systemctl restart wnsoj-judge-worker@1
+sudo systemctl restart wnsoj-judge-worker@2
 ```
 
 ### Check logs
@@ -385,6 +373,5 @@ sudo systemctl restart wnsoj-celery-beat
 ```bash
 sudo journalctl -u wnsoj-gunicorn -f
 sudo journalctl -u wnsoj-next -f
-sudo journalctl -u wnsoj-celery-worker -f
-sudo journalctl -u wnsoj-celery-beat -f
+sudo journalctl -u wnsoj-judge-worker@1 -f
 ```

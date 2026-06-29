@@ -1,10 +1,8 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
-
 from django.test import TestCase, override_settings
 
-from problemset.models import Problem, Submission
+from problemset.models import JudgeJob, Problem, Submission
 from problemset.tests.helpers import (
     create_category,
     create_problem,
@@ -118,23 +116,23 @@ class SubmissionAPITests(TestCase):
     def test_authenticated_user_can_create_submission_for_self(self):
         self.client.force_login(self.user)
 
-        with patch("problemset.tasks.test_submission_task.delay") as delay:
-            with self.captureOnCommitCallbacks(execute=True):
-                response = self.client.post(
-                    "/api/submissions/",
-                    {
-                        "problem_id": self.problem.id,
-                        "language": "py",
-                        "code": "print(42)",
-                    },
-                )
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(
+                "/api/submissions/",
+                {
+                    "problem_id": self.problem.id,
+                    "language": "py",
+                    "code": "print(42)",
+                },
+            )
 
         self.assertEqual(response.status_code, 201)
         submission = Submission.objects.get()
         self.assertEqual(submission.user, self.user)
         self.assertEqual(submission.problem, self.problem)
         self.assertEqual(submission.verdict, "IQ")
-        delay.assert_called_once_with(submission.id)
+        job = JudgeJob.objects.get(submission=submission)
+        self.assertEqual(job.status, JudgeJob.Status.QUEUED)
 
     def test_submission_status_endpoint_returns_parsed_verdict(self):
         submission = Submission.objects.create(

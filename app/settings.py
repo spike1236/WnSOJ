@@ -102,18 +102,21 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS
 }
 
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
-CELERY_TIMEZONE = "UTC"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 10 * 60
-
-# Optional: separate Redis URL for realtime verdict streaming (SSE).
-# Defaults to CELERY_BROKER_URL.
-REALTIME_REDIS_URL = os.getenv("REALTIME_REDIS_URL", "").strip()
+# Redis URL for realtime verdict streaming (SSE).
+REALTIME_REDIS_URL = os.getenv("REALTIME_REDIS_URL", "redis://localhost:6379/0").strip()
 
 NO_ISOLATE = os.getenv('NO_ISOLATE', 'False') == 'True'
 ISOLATE_PATH = os.getenv('ISOLATE_PATH', '/var/lib/isolate')
+JUDGE_ISOLATE_BOX_ID = int(os.getenv("JUDGE_ISOLATE_BOX_ID", "1"))
+JUDGE_WORKER_ID = os.getenv("JUDGE_WORKER_ID", "").strip()
+JUDGE_JOB_LEASE_SECONDS = float(os.getenv("JUDGE_JOB_LEASE_SECONDS", "900"))
+JUDGE_JOB_HEARTBEAT_INTERVAL_SECONDS = float(
+    os.getenv("JUDGE_JOB_HEARTBEAT_INTERVAL_SECONDS", "30")
+)
+JUDGE_ISOLATE_LOCK_DIR = Path(
+    os.getenv("JUDGE_ISOLATE_LOCK_DIR", "/tmp/wnsoj-isolate-locks")
+)
+JUDGE_ADMIN_RETEST_BATCH_SIZE = int(os.getenv("JUDGE_ADMIN_RETEST_BATCH_SIZE", "500"))
 
 
 # Application definition

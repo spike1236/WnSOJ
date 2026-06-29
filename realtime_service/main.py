@@ -29,9 +29,6 @@ def _redis_url() -> str:
     url = (os.getenv("REALTIME_REDIS_URL") or "").strip()
     if url:
         return url
-    url = (os.getenv("CELERY_BROKER_URL") or "").strip()
-    if url:
-        return url
     return "redis://localhost:6379/0"
 
 

@@ -24,15 +24,15 @@ Nginx is the production edge: it terminates public traffic, serves static/media
 files, performs public HTTP-to-HTTPS redirects, blocks direct public `/api/`
 access, and proxies normal page traffic to Next.js. Django is an internal
 backend/API/admin service. Next.js is the public web app. FastAPI handles
-realtime/SSE behavior. Redis supports Celery/realtime, and Postgres is the
-Django database.
+realtime/SSE behavior. Redis supports realtime pub/sub, and Postgres is the
+Django database and durable judge-job queue.
 
 ## Runtime And Env
 
 Each service has its own environment. Do not make one service import another
 service's settings.
 
-- Django env: `SECRET_KEY`, `INTERNAL_API_KEY`, `DB_*`, Celery, judge settings.
+- Django env: `SECRET_KEY`, `INTERNAL_API_KEY`, `DB_*`, judge settings.
 - Next.js env: `BACKEND_ORIGIN`, `REALTIME_ORIGIN`, `INTERNAL_API_KEY`.
 - Realtime env: `INTERNAL_API_KEY`, Redis URL.
 

@@ -78,3 +78,50 @@ class Submission(models.Model):
         if testcase:
             return f"{code} #{testcase}"
         return code
+
+
+class JudgeJob(models.Model):
+    class Status(models.TextChoices):
+        QUEUED = "queued", "Queued"
+        RUNNING = "running", "Running"
+        COMPLETED = "completed", "Completed"
+        FAILED = "failed", "Failed"
+
+    submission = models.ForeignKey(
+        Submission, on_delete=models.CASCADE, related_name="judge_jobs"
+    )
+    status = models.CharField(
+        max_length=20, choices=Status.choices, default=Status.QUEUED, db_index=True
+    )
+    attempt = models.PositiveIntegerField(default=0)
+    claimed_by = models.CharField(max_length=128, blank=True)
+    lease_expires_at = models.DateTimeField(null=True, blank=True, db_index=True)
+    last_heartbeat_at = models.DateTimeField(null=True, blank=True)
+    error = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["submission"],
+                condition=models.Q(status__in=["queued", "running"]),
+                name="uniq_active_judge_job",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["status", "lease_expires_at"],
+                name="judgejob_status_lease_idx",
+            ),
+            models.Index(
+                fields=["submission", "status"],
+                name="judgejob_submission_status_idx",
+            ),
+        ]
+
+    @property
+    def is_terminal(self) -> bool:
+        return self.status in {self.Status.COMPLETED, self.Status.FAILED}
